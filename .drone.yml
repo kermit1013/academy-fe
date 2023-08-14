@@ -40,3 +40,7 @@ steps:
     #     - docker stop $DOCKER_CONTAINER_NAME || true
     #     - docker rm $DOCKER_CONTAINER_NAME || true
     #     - docker run -d --name $DOCKER_CONTAINER_NAME -p 5168:3000 $DOCKER_IMAGE_NAME
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
