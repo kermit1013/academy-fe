@@ -17,7 +17,7 @@ steps:
       - npm run build
 
   - name: test-docker
-    image: docker
+    image: plugins/docker
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -25,7 +25,7 @@ steps:
       - docker ps
 
   - name: build-docker-image
-    image: docker
+    image: plugins/docker
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -33,7 +33,7 @@ steps:
       - docker build -t $DOCKER_IMAGE_NAME .
 
   - name: deploy-docker
-    image: docker
+    image: plugins/docker
     volumes:
       - name: docker
         path: /var/run/docker.sock
