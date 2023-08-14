@@ -29,6 +29,8 @@ services:
     volumes:
       - name: dockersock
         path: /var/run
+    commands:
+      - docker ps
     # - name: build-docker-image
     #   image: plugins/docker
     #   volumes:
