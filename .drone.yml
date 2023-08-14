@@ -15,22 +15,14 @@ steps:
   #     - npm install
   #     - npm run build
 
-  - name: test-docker
+  - name: test
     image: docker:dind
     volumes:
       - name: dockersock
-        path: /var/run
+        path: /var/run/docker.sock
     commands:
-      - docker ps
-services:
-  - name: docker
-    image: docker:dind
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
-    commands:
-      - docker ps
+      - docker ps -a
+
     # - name: build-docker-image
     #   image: plugins/docker
     #   volumes:
