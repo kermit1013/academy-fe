@@ -17,10 +17,12 @@ steps:
       - npm run build
 
   - name: build-docker-image
+    image: docker
     commands:
       - docker build -t $DOCKER_IMAGE_NAME .
 
   - name: deploy-docker
+    image: docker
     commands:
       - docker stop $DOCKER_CONTAINER_NAME || true
       - docker rm $DOCKER_CONTAINER_NAME || true
