@@ -15,6 +15,7 @@ steps:
     commands:
       - npm install
       - npm run build
+      - npm docker ps
 
   - name: build-docker-image
     image: docker
