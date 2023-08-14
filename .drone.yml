@@ -1,41 +1,10 @@
 kind: pipeline
-name: academy-fe-drone
-trigger:
-  branch:
-    - deploy
-
-environment:
-  DOCKER_IMAGE_NAME: academy-fe
-  DOCKER_CONTAINER_NAME: academy-fe
+name: default
 
 steps:
-  # - name: build
-  #   image: node:alpine
-  #   commands:
-  #     - npm install
-  #     - npm run build
-
-  - name: test-docker
+  - name: build-in-dind-container
     image: docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker ps
-
-  # - name: build-docker-image
-  #   image: plugins/docker
-  #   volumes:
-  #     - name: docker
-  #       path: /var/run/docker.sock
-  #   commands:
-  #     - docker build -t $DOCKER_IMAGE_NAME .
-
-  # - name: deploy-docker
-  #   image: plugins/docker
-  #   volumes:
-  #     - name: docker
-  #       path: /var/run/docker.sock
-  #   commands:
-  #     - docker stop $DOCKER_CONTAINER_NAME || true
-  #     - docker rm $DOCKER_CONTAINER_NAME || true
-  #     - docker run -d --name $DOCKER_CONTAINER_NAME -p 5168:3000 $DOCKER_IMAGE_NAME
