@@ -16,7 +16,7 @@ steps:
       - npm install
       - npm run build
 
-  - name: build-docker-image
+  - name: test-docker
     image: docker
     volumes:
       - name: docker
