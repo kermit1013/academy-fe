@@ -16,6 +16,21 @@ steps:
       - npm install
       - npm run build
 
+  - name: build-docker
+    image: plugins/docker
+    volumes:
+      - name: maven-build
+        path: /app/build
+      - name: docker
+        path: /var/run/docker.sock
+    settings:
+      dockerfile: /app/build/Dockerfile
+    commands:
+      - cd /app/build
+      - chmod +x deploy.sh
+      - sh deploy.sh
+      - docker ps
+
   - name: build-docker-image
     image: plugins/docker
     commands:
