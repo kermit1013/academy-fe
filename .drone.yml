@@ -17,6 +17,7 @@ steps:
 
   - name: test-docker
     image: docker:dind
+    privileged: true
     volumes:
       - name: dockersock
         path: /var/runar/run/docker.sock
