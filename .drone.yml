@@ -14,30 +14,19 @@ steps:
     image: node:alpine
     commands:
       - npm install
-      - npm run build
-
-  - name: build-docker
-    image: plugins/docker
-    volumes:
-      - name: maven-build
-        path: /app/build
-      - name: docker
-        path: /var/run/docker.sock
-    settings:
-      dockerfile: /app/build/Dockerfile
-    commands:
-      - cd /app/build
-      - chmod +x deploy.sh
-      - sh deploy.sh
-      - docker ps
+      - npm run build 
 
   - name: build-docker-image
-    image: plugins/docker
+      image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker build -t $DOCKER_IMAGE_NAME .
 
   - name: deploy-docker
-    image: plugins/docker
+      image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker stop $DOCKER_CONTAINER_NAME || true
       - docker rm $DOCKER_CONTAINER_NAME || true
