@@ -1,0 +1,29 @@
+kind: pipeline
+type: docker
+name: deploy
+trigger:
+  branch:
+    - deploy
+
+environment:
+  DOCKER_IMAGE_NAME: academy-fe
+  DOCKER_CONTAINER_NAME: academy-fe
+
+steps:
+  - name: build
+    image: node:alpine
+    commands:
+      - npm install
+      - npm run build
+
+  - name: build-docker-image
+    image: docker
+    commands:
+      - docker build -t $DOCKER_IMAGE_NAME .
+
+  - name: deploy-docker
+    image: plugins/docker
+    commands:
+      - docker stop $DOCKER_CONTAINER_NAME || true
+      - docker rm $DOCKER_CONTAINER_NAME || true
+      - docker run -d --name $DOCKER_CONTAINER_NAME -p 5168:3000 $DOCKER_IMAGE_NAME
