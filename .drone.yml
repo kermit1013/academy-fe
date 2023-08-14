@@ -15,7 +15,14 @@ steps:
     commands:
       - npm install
       - npm run build
-      - npm docker ps
+
+  - name: build-docker-image
+    image: docker
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    commands:
+      - docker ps
 
   - name: build-docker-image
     image: docker
