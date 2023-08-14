@@ -17,27 +17,32 @@ steps:
 
   - name: test-docker
     image: docker:dind
+    volumes:
+      - name: dockersock
+        path: /var/run
+    commands:
+      - docker ps
+services:
+  - name: docker
+    image: docker:dind
     privileged: true
     volumes:
       - name: dockersock
-        path: /var/runar/run/docker.sock
-    commands:
-      - docker ps
+        path: /var/run
+    # - name: build-docker-image
+    #   image: plugins/docker
+    #   volumes:
+    #     - name: docker
+    #       path: /var/run/docker.sock
+    #   commands:
+    #     - docker build -t $DOCKER_IMAGE_NAME .
 
-  # - name: build-docker-image
-  #   image: plugins/docker
-  #   volumes:
-  #     - name: docker
-  #       path: /var/run/docker.sock
-  #   commands:
-  #     - docker build -t $DOCKER_IMAGE_NAME .
-
-  # - name: deploy-docker
-  #   image: plugins/docker
-  #   volumes:
-  #     - name: docker
-  #       path: /var/run/docker.sock
-  #   commands:
-  #     - docker stop $DOCKER_CONTAINER_NAME || true
-  #     - docker rm $DOCKER_CONTAINER_NAME || true
-  #     - docker run -d --name $DOCKER_CONTAINER_NAME -p 5168:3000 $DOCKER_IMAGE_NAME
+    # - name: deploy-docker
+    #   image: plugins/docker
+    #   volumes:
+    #     - name: docker
+    #       path: /var/run/docker.sock
+    #   commands:
+    #     - docker stop $DOCKER_CONTAINER_NAME || true
+    #     - docker rm $DOCKER_CONTAINER_NAME || true
+    #     - docker run -d --name $DOCKER_CONTAINER_NAME -p 5168:3000 $DOCKER_IMAGE_NAME
