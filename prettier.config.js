@@ -1,3 +1,4 @@
+// prettier.config.js
 module.exports = {
   printWidth: 120, // 换行字符串阈值
   tabWidth: 2, // 设置工具每一个水平缩进的空格数
@@ -10,5 +11,6 @@ module.exports = {
   bracketSameLine: false,
   arrowParens: "always", // (x) => {} 是否要有小括号
   requirePragma: false, // 不需要写文件开头的 @prettier
-  insertPragma: false // 不需要自动在文件开头插入 @prettier
+  insertPragma: false, // 不需要自动在文件开头插入 @prettier
+  plugins: ["prettier-plugin-tailwindcss"],
 };
