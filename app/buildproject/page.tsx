@@ -11,24 +11,12 @@ const BuildProject = () => {
       </p>
       <div className="flex justify-items-center gap-8">
         <div className="flex h-[488px] w-[430px] flex-col items-center justify-center gap-8  rounded-xl border-2 border-black ">
-          <Image
-            width={32}
-            height={32}
-            src="/bg_login.jpeg"
-            alt=""
-            className="h-32 w-32 rounded-lg"
-          />
+          <Image width={32} height={32} src="/bg_login.jpeg" alt="" className="h-32 w-32 rounded-lg" />
           <p className="text-4xl font-bold">毫無想法</p>
         </div>
 
         <div className="flex h-[488px] w-[430px] flex-col items-center justify-center gap-8  rounded-xl border-2 border-black ">
-          <Image
-            width={32}
-            height={32}
-            src="/bg_login.jpeg"
-            alt=""
-            className="h-32 w-32 rounded-lg"
-          />
+          <Image width={32} height={32} src="/bg_login.jpeg" alt="" className="h-32 w-32 rounded-lg" />
           <p className="text-4xl font-bold">已經有明確的想法</p>
         </div>
       </div>
