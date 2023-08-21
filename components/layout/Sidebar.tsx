@@ -52,10 +52,7 @@ const Sidebar = () => {
   const handleRoutePath = (path: string) => {
     router.push(`${path}`);
   };
-  const isLogin = false;
-  if (!isLogin) {
-    return <></>;
-  }
+
   return (
     <div
       className={`  absolute left-0 z-10 grid h-screen grid-rows-6 place-items-center   bg-stone-200 p-4 ${
