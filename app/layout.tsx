@@ -1,8 +1,6 @@
 import React from "react";
-import StyledComponentsRegistry from "../lib/AntdRegistry";
-import "@/globals.css";
-import Topbar from "@/components/layout/Topbar";
-import Sidebar from "@/components/layout/Sidebar";
+import "@/styles/globals.css";
+import StyledComponentsRegistry from "@/lib/AntdRegistry";
 
 export const metadata = {
   title: "Create Next App",
@@ -12,13 +10,7 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
     <body>
-      <StyledComponentsRegistry>
-        <div className="relative">
-          <Topbar />
-          <Sidebar />
-          <main>{children}</main>
-        </div>
-      </StyledComponentsRegistry>
+      <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
     </body>
   </html>
 );
