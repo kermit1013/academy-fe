@@ -19,7 +19,13 @@ const Login = () => {
   return (
     <div className="md:flex md:justify-between">
       <div className="relative h-screen w-full md:static md:w-2/3 lg:w-3/4">
-        <Image width={900} height={900} className="h-full w-full " alt="NextUI hero Image" src="/bg_login.jpeg" />
+        <Image
+          width={900}
+          height={900}
+          className="h-full w-full object-cover"
+          alt="NextUI hero Image"
+          src="/bg_login.jpeg"
+        />
       </div>
       <div className="absolute top-0 flex h-screen w-full  flex-col items-center  justify-between p-8 md:static md:w-1/3 lg:w-1/4">
         <div className="flex flex-col items-center gap-8">

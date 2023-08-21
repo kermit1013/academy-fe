@@ -36,7 +36,7 @@ const Journey = () => {
   };
 
   return (
-    <div className="absolute left-20 top-24 h-[calc(100vh-96px)] w-[calc(100vw-80px)]  p-11">
+    <div className="absolute left-20 top-24 h-[calc(100vh-96px)] w-[calc(100vw-80px)]  overflow-y-scroll p-11">
       <div className="flex flex-wrap  justify-start gap-3 ">
         {journeyList.length === 0 ? (
           <JourneyCard journey={newJorney} />
