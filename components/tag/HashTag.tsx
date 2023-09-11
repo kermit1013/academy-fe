@@ -10,7 +10,7 @@ const HashTag = (props: HashTagProps) => {
   return (
     <div
       key={props.id}
-      className="mr-2 rounded-lg border-2 border-red-400 bg-red-300 px-3  py-1 text-white hover:bg-red-500"
+      className="w-full rounded-lg border-2 border-white bg-transparent px-3 py-1  text-center text-white  "
     >
       {props.title}
     </div>

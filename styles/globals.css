@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+.contentPage {
+  @apply absolute left-20 top-24 h-[calc(100vh-96px)] w-[calc(100vw-80px)];
+}
+
+.monster {
+  display: flex;
+}
+
+.journeyCard {
+}
+.journeyCard .monster-eye {
+  transform: translate(var(--x), var(--y));
+  transition: 0.4s linear;
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

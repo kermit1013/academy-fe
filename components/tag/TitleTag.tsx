@@ -4,12 +4,9 @@ type TitleTagProps = {
   title: string;
 };
 
-const TitleTag = (props: TitleTagProps) => {
-  return (
-    <div className="rounded-full border-2 border-red-400 bg-red-300 px-3 py-1 text-white hover:bg-red-500">
-      {props.title}
-    </div>
-  );
+const TitleTag = ({ title }: TitleTagProps) => {
+  const txtColor = title == "新手計畫" ? "text-green-700" : "text-[#2F66B0]";
+  return <div className={`z-10 w-full rounded-lg bg-white px-3 py-1 text-center ${txtColor}`}>{title}</div>;
 };
 
 export default TitleTag;
