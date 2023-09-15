@@ -6,7 +6,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="relative">
     <Topbar />
     <Sidebar />
-    <main>{children}</main>
+    <main>
+      <div className="contentPage  overflow-y-scroll bg-[url('../public/bg_dashboard_grid.svg')] bg-cover bg-repeat p-11 ">
+        {children}
+      </div>
+    </main>
   </div>
 );
 

@@ -36,16 +36,14 @@ const Journey = () => {
   };
 
   return (
-    <div className="contentPage overflow-y-scroll bg-[url('../public/bg_dashboard_grid.svg')] bg-cover bg-repeat p-11">
-      <div className="flex flex-wrap justify-start gap-3 ">
-        {journeyList.length === 0 ? (
-          <JourneyCard index={-1} key={-1} journey={newJorney} />
-        ) : (
-          journeyList.map((journey, index) => {
-            return <JourneyCard index={index} key={journey.id} journey={journey} />;
-          })
-        )}
-      </div>
+    <div className="flex flex-wrap justify-start gap-3 ">
+      {journeyList.length === 0 ? (
+        <JourneyCard index={-1} key={-1} journey={newJorney} />
+      ) : (
+        journeyList.map((journey, index) => {
+          return <JourneyCard index={index} key={journey.id} journey={journey} />;
+        })
+      )}
     </div>
   );
 };
