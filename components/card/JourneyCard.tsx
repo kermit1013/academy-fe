@@ -16,7 +16,7 @@ const JourneyCard = ({ index, journey }: props) => {
   // index && key = -1 為尚未擁有專案
   const bgColor =
     index % 4 === 0
-      ? "bg-blue-600"
+      ? "bg-sky-600"
       : index % 4 === 1 || index === -1
       ? "bg-green-600"
       : index % 4 === 2
