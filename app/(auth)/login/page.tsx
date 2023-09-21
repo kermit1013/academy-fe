@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { Checkbox } from "antd";
 import type { CheckboxChangeEvent } from "antd/es/checkbox";
@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { GoogleOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import bgLogin from "../../../public/bg_login.svg";
 import iconLogin from "../../../public/icon_login.svg";
+import { authApi } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 const onChange = (e: CheckboxChangeEvent) => {
   console.log(`checked = ${e.target.checked}`);
@@ -14,6 +16,19 @@ const onChange = (e: CheckboxChangeEvent) => {
 
 const Login = () => {
   const router = useRouter();
+
+  const { mutateAsync: login, isLoading } = useMutation(authApi.login, {
+    onSuccess: () => {}
+  });
+
+  useEffect(() => {
+    login({
+      username: "chia",
+      password: "1234"
+    }).then((data) => {
+      console.log(data);
+    });
+  }, []);
 
   const handleLogin = () => {
     router.push("/");
@@ -28,6 +43,7 @@ const Login = () => {
       OAUTH2_REDIRECT_URI: "http://localhost:3000/oauth2/redirect"
     }
   };
+
   return (
     <div className="flex items-center justify-center   md:justify-between">
       <div className="relative flex h-screen w-full items-center justify-center bg-[#E3CEFE] md:static md:w-2/3 lg:w-3/4">
