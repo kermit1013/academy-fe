@@ -1,13 +1,13 @@
 import React from "react";
 import "@/styles/globals.css";
-import StyledComponentsRegistry from "@/lib/AntdRegistry";
-import ReactQueryProvider from "@/components/provider/ReactQueryProvider";
+
+import { AntdRegistryProvider, ReactQueryProvider } from "@/components/provider";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
     <body>
       <ReactQueryProvider>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <AntdRegistryProvider>{children}</AntdRegistryProvider>
       </ReactQueryProvider>
     </body>
   </html>
