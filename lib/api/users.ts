@@ -28,20 +28,18 @@ export const usersApi = {
   /**
    * 更新用戶
    */
-  updateUser: (userId: string, data: IUserData) => {
+  updateUser: (userId: string, data: IUserData) =>
     request.fetch(`/users/${userId}`, {
       method: "PUT",
       body: JSON.stringify(data)
-    });
-  },
+    }),
   /**
    * 刪除用戶
    */
-  deleteUser: (userId: string) => {
+  deleteUser: (userId: string) =>
     request.fetch(`/users/${userId}`, {
       method: "DELETE"
-    });
-  }
+    })
 };
 
 export default usersApi;

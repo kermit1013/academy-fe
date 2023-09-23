@@ -10,11 +10,10 @@ export const journeysApi = {
   /**
    * 取得探索內容
    */
-  getJourney: (journeyId: string) => {
+  getJourney: (journeyId: string) =>
     request.fetch(`/journeys/${journeyId}`, {
       method: "GET"
-    });
-  },
+    }),
   /**
    * 新增探索
    */
@@ -26,12 +25,11 @@ export const journeysApi = {
   /**
    * 更新探索
    */
-  updateJourney: (journeyId: string, data: IJourneyData) => {
+  updateJourney: (journeyId: string, data: IJourneyData) =>
     request.fetch(`/journeys/${journeyId}`, {
       method: "PUT",
       body: JSON.stringify(data)
-    });
-  }
+    })
 };
 
 export default journeysApi;

@@ -10,9 +10,9 @@
   display: flex;
 }
 
-.journeyCard {
+.projectCard {
 }
-.journeyCard .monster-eye {
+.projectCard .monster-eye {
   transform: translate(var(--x), var(--y));
   transition: 0.4s linear;
 }

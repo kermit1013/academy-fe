@@ -1,3 +1,4 @@
+import { IProject } from "@/\btypes";
 import Request from "@/utils/request";
 const request = new Request();
 
@@ -15,11 +16,10 @@ export const projectsApi = {
   /**
    * 取得所有專案
    */
-  getAllProjects: () => {
-    request.fetch(`/projects`, {
+  getAllProjects: () =>
+    request.fetch<IProject[]>(`/projects`, {
       method: "GET"
-    });
-  },
+    }),
   /**
    * 建立專案
    */
@@ -46,20 +46,18 @@ export const projectsApi = {
   /**
    * 新增專案標籤
    */
-  addProjectTag: (projectId: string, data: ITagData) => {
+  addProjectTag: (projectId: string, data: ITagData) =>
     request.fetch(`/projects/${projectId}/tags`, {
       method: "POST",
       body: JSON.stringify(data)
-    });
-  },
+    }),
   /**
    * 取得專案規劃所有時程
    */
-  getProjectSchedules: (projectId: string) => {
+  getProjectSchedules: (projectId: string) =>
     request.fetch(`/projects/${projectId}/schedules`, {
       method: "GET"
-    });
-  }
+    })
 };
 
 export default projectsApi;

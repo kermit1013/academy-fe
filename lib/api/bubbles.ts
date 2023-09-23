@@ -11,11 +11,10 @@ export const bubblesApi = {
   /**
    * 取得所有泡泡
    */
-  getAllBubbles: (journeyId: string) => {
+  getAllBubbles: (journeyId: string) =>
     request.fetch(`/journeys/${journeyId}/bubbles`, {
       method: "GET"
-    });
-  },
+    }),
   /**
    * 新增泡泡
    */
@@ -27,20 +26,18 @@ export const bubblesApi = {
   /**
    * 更新泡泡
    */
-  updateBubble: (bubbleId: string, data: IBubbleData) => {
+  updateBubble: (bubbleId: string, data: IBubbleData) =>
     request.fetch(`/bubbles/${bubbleId}`, {
       method: "PUT",
       body: JSON.stringify(data)
-    });
-  },
+    }),
   /**
    * 刪除泡泡
    */
-  deleteBubble: (bubbleId: string) => {
+  deleteBubble: (bubbleId: string) =>
     request.fetch(`/bubbles/${bubbleId}`, {
       method: "DELETE"
-    });
-  }
+    })
 };
 
 export default bubblesApi;

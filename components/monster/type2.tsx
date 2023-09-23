@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 
 const Type2 = () => {
   useEffect(() => {
-    const monsterEyes = document.querySelectorAll(".journeyCard") as NodeListOf<HTMLElement>;
+    const monsterEyes = document.querySelectorAll(".projectCard") as NodeListOf<HTMLElement>;
 
     monsterEyes.forEach((eye) => {
       eye.addEventListener("mousemove", (e: MouseEventInit) => {

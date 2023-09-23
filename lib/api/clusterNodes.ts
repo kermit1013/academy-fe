@@ -10,11 +10,10 @@ export const clusterNodesApi = {
   /**
    * 取得叢集所有節點
    */
-  getAllClusterNodes: (clusterCode: string) => {
+  getAllClusterNodes: (clusterCode: string) =>
     request.fetch(`/clusters/${clusterCode}/nodes`, {
       method: "GET"
-    });
-  },
+    }),
   /**
    * 新增叢集節點
    */
@@ -26,20 +25,18 @@ export const clusterNodesApi = {
   /**
    * 更新叢集節點
    */
-  updateClusterNode: (nodeId: string, data: IClusterNodeData) => {
+  updateClusterNode: (nodeId: string, data: IClusterNodeData) =>
     request.fetch(`/nodes/${nodeId}`, {
       method: "PUT",
       body: JSON.stringify(data)
-    });
-  },
+    }),
   /**
    * 刪除叢集節點
    */
-  deleteClusterNode: (nodeId: string) => {
+  deleteClusterNode: (nodeId: string) =>
     request.fetch(`/nodes/${nodeId}`, {
       method: "DELETE"
-    });
-  }
+    })
 };
 
 export default clusterNodesApi;
