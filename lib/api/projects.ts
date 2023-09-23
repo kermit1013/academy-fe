@@ -18,7 +18,10 @@ export const projectsApi = {
    */
   getAllProjects: () =>
     request.fetch<IProject[]>(`/projects`, {
-      method: "GET"
+      method: "GET",
+      next: {
+        revalidate: 5 // 待調整
+      }
     }),
   /**
    * 建立專案
