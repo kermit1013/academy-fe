@@ -2,10 +2,13 @@ import Request from "@/utils/request";
 const request = new Request();
 
 export const authApi = {
-  login: (data: any) =>
+  /**
+   * 使用者登入
+   */
+  login: (data: { username: string; password: string }) =>
     request.fetch("/auth/login", {
       method: "POST",
-      body: data
+      body: JSON.stringify(data)
     })
 };
 

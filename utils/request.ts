@@ -5,7 +5,6 @@ class Request {
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_BASE_URL as string;
     this.defaultOptions = {
-      method: "GET",
       headers: {
         "Content-Type": "application/json"
       }
@@ -16,11 +15,11 @@ class Request {
     const requestOptions: RequestInit = { ...this.defaultOptions, ...options };
 
     switch (options.method) {
+      case "GET":
+        break;
+
       case "POST":
       case "PUT":
-        if (options.body) {
-          requestOptions.body = JSON.stringify(options.body);
-        }
         break;
 
       // 擴充自定義用，如上傳檔案
@@ -29,7 +28,6 @@ class Request {
         if (requestOptions.headers && "Content-Type" in requestOptions.headers) {
           delete requestOptions.headers["Content-Type"];
         }
-        break;
 
       default:
         break;
@@ -38,8 +36,8 @@ class Request {
     return requestOptions;
   }
 
-  async fetch<T>(path: string, optoins: RequestInit = {}): Promise<T> {
-    const requestOptions = this.getRequestOptions(optoins);
+  async fetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const requestOptions = this.getRequestOptions(options);
     const url = this.baseUrl + path;
 
     try {
