@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .contentPage {
-  @apply absolute left-20 top-24 h-[calc(100vh-96px)] w-[calc(100vw-80px)];
+  @apply absolute top-24 h-[calc(100vh-96px)];
 }
 
 .monster {

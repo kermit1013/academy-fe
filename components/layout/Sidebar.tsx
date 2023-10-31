@@ -43,7 +43,9 @@ const Sidebar = () => {
   const handleRoutePath = (path: string) => {
     router.push(`${path}`);
   };
-
+  if (pathname !== "/") {
+    return <div></div>;
+  }
   return (
     <div
       className={`absolute left-0 z-20 h-screen  bg-neutral-100 p-4  transition-all duration-500 ease-in-out ${
