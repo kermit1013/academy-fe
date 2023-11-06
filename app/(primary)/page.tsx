@@ -1,10 +1,11 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ProjectCard from "@/components/card/ProjectCard";
 import { projectsApi } from "@/lib/api";
 import { IProject } from "@/\btypes";
 
-const getProjects = () => {
-  const data = projectsApi.getAllProjects();
+const getProjects = async () => {
+  const data = await projectsApi.getAllProjects();
   return data;
 };
 
@@ -21,15 +22,25 @@ const initProject: IProject[] = [
   }
 ];
 
-const Project = async () => {
-  const projects = await getProjects();
-  const projectList = projects.length > 0 ? projects : initProject;
+const Project = () => {
+  const [projects, setProjects] = useState<IProject[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const data = await getProjects();
+      setProjects(data);
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
     <div className="flex flex-wrap justify-start gap-3 ">
-      {projectList.map((project, index) => {
-        return <ProjectCard index={index} key={project.id} project={project} />;
-      })}
+      {projects.length > 0 ? (
+        projects.map((project, index) => <ProjectCard index={index} key={project.id} project={project} />)
+      ) : (
+        <ProjectCard index={-1} key={-1} project={initProject[0]} />
+      )}
     </div>
   );
 };

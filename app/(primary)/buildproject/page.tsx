@@ -15,10 +15,7 @@ const BuildProject = () => {
           使用者名稱
         </a>
         <span>{", "}</span>
-        <a href="" className="underline decoration-2 hover:decoration-wavy">
-          網頁名稱
-        </a>
-        <span>想請問你對學習計畫…</span>
+        <span>你對自主學習…</span>
       </p>
 
       <div className="flex w-full shrink  justify-center justify-items-center gap-8 self-center  ">

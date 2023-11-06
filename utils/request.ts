@@ -42,12 +42,15 @@ class Request {
 
     try {
       const response = await fetch(url, requestOptions);
+
       if (!response.ok) {
-        throw new Error(`HTTP Error! Status: ${response.status}`);
+        const responseBody = await response.text();
+        throw new Error(`HTTP Error! Status: ${response.status}, Body: ${responseBody}`);
       }
+
       return response.json();
     } catch (error) {
-      console.error("Network Error", Error);
+      console.error("Network Error", error);
       throw error;
     }
   }
