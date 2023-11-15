@@ -26,6 +26,11 @@ const Sidebar = () => {
       path: "/"
     },
     {
+      icon: <HomeFilled style={{ fontSize: "2rem" }} />,
+      title: "評估(待 Bubble 完成拿掉)",
+      path: "/evaluation"
+    },
+    {
       icon: <FileTextFilled style={{ fontSize: "2rem" }} />,
       title: "草稿",
       path: "/draft"
