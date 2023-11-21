@@ -5,8 +5,10 @@ import type { Node, Edge } from "reactflow";
 type State = {
   nodeList: Node<any, string | undefined>[];
   edgeList: Edge<any>[];
-  levelOneHintList: string[];
-  levelTwoHintList: string[];
+  levelOneHintListType1: string[];
+  levelTwoHintListType1: string[];
+  levelOneHintListType2: string[];
+  levelTwoHintListType2: string[];
 };
 
 type Actions = {
@@ -22,14 +24,22 @@ const useClusterPosition = create<State & Actions>()(
   immer((set) => ({
     nodeList: [],
     edgeList: [],
-    levelOneHintList: [
+    levelOneHintListType1: [
       "寫一項你喜歡的人事物",
       "寫一項令你困擾的人事物",
       "寫一項你擅長的事物",
       "寫一項你不擅長的事物",
       "過去一週發生的趣事"
     ],
-    levelTwoHintList: ["針對這些關鍵字，你想了解什麼？", "針對這些關鍵字，你想解決什麼？"],
+    levelTwoHintListType1: ["針對這些關鍵字，你想了解什麼？", "針對這些關鍵字，你想解決什麼？"],
+    levelOneHintListType2: [
+      "如果你能擁有一個技能或專長，那會是什麼？",
+      "如果你可以改變你的社區或學校的一個方面，那會是什麼？",
+      "如果你有一個月的自由時間，你會怎麼安排？",
+      "描述你理想中十年後的生活。",
+      "如果你有機會召開一個國際性的會議，那會是什麼樣的會議？"
+    ],
+    levelTwoHintListType2: ["你可以如何實現上述回覆？", "你需要先了解什麼？"],
     removeNode: (id: string) =>
       set((state) => ({
         nodeList: state.nodeList.filter((node: Node) => node.id !== id)

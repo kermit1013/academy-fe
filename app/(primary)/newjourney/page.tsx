@@ -7,6 +7,8 @@ import "reactflow/dist/style.css";
 import Bubble from "@/components/bubble/Bubble";
 import useClusterPosition from "@/hooks/useClusterPosition";
 import Cluster from "@/components/bubble/Cluster";
+import { Switch } from "antd";
+import { boolean } from "zod";
 const nodeTypes = {
   bubble: Bubble,
   cluster: Cluster
@@ -14,8 +16,16 @@ const nodeTypes = {
 
 const NewJourney = () => {
   const [firstVisit, setFirstVisit] = useState(true);
-  const { nodeList, edgeList, levelOneHintList, addNode, addEdge, updateNode, updateNodePosition } =
-    useClusterPosition();
+  const {
+    nodeList,
+    edgeList,
+    levelOneHintListType1,
+    levelOneHintListType2,
+    addNode,
+    addEdge,
+    updateNode,
+    updateNodePosition
+  } = useClusterPosition();
   const initStatus = () => {
     setFirstVisit(false);
   };
@@ -76,7 +86,15 @@ const NewJourney = () => {
       </div>
     );
   };
-
+  useEffect(() => {
+    if (localStorage.getItem("choice")) {
+      setSwitchKey(localStorage.getItem("choice") === "0" ? false : true);
+    } else {
+      localStorage.setItem("choice", "0");
+      setSwitchKey(false);
+    }
+    console.log(switchKey, localStorage.getItem("choice"));
+  }, []);
   const onNodesChange = (event: NodeChange[]) => {
     // console.log("NodeChange", event[0]);
     const data = event[0] as Node;
@@ -85,14 +103,16 @@ const NewJourney = () => {
     }
   };
   const onAdd = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const randomIndex = Math.floor(Math.random() * levelOneHintList.length);
+    console.log(switchKey, localStorage.getItem("choice"));
+    const levelOne = localStorage.getItem("choice") === "0" ? levelOneHintListType1 : levelOneHintListType2;
+    const randomIndex = Math.floor(Math.random() * levelOne.length);
     const NodeId = `randomnode_${+new Date()}`;
     const newNode: Node = {
       id: NodeId,
       type: "bubble",
       data: {
         id: NodeId,
-        label: levelOneHintList[randomIndex],
+        label: levelOne[randomIndex],
         position: {
           x: event.pageX - 100,
           y: event.pageY - 196
@@ -188,9 +208,24 @@ const NewJourney = () => {
     // setTarget(null);
     // setDragRef(null);
   };
-
+  const [switchKey, setSwitchKey] = useState(false);
+  const onChange = (checked: boolean) => {
+    console.log(`switch to ${checked}`);
+    if (checked) {
+      localStorage.setItem("choice", "1");
+    } else {
+      localStorage.setItem("choice", "0");
+    }
+    setSwitchKey(checked);
+    console.log(switchKey, localStorage.getItem("choice"));
+  };
   return (
     <div className="h-[calc(100vh-160px)] w-[calc(100vw-64px)] " onDoubleClick={(event) => onAdd(event)}>
+      <div className="flex gap-1">
+        <p>情境1</p>
+        <Switch checked={switchKey} onChange={onChange} />
+        <p>情境2</p>
+      </div>
       {nodeList.length === 0 ? (
         <FirstVisit />
       ) : (

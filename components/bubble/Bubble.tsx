@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Handle, Position, NodeResizer } from "reactflow";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import useClusterPosition from "@/hooks/useClusterPosition";
@@ -20,7 +20,8 @@ const Bubble = ({ data }: props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [bubbleText, setBubbleText] = useState(data.label);
   const [isSelected, setIsSelected] = useState(false);
-  const { removeNode, addNode, removeEdge, addEdge, levelOneHintList, edgeList } = useClusterPosition();
+  const { removeNode, addNode, removeEdge, addEdge, levelTwoHintListType1, levelTwoHintListType2, edgeList } =
+    useClusterPosition();
   const bubbleClass = data.parentNode === "" ? "h-40 w-40 " : "h-20 w-64 ";
 
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -57,11 +58,10 @@ const Bubble = ({ data }: props) => {
     removeEdge(selectEdge.id);
   };
   const handlerAddNode = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    console.log(event);
-
+    const levelTwo = localStorage.getItem("choice") === "0" ? levelTwoHintListType1 : levelTwoHintListType2;
     event.stopPropagation();
     console.log("plus");
-    const randomIndex = Math.floor(Math.random() * levelOneHintList.length);
+    const randomIndex = Math.floor(Math.random() * levelTwo.length);
     const NodeId = `randomnode_${+new Date()}`;
     const { x, y } = data.position;
     const newNode: Node = {
@@ -69,7 +69,7 @@ const Bubble = ({ data }: props) => {
       type: "bubble",
       data: {
         id: NodeId,
-        label: levelOneHintList[randomIndex],
+        label: levelTwo[randomIndex],
         position: {
           x: x + 100,
           y: data.parentNode ? y - 100 : y
@@ -103,7 +103,7 @@ const Bubble = ({ data }: props) => {
       <div className="flex h-full w-40 items-center justify-between rounded-full border-2 border-green-500 px-3 ">
         <MinusOutlined
           onClick={(event) => handlerRemoveNode(event)}
-          className="flex items-center font-sans text-3xl font-extrabold text-red-500 hover:cursor-pointer  hover:bg-red-300"
+          className="flex items-center font-sans text-3xl font-extrabold text-red-500 hover:cursor-pointer  "
         />
         <svg width="2" height="29" viewBox="0 0 2 29" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect opacity="0.2" width="2" height="29" rx="1" fill="#30A549" />
@@ -111,11 +111,11 @@ const Bubble = ({ data }: props) => {
 
         <PlusOutlined
           onClick={(event) => handlerAddNode(event)}
-          className="flex items-center font-sans text-3xl font-extrabold text-green-500 hover:cursor-pointer hover:bg-red-300"
+          className="flex items-center font-sans text-3xl font-extrabold text-green-500 hover:cursor-pointer "
         />
       </div>
     ) : (
-      <div className="flex h-full w-40 items-center justify-between rounded-full border-2 border-green-500 px-3 ">
+      <div className="flex h-full w-24 items-center justify-center rounded-full border-2 border-green-500 px-3 ">
         <MinusOutlined
           onClick={(event) => handlerRemoveNode(event)}
           className="flex items-center font-sans text-3xl font-extrabold text-red-500 hover:cursor-pointer"
@@ -131,6 +131,7 @@ const Bubble = ({ data }: props) => {
       }}
       onClick={(event) => onclick(event)}
       onBlur={() => onblur()}
+      title={data.label}
     >
       <Handle
         type="target"
