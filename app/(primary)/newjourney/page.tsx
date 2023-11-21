@@ -77,9 +77,9 @@ const NewJourney = () => {
     );
   };
 
-  const onNodesChange = (event: NodePositionChange[]) => {
+  const onNodesChange = (event: NodeChange[]) => {
     // console.log("NodeChange", event[0]);
-    const data = event[0];
+    const data = event[0] as Node;
     if (data.dragging) {
       updateNodePosition(data.id, data.position!.x, data.position!.y);
     }
@@ -112,11 +112,11 @@ const NewJourney = () => {
   // target is the node that the node is dragged over
   const [target, setTarget] = useState<Node>();
   const [dragRef, setDragRef] = useState<Node>();
-  const onNodeDragStart = (evt: NodeDragHandler, node: Node) => {
+  const onNodeDragStart = (event: React.MouseEvent<Element, MouseEvent>, node: Node) => {
     setDragRef(node);
   };
 
-  const onNodeDrag = (evt: NodeDragHandler, node: Node) => {
+  const onNodeDrag = (event: React.MouseEvent<Element, MouseEvent>, node: Node) => {
     // calculate the center point of the node from position and dimensions
 
     const targetNode = nodeList.filter((n) => {
@@ -134,7 +134,7 @@ const NewJourney = () => {
     setTarget(targetNode);
   };
 
-  const onNodeDragStop = (evt: NodeDragHandler | undefined, node: Node) => {
+  const onNodeDragStop = (event: React.MouseEvent<Element, MouseEvent> | undefined, node: Node) => {
     // on drag stop, we swap the colors of the nodes
     // if (target) {
     //   const NodeId = `randomnode_${+new Date()}`;
@@ -199,9 +199,9 @@ const NewJourney = () => {
           edges={edgeList}
           nodeTypes={nodeTypes}
           onNodesChange={(event) => onNodesChange(event)}
-          onNodeDragStart={onNodeDragStart}
-          onNodeDrag={onNodeDrag}
-          onNodeDragStop={onNodeDragStop}
+          onNodeDragStart={(event, node) => onNodeDragStart(event, node)}
+          onNodeDrag={(event, node) => onNodeDrag(event, node)}
+          onNodeDragStop={(event, node) => onNodeDragStop(event, node)}
           zoomOnDoubleClick={false}
         >
           <Controls />

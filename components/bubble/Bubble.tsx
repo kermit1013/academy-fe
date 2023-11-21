@@ -20,7 +20,7 @@ const Bubble = ({ data }: props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [bubbleText, setBubbleText] = useState(data.label);
   const [isSelected, setIsSelected] = useState(false);
-  const { removeNode, addNode, removeEdge, addEdge, levelOneHintList } = useClusterPosition();
+  const { removeNode, addNode, removeEdge, addEdge, levelOneHintList, edgeList } = useClusterPosition();
   const bubbleClass = data.parentNode === "" ? "h-40 w-40 " : "h-20 w-64 ";
 
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -52,6 +52,9 @@ const Bubble = ({ data }: props) => {
   const handlerRemoveNode = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     event.stopPropagation();
     console.log("minus");
+    removeNode(data.id);
+    const selectEdge: Edge = edgeList.filter((edge) => edge.targetNode?.id === data.id)[0];
+    removeEdge(selectEdge.id);
   };
   const handlerAddNode = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     console.log(event);
