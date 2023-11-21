@@ -12,7 +12,7 @@ interface props {
   };
 }
 const Cluster = ({ data }: props) => {
-  return <div className="bg-red-300">{data.id}</div>;
+  return <div className="h-40 w-80 rounded-sm border-2 border-black">{data.id}</div>;
 };
 
 export default Cluster;

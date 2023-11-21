@@ -8,7 +8,6 @@ import Bubble from "@/components/bubble/Bubble";
 import useClusterPosition from "@/hooks/useClusterPosition";
 import Cluster from "@/components/bubble/Cluster";
 import { Switch } from "antd";
-import { boolean } from "zod";
 const nodeTypes = {
   bubble: Bubble,
   cluster: Cluster
@@ -86,33 +85,31 @@ const NewJourney = () => {
       </div>
     );
   };
-  useEffect(() => {
-    if (localStorage.getItem("choice")) {
-      setSwitchKey(localStorage.getItem("choice") === "0" ? false : true);
-    } else {
-      localStorage.setItem("choice", "0");
-      setSwitchKey(false);
-    }
-    console.log(switchKey, localStorage.getItem("choice"));
-  }, []);
+
   const onNodesChange = (event: NodeChange[]) => {
     // console.log("NodeChange", event[0]);
-    const data = event[0] as Node;
-    if (data.dragging) {
-      updateNodePosition(data.id, data.position!.x, data.position!.y);
+    const selectNode = event[0] as Node;
+    if (selectNode.dragging) {
+      updateNodePosition(selectNode.id, selectNode.position!.x, selectNode.position!.y);
     }
   };
   const onAdd = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log(switchKey, localStorage.getItem("choice"));
     const levelOne = localStorage.getItem("choice") === "0" ? levelOneHintListType1 : levelOneHintListType2;
-    const randomIndex = Math.floor(Math.random() * levelOne.length);
-    const NodeId = `randomnode_${+new Date()}`;
+    let bubbleCount = localStorage.getItem("levelOneBubble");
+    if (!bubbleCount) {
+      localStorage.setItem("levelOneBubble", "0");
+      bubbleCount = "0";
+    } else {
+      localStorage.setItem("levelOneBubble", ((parseInt(bubbleCount!) + 1) % levelOne.length).toString());
+    }
+    console.log(bubbleCount);
+    const NodeId = `level1_${+new Date()}`;
     const newNode: Node = {
       id: NodeId,
       type: "bubble",
       data: {
         id: NodeId,
-        label: levelOne[randomIndex],
+        label: levelOne[parseInt(bubbleCount!)],
         position: {
           x: event.pageX - 100,
           y: event.pageY - 196
@@ -155,12 +152,15 @@ const NewJourney = () => {
   };
 
   const onNodeDragStop = (event: React.MouseEvent<Element, MouseEvent> | undefined, node: Node) => {
-    // on drag stop, we swap the colors of the nodes
+    //on drag stop, we swap the colors of the nodes
     // if (target) {
-    //   const NodeId = `randomnode_${+new Date()}`;
+    //   if (target.data.level !== 1 || dragRef?.data.level !== 1) {
+    //     return;
+    //   }
+    //   const NodeId = `level0_${+new Date()}`;
     //   const newNode: Node = {
     //     id: NodeId,
-    //     type: "group",
+    //     type: "cluster",
     //     data: {},
     //     position: {
     //       x: target.position.x,
@@ -171,12 +171,21 @@ const NewJourney = () => {
     //   addNode(newNode);
     //   const newTarget = { ...target };
     //   newTarget.parentNode = NodeId;
+    //   newTarget.position = {
+    //     x: target.position.x - 150,
+    //     y: target.position.y - 80
+    //   };
     //   newTarget.extent = "parent";
     //   updateNode(newTarget);
-    //   const newDragRef = { ...dragRef };
+    //   const newDragRef: Node = { ...dragRef! };
     //   newDragRef.parentNode = NodeId;
+    //   newDragRef.position = {
+    //     x: target.position.x + 160,
+    //     y: target.position.y - 80
+    //   };
     //   newDragRef.extent = "parent";
-    //   updateNode(newDragRef!);
+    //   console.log(newDragRef);
+    //   updateNode(newDragRef);
     //   let EdgeId = `randomedge_${+new Date()}`;
     //   let newEdge: Edge = {
     //     id: EdgeId,
@@ -194,21 +203,19 @@ const NewJourney = () => {
     //   };
     //   addEdge(newEdge);
     // }
-    // setNodes((nodes) =>
-    //   nodes.map((n) => {
-    //     if (n.id === target?.id) {
-    //       n.data = { ...n.data, color: nodeColor, label: nodeColor };
-    //     }
-    //     if (n.id === node.id && target) {
-    //       n.data = { ...n.data, color: targetColor, label: targetColor };
-    //     }
-    //     return n;
-    //   })
-    // );
-    // setTarget(null);
-    // setDragRef(null);
+    // setTarget(undefined);
+    // setDragRef(undefined);
   };
-  const [switchKey, setSwitchKey] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("choice")) {
+      setIsChecked(localStorage.getItem("choice") === "1" ? true : false);
+    } else {
+      localStorage.setItem("choice", "0");
+
+      setIsChecked(false);
+    }
+  }, []);
   const onChange = (checked: boolean) => {
     console.log(`switch to ${checked}`);
     if (checked) {
@@ -216,14 +223,13 @@ const NewJourney = () => {
     } else {
       localStorage.setItem("choice", "0");
     }
-    setSwitchKey(checked);
-    console.log(switchKey, localStorage.getItem("choice"));
+    setIsChecked(checked);
   };
   return (
     <div className="h-[calc(100vh-160px)] w-[calc(100vw-64px)] " onDoubleClick={(event) => onAdd(event)}>
-      <div className="flex gap-1">
+      <div className="m-2 flex gap-2">
         <p>情境1</p>
-        <Switch checked={switchKey} onChange={onChange} />
+        <Switch checked={isChecked} onChange={onChange} />
         <p>情境2</p>
       </div>
       {nodeList.length === 0 ? (

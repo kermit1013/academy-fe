@@ -3,6 +3,8 @@ import { Handle, Position, NodeResizer } from "reactflow";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import useClusterPosition from "@/hooks/useClusterPosition";
 import type { Edge, Node } from "reactflow";
+import { message } from "antd";
+
 interface props {
   data: {
     id: string;
@@ -17,12 +19,20 @@ interface props {
 }
 
 const Bubble = ({ data }: props) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [isEdit, setIsEdit] = useState(false);
   const [bubbleText, setBubbleText] = useState(data.label);
   const [isSelected, setIsSelected] = useState(false);
-  const { removeNode, addNode, removeEdge, addEdge, levelTwoHintListType1, levelTwoHintListType2, edgeList } =
+  const { removeNode, addNode, removeEdge, addEdge, nodeList, levelTwoHintListType1, levelTwoHintListType2, edgeList } =
     useClusterPosition();
-  const bubbleClass = data.parentNode === "" ? "h-40 w-40 " : "h-20 w-64 ";
+  const choice = localStorage.getItem("choice");
+  const bubbleClass =
+    data.parentNode === ""
+      ? choice === "0"
+        ? "h-40 w-40 text-2xl"
+        : "h-40 w-40 text-md"
+      : "h-20 w-64 text-gray-400 text-2xl";
 
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
@@ -33,7 +43,10 @@ const Bubble = ({ data }: props) => {
   const onchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     console.log(event);
     if (event.target.value.length >= 20) {
-      console.log("超過字數");
+      messageApi.open({
+        type: "warning",
+        content: "超過字數"
+      });
       setBubbleText(event.target.value.substring(0, 20));
     } else {
       setBubbleText(event.target.value);
@@ -57,19 +70,55 @@ const Bubble = ({ data }: props) => {
     const selectEdge: Edge = edgeList.filter((edge) => edge.targetNode?.id === data.id)[0];
     removeEdge(selectEdge.id);
   };
+  const checkPermission = (): boolean => {
+    if (data.level === 1) {
+      const filterNode = nodeList.filter((node) => node.parentNode === data.id);
+      console.log(filterNode);
+      if (filterNode.length >= 2) {
+        messageApi.open({
+          type: "warning",
+          content: "已達上限"
+        });
+
+        return false;
+      }
+    } else if (data.level === 2) {
+      const filterNode = nodeList.filter((node) => node.parentNode === data.id);
+      console.log(filterNode);
+      if (filterNode.length >= 1) {
+        messageApi.open({
+          type: "warning",
+          content: "已達上限"
+        });
+        return false;
+      }
+    }
+    return true;
+  };
   const handlerAddNode = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const levelTwo = localStorage.getItem("choice") === "0" ? levelTwoHintListType1 : levelTwoHintListType2;
+    const result = checkPermission();
+    if (!result) {
+      return;
+    }
     event.stopPropagation();
     console.log("plus");
     const randomIndex = Math.floor(Math.random() * levelTwo.length);
-    const NodeId = `randomnode_${+new Date()}`;
+    const NodeId = data.level === 1 ? `level2_${+new Date()}` : `level3_${+new Date()}`;
     const { x, y } = data.position;
+    let bubbleCount = localStorage.getItem("levelTwoBubble");
+    if (bubbleCount) {
+      localStorage.setItem("levelTwoBubble", "0");
+      bubbleCount = "0";
+    } else {
+      localStorage.setItem("levelTwoBubble", ((parseInt(bubbleCount!) + 1) % levelTwo.length).toString());
+    }
     const newNode: Node = {
       id: NodeId,
       type: "bubble",
       data: {
         id: NodeId,
-        label: levelTwo[randomIndex],
+        label: data.level === 1 ? levelTwo[randomIndex] : "這讓你想到什麼自主學習主題？",
         position: {
           x: x + 100,
           y: data.parentNode ? y - 100 : y
@@ -84,7 +133,7 @@ const Bubble = ({ data }: props) => {
       parentNode: data.id
     };
     addNode(newNode);
-    const EdgeId = `randomedge_${+new Date()}`;
+    const EdgeId = data.level === 1 ? `1to2_${+new Date()}` : `2to3_${+new Date()}`;
     const newEdge: Edge = {
       id: EdgeId,
       source: data.id,
@@ -133,6 +182,7 @@ const Bubble = ({ data }: props) => {
       onBlur={() => onblur()}
       title={data.label}
     >
+      {contextHolder}
       <Handle
         type="target"
         position={Position.Left}
@@ -157,12 +207,12 @@ const Bubble = ({ data }: props) => {
             value={bubbleText}
             placeholder={data.label}
             onChange={(event) => onchange(event)}
-            className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center text-2xl focus:outline-0`}
+            className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center focus:outline-0`}
           />
         ) : (
           <div>
             <p
-              className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center text-2xl`}
+              className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center`}
             >
               {bubbleText}
             </p>

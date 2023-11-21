@@ -14,7 +14,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div
           className={`contentPage ${
             pathname === "/" ? "left-20 w-[calc(100vw-80px)]" : "w-full"
-          } overflow-y-scroll bg-[url('../public/bg_dashboard_grid.svg')] bg-cover bg-repeat p-6`}
+          } overflow-y-scroll bg-[url('../public/bg_dashboard_grid.svg')] bg-cover bg-repeat`}
         >
           {children}
         </div>

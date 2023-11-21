@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Node, Edge } from "reactflow";
+import { number } from "zod";
 
 type State = {
-  nodeList: Node<any, string | undefined>[];
-  edgeList: Edge<any>[];
+  nodeList: Node[];
+  edgeList: Edge[];
   levelOneHintListType1: string[];
   levelTwoHintListType1: string[];
   levelOneHintListType2: string[];
@@ -50,18 +51,9 @@ const useClusterPosition = create<State & Actions>()(
         return { ...state, nodeList: newList };
       }),
     updateNode: (node: Node) =>
-      set((state) => {
-        const newList = state.nodeList.map((n: Node) => {
-          if (n.id === node.id) {
-            return {
-              node
-            };
-          }
-          return n;
-        });
-
-        return { ...state, nodeList: newList };
-      }),
+      set((state) => ({
+        nodeList: state.nodeList.map((item) => (item.id === node.id ? node : item))
+      })),
     removeEdge: (id: string) =>
       set((state) => ({
         nodeList: state.edgeList.filter((edge: Edge) => edge.id !== id)
