@@ -1,20 +1,24 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 // import Consultation from "@/components/consultation/Consultation";
-import Bubble from "../../../components/bubble/Bubble";
-import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
+import ReactFlow, { MiniMap, Controls, ControlButton, useNodesState, useEdgesState, addEdge } from "reactflow";
+import type { Connection, NodeChange, Node, Edge, NodePositionChange, NodeDragHandler } from "reactflow";
+import "reactflow/dist/style.css";
+import Bubble from "@/components/bubble/Bubble";
+import useClusterPosition from "@/hooks/useClusterPosition";
+import Cluster from "@/components/bubble/Cluster";
+const nodeTypes = {
+  bubble: Bubble,
+  cluster: Cluster
+};
+
 const NewJourney = () => {
   const [firstVisit, setFirstVisit] = useState(true);
-  const [bubbleList, setBubbleList] = useState<string[]>([]);
+  const { nodeList, edgeList, levelOneHintList, addNode, addEdge, updateNode, updateNodePosition } =
+    useClusterPosition();
   const initStatus = () => {
     setFirstVisit(false);
-    const newlist = bubbleList.concat("");
-    setBubbleList(newlist);
   };
-
-  useEffect(() => {
-    console.log(bubbleList);
-  }, [bubbleList]);
 
   const FirstVisit = () => {
     return (
@@ -73,47 +77,138 @@ const NewJourney = () => {
     );
   };
 
-  const createNewBubble = () => {
-    const newlist = bubbleList.concat("a");
-    setBubbleList(newlist);
+  const onNodesChange = (event: NodePositionChange[]) => {
+    // console.log("NodeChange", event[0]);
+    const data = event[0];
+    if (data.dragging) {
+      updateNodePosition(data.id, data.position!.x, data.position!.y);
+    }
   };
+  const onAdd = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const randomIndex = Math.floor(Math.random() * levelOneHintList.length);
+    const NodeId = `randomnode_${+new Date()}`;
+    const newNode: Node = {
+      id: NodeId,
+      type: "bubble",
+      data: {
+        id: NodeId,
+        label: levelOneHintList[randomIndex],
+        position: {
+          x: event.pageX - 100,
+          y: event.pageY - 196
+        },
+        parentNode: "",
+        level: 1
+      },
+      position: {
+        x: event.pageX - 100,
+        y: event.pageY - 196
+      },
+      parentNode: ""
+    };
+    addNode(newNode);
+  };
+
+  // target is the node that the node is dragged over
+  const [target, setTarget] = useState<Node>();
+  const [dragRef, setDragRef] = useState<Node>();
+  const onNodeDragStart = (evt: NodeDragHandler, node: Node) => {
+    setDragRef(node);
+  };
+
+  const onNodeDrag = (evt: NodeDragHandler, node: Node) => {
+    // calculate the center point of the node from position and dimensions
+
+    const targetNode = nodeList.filter((n) => {
+      if (n.parentNode === "") {
+        const xDistance = node.position.x - n.position.x;
+        const yDistance = node.position.y - n.position.y;
+        const centersDistance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+
+        if (centersDistance <= 2 * 80 && node.id != n.id) {
+          return n;
+        }
+      }
+    })[0];
+
+    setTarget(targetNode);
+  };
+
+  const onNodeDragStop = (evt: NodeDragHandler | undefined, node: Node) => {
+    // on drag stop, we swap the colors of the nodes
+    // if (target) {
+    //   const NodeId = `randomnode_${+new Date()}`;
+    //   const newNode: Node = {
+    //     id: NodeId,
+    //     type: "group",
+    //     data: {},
+    //     position: {
+    //       x: target.position.x,
+    //       y: target.position.y
+    //     },
+    //     parentNode: ""
+    //   };
+    //   addNode(newNode);
+    //   const newTarget = { ...target };
+    //   newTarget.parentNode = NodeId;
+    //   newTarget.extent = "parent";
+    //   updateNode(newTarget);
+    //   const newDragRef = { ...dragRef };
+    //   newDragRef.parentNode = NodeId;
+    //   newDragRef.extent = "parent";
+    //   updateNode(newDragRef!);
+    //   let EdgeId = `randomedge_${+new Date()}`;
+    //   let newEdge: Edge = {
+    //     id: EdgeId,
+    //     source: NodeId,
+    //     target: target.id,
+    //     style: { stroke: "#22C55E", strokeWidth: "3" }
+    //   };
+    //   addEdge(newEdge);
+    //   EdgeId = `randomedge_${+new Date()}`;
+    //   newEdge = {
+    //     id: EdgeId,
+    //     source: NodeId,
+    //     target: dragRef!.id,
+    //     style: { stroke: "#22C55E", strokeWidth: "3" }
+    //   };
+    //   addEdge(newEdge);
+    // }
+    // setNodes((nodes) =>
+    //   nodes.map((n) => {
+    //     if (n.id === target?.id) {
+    //       n.data = { ...n.data, color: nodeColor, label: nodeColor };
+    //     }
+    //     if (n.id === node.id && target) {
+    //       n.data = { ...n.data, color: targetColor, label: targetColor };
+    //     }
+    //     return n;
+    //   })
+    // );
+    // setTarget(null);
+    // setDragRef(null);
+  };
+
   return (
-    <div className="relative h-full w-full overflow-hidden">
-      <TransformWrapper initialScale={0.5} initialPositionX={800} initialPositionY={1000}>
-        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
-          <React.Fragment>
-            <TransformComponent>
-              <div
-                className="h-screen w-screen"
-                onDoubleClick={() => {
-                  createNewBubble();
-                }}
-              >
-                {firstVisit ? (
-                  <FirstVisit />
-                ) : (
-                  <>
-                    {bubbleList.map((item, index) => {
-                      return <Bubble key={index} />;
-                    })}
-                  </>
-                )}
-              </div>
-            </TransformComponent>
-            <div className=" absolute bottom-2 left-[calc(50%-155px)] flex h-[65px]  w-[310px] select-none items-center justify-between gap-2 rounded-full  border-2 border-gray-400 p-6 text-3xl font-bold text-gray-400">
-              <button className="hover:text-black" onClick={() => zoomOut()}>
-                -
-              </button>
-              <button onDoubleClick={() => resetTransform()} className="text-black">
-                50%
-              </button>
-              <button className="hover:text-black" onClick={() => zoomIn()}>
-                +
-              </button>
-            </div>
-          </React.Fragment>
-        )}
-      </TransformWrapper>
+    <div className="h-[calc(100vh-160px)] w-[calc(100vw-64px)] " onDoubleClick={(event) => onAdd(event)}>
+      {nodeList.length === 0 ? (
+        <FirstVisit />
+      ) : (
+        <ReactFlow
+          nodes={nodeList}
+          edges={edgeList}
+          nodeTypes={nodeTypes}
+          onNodesChange={(event) => onNodesChange(event)}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDrag={onNodeDrag}
+          onNodeDragStop={onNodeDragStop}
+          zoomOnDoubleClick={false}
+        >
+          <Controls />
+
+          <MiniMap />
+        </ReactFlow>
+      )}
     </div>
   );
 };

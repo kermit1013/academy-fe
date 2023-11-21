@@ -1,47 +1,82 @@
-import create from "zustand";
+import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
-interface Todo {
-  id: string;
-  title: string;
-  done: boolean;
-}
+import type { Node, Edge } from "reactflow";
 
 type State = {
-  todos: Record<string, Todo>;
+  nodeList: Node<any, string | undefined>[];
+  edgeList: Edge<any>[];
+  levelOneHintList: string[];
+  levelTwoHintList: string[];
 };
 
 type Actions = {
-  toggleTodo: (todoId: string) => void;
+  removeNode: (id: string) => void;
+  addNode: (node: Node) => void;
+  updateNode: (node: Node) => void;
+  removeEdge: (id: string) => void;
+  addEdge: (edge: Edge) => void;
+  updateNodePosition: (id: string, x: number, y: number) => void;
 };
 
-const useClusterPosition = create(
-  immer<State & Actions>((set) => ({
-    todos: {
-      "82471c5f-4207-4b1d-abcb-b98547e01a3e": {
-        id: "82471c5f-4207-4b1d-abcb-b98547e01a3e",
-        title: "Learn Zustand",
-        done: false
-      },
-      "354ee16c-bfdd-44d3-afa9-e93679bda367": {
-        id: "354ee16c-bfdd-44d3-afa9-e93679bda367",
-        title: "Learn Jotai",
-        done: false
-      },
-      "771c85c5-46ea-4a11-8fed-36cc2c7be344": {
-        id: "771c85c5-46ea-4a11-8fed-36cc2c7be344",
-        title: "Learn Valtio",
-        done: false
-      },
-      "363a4bac-083f-47f7-a0a2-aeeee153a99c": {
-        id: "363a4bac-083f-47f7-a0a2-aeeee153a99c",
-        title: "Learn Signals",
-        done: false
-      }
-    },
-    toggleTodo: (todoId: string) =>
+const useClusterPosition = create<State & Actions>()(
+  immer((set) => ({
+    nodeList: [],
+    edgeList: [],
+    levelOneHintList: [
+      "寫一項你喜歡的人事物",
+      "寫一項令你困擾的人事物",
+      "寫一項你擅長的事物",
+      "寫一項你不擅長的事物",
+      "過去一週發生的趣事"
+    ],
+    levelTwoHintList: ["針對這些關鍵字，你想了解什麼？", "針對這些關鍵字，你想解決什麼？"],
+    removeNode: (id: string) =>
+      set((state) => ({
+        nodeList: state.nodeList.filter((node: Node) => node.id !== id)
+      })),
+    addNode: (node: Node) =>
       set((state) => {
-        state.todos[todoId].done = !state.todos[todoId].done;
+        const newList = [...state.nodeList, node];
+        return { ...state, nodeList: newList };
+      }),
+    updateNode: (node: Node) =>
+      set((state) => {
+        const newList = state.nodeList.map((n: Node) => {
+          if (n.id === node.id) {
+            return {
+              node
+            };
+          }
+          return n;
+        });
+
+        return { ...state, nodeList: newList };
+      }),
+    removeEdge: (id: string) =>
+      set((state) => ({
+        nodeList: state.edgeList.filter((edge: Edge) => edge.id !== id)
+      })),
+    addEdge: (edge: Edge) =>
+      set((state) => {
+        const newList = [...state.edgeList, edge];
+        return { ...state, edgeList: newList };
+      }),
+    updateNodePosition: (id: string, x: number, y: number) =>
+      set((state) => {
+        const newList = state.nodeList.map((node: Node) => {
+          if (node.id === id) {
+            return {
+              ...node,
+              position: {
+                x,
+                y
+              }
+            };
+          }
+          return node;
+        });
+
+        return { ...state, nodeList: newList };
       })
   }))
 );
