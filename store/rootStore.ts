@@ -1,13 +1,13 @@
 import { create } from "zustand";
 // import { persist } from "zustand/middleware";
-import { GlobalState, createGlobalSlice } from "./globalStoreSlice";
+import { StepState, createStepSlice } from "./stepStoreSlice";
 import { AuthState, createAuthSlice } from "./authStoreSlice";
 import { immer } from "zustand/middleware/immer";
 
-const createRootSlice = create<GlobalState & AuthState>()(
+const createRootSlice = create<AuthState & StepState>()(
   immer((...state) => ({
-    ...createGlobalSlice(...state),
-    ...createAuthSlice(...state)
+    ...createAuthSlice(...state),
+    ...createStepSlice(...state)
   }))
 );
 

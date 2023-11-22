@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PlusOutlined, LeftOutlined } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
+import { useStore } from "@/store/rootStore";
 const Topbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [yearName, setYearName] = useState("112年上學期");
   const [topicName, setTopicName] = useState("生成中…");
   const [targetName, setTargetName] = useState("生成中…");
-  const [stepThemeName, setStepThemeName] = useState("探索");
-  const [stepActiontName, setStepActiontName] = useState("前往探索");
-  const [steps, setSteps] = useState<boolean[]>([false, false, false]);
+
+  const { type: stepType, name: stepThemeName, nextName: stepActiontName } = useStore((state) => state.currentStepInfo);
+  const steps = useStore((state) => state.allStepStatus[stepType]);
 
   const back2Home = () => {
     router.push("/");
@@ -51,19 +52,23 @@ const Topbar = () => {
           />
           <div className="flex  h-full w-full items-center justify-between ">
             <p className="flex h-11 items-center rounded-md bg-black px-6 text-center text-white">{yearName}</p>
+
             <div className="flex items-center">
               <span className="rounded-md bg-orange-500 p-2 text-white">主題</span>
               <p className="m-3 text-gray-400">{topicName}</p>
             </div>
+
             <div className="flex items-center">
               <span className="rounded-md bg-blue-500 p-2 text-white">目標</span>
               <p className="m-3 text-gray-400">{targetName}</p>
             </div>
+
             <div className="flex h-full w-full max-w-[490px] rounded-r-md font-bold text-white">
               <div className="flex h-full items-center whitespace-nowrap rounded-l-md bg-black p-2">
                 {stepThemeName}
               </div>
-              <div className="relative flex w-full items-center justify-between gap-10 overflow-hidden rounded-r-md border-2 border-black p-1 pl-8  before:absolute before:-z-10 before:h-1 before:w-[90%] before:border-2 before:border-dashed before:border-gray-300 before:text-black       before:content-['']">
+
+              <div className="relative flex w-full items-center justify-between gap-10 overflow-hidden rounded-r-md border-2 border-black p-1 pl-8  before:absolute before:-z-10 before:h-1 before:w-[90%] before:border-2 before:border-dashed before:border-gray-300 before:text-black before:content-['']">
                 {steps.map((bool, index) => {
                   const className = `w-11 rounded-md p-1 text-center ${bool ? "bg-green-400" : "bg-gray-300 "}`;
                   const idx = index + 1;
@@ -75,10 +80,10 @@ const Topbar = () => {
                 })}
 
                 <button
-                  disabled={steps[2] === false}
-                  className={`h-full w-[136px] rounded-md ${steps[2] ? "bg-black" : "bg-gray-300"}`}
+                  disabled={steps.at(-1) === false}
+                  className={`h-full w-[136px] rounded-md ${steps.at(-1) ? "bg-black" : "bg-gray-300"}`}
                 >
-                  {stepActiontName}
+                  前往{stepActiontName}
                 </button>
               </div>
             </div>
