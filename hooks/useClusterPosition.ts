@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Node, Edge } from "reactflow";
-import { number } from "zod";
+import { boolean, number } from "zod";
 
 type State = {
   nodeList: Node[];
@@ -10,21 +10,26 @@ type State = {
   levelTwoHintListType1: string[];
   levelOneHintListType2: string[];
   levelTwoHintListType2: string[];
+  isConnect: boolean;
 };
 
 type Actions = {
   removeNode: (id: string) => void;
   addNode: (node: Node) => void;
+  setNodeList: (list: Node[]) => void;
+  setEdgeList: (list: Edge[]) => void;
   updateNode: (node: Node) => void;
   removeEdge: (id: string) => void;
   addEdge: (edge: Edge) => void;
   updateNodePosition: (id: string, x: number, y: number) => void;
+  updateConnectStatus: (status: boolean) => void;
 };
 
 const useClusterPosition = create<State & Actions>()(
   immer((set) => ({
     nodeList: [],
     edgeList: [],
+    isConnect: false,
     levelOneHintListType1: [
       "寫一項你喜歡的人事物",
       "寫一項令你困擾的人事物",
@@ -41,6 +46,10 @@ const useClusterPosition = create<State & Actions>()(
       "如果你有機會召開一個國際性的會議，那會是什麼樣的會議？"
     ],
     levelTwoHintListType2: ["你可以如何實現上述回覆？", "你需要先了解什麼？"],
+    updateConnectStatus: (status: boolean) =>
+      set((state) => {
+        return { ...state, isConnect: status };
+      }),
     removeNode: (id: string) =>
       set((state) => ({
         nodeList: state.nodeList.filter((node: Node) => node.id !== id)
@@ -58,6 +67,14 @@ const useClusterPosition = create<State & Actions>()(
       set((state) => ({
         nodeList: state.edgeList.filter((edge: Edge) => edge.id !== id)
       })),
+    setNodeList: (list: Node[]) =>
+      set((state) => {
+        return { ...state, nodeList: list };
+      }),
+    setEdgeList: (list: Edge[]) =>
+      set((state) => {
+        return { ...state, edgeList: list };
+      }),
     addEdge: (edge: Edge) =>
       set((state) => {
         const newList = [...state.edgeList, edge];

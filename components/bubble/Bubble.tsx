@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from "react";
-import { Handle, Position, NodeResizer } from "reactflow";
+import { Handle, Position, NodeResizer, NodeToolbar, useViewport, useOnViewportChange } from "reactflow";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import useClusterPosition from "@/hooks/useClusterPosition";
-import type { Edge, Node } from "reactflow";
+import type { Edge, Node, Viewport } from "reactflow";
 import { message } from "antd";
 
 interface props {
@@ -32,7 +32,7 @@ const Bubble = ({ data }: props) => {
       ? choice === "0"
         ? "h-40 w-40 text-2xl"
         : "h-40 w-40 text-md"
-      : "h-20 w-64 text-gray-400 text-2xl";
+      : "h-fit w-64 text-gray-400 text-2xl";
 
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
@@ -74,7 +74,7 @@ const Bubble = ({ data }: props) => {
     if (data.level === 1) {
       const filterNode = nodeList.filter((node) => node.parentNode === data.id);
       console.log(filterNode);
-      if (filterNode.length >= 2) {
+      if (filterNode.length >= 3) {
         messageApi.open({
           type: "warning",
           content: "已達上限"
@@ -198,25 +198,20 @@ const Bubble = ({ data }: props) => {
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={true}
       />
-      <div>
+
+      <div
+        className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 text-center`}
+      >
         {isEdit ? (
           <textarea
             autoFocus
-            rows={5}
-            cols={15}
             value={bubbleText}
             placeholder={data.label}
             onChange={(event) => onchange(event)}
-            className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center focus:outline-0`}
+            className={`${bubbleClass} flex-wrap overflow-visible break-all rounded-full p-4 text-center align-middle focus:outline-0`}
           />
         ) : (
-          <div>
-            <p
-              className={`${bubbleClass} flex items-center justify-center overflow-hidden rounded-full border-4 border-green-500 p-4 text-center`}
-            >
-              {bubbleText}
-            </p>
-          </div>
+          <p className="break-all p-4 text-center">{bubbleText}</p>
         )}
       </div>
       {isSelected ? (

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ProjectCard from "@/components/card/ProjectCard";
 import { projectsApi } from "@/lib/api";
 import { IProject } from "@/\btypes";
+import { useRouter } from "next/navigation";
 
 const getProjects = async () => {
   const data = await projectsApi.getAllProjects();
@@ -23,6 +24,9 @@ const initProject: IProject[] = [
 ];
 
 const Project = () => {
+  const router = useRouter();
+  router.push("/start");
+  return;
   const [projects, setProjects] = useState<IProject[]>([]);
 
   useEffect(() => {
@@ -35,7 +39,7 @@ const Project = () => {
   }, []);
 
   return (
-    <div className="flex flex-wrap justify-start gap-3 ">
+    <div className="flex flex-wrap justify-start gap-3 px-9 py-10">
       {projects.length > 0 ? (
         projects.map((project, index) => <ProjectCard index={index} key={project.id} project={project} />)
       ) : (

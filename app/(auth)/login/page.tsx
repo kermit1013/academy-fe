@@ -9,13 +9,14 @@ import bgLogin from "../../../public/bg_login.svg";
 import iconLogin from "../../../public/icon_login.svg";
 import { authApi } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
-
 const onChange = (e: CheckboxChangeEvent) => {
   console.log(`checked = ${e.target.checked}`);
 };
 
 const Login = () => {
   const router = useRouter();
+  router.push("/start");
+  return;
 
   const { mutateAsync: login, isLoading } = useMutation(authApi.login, {
     onSuccess: () => {}
