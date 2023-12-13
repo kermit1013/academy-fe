@@ -26,7 +26,7 @@ const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
-  const userName = localStorage.getItem("user_name");
+
   const [connecting, setConnecting] = useState(false);
   const [socket, setSocket] = useState();
   const [roomId, setRoomId] = useState("");
@@ -35,15 +35,19 @@ const AddNodeOnEdgeDrop = () => {
     nodeList,
     edgeList,
     isConnect,
+    isEdit,
     addNode,
     addEdge,
     setNodeList,
     setEdgeList,
+    setIsEdit,
     updateNodePosition,
-    updateConnectStatus
+    updateConnectStatus,
+    setMyRoomId
   } = useClusterPosition();
 
   useEffect(() => {
+    const userName = localStorage.getItem("user_name");
     const id = `level1_${uuidv4()}`;
     localStorage.setItem("center", id);
     const Center = {
@@ -97,22 +101,22 @@ const AddNodeOnEdgeDrop = () => {
     }
   }, [roomId, socket]);
 
-  useEffect(() => {
-    if (socket === undefined) return;
-    if (!socket?.connected) return;
+  // useEffect(() => {
+  //   if (socket === undefined) return;
+  //   if (!socket?.connected) return;
 
-    const interval = setInterval(() => {
-      socket?.emit("project_save", {
-        room: roomId,
-        nodes: nodeList,
-        edges: edgeList
-      });
-    }, 2000);
+  //   const interval = setInterval(() => {
+  //     socket?.emit("project_save", {
+  //       room: roomId,
+  //       nodes: JSON.stringify(nodeList),
+  //       edges: JSON.stringify(edgeList)
+  //     });
+  //   }, 2000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [socket, nodeList, edgeList]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [socket, nodeList, edgeList]);
 
   useEffect(() => {
     if (socket === null || socket === undefined) return;
@@ -124,60 +128,12 @@ const AddNodeOnEdgeDrop = () => {
           try {
             const nlist = JSON.parse(data) as Node[];
             const newNList = nodeList.concat(nlist);
+            // setNodeList(newNList);
+
             const n_set = new Set();
-            const n_result = newNList.filter((node) => (!n_set.has(node.id) ? n_set.add(node.id) : false));
-            const center_id = localStorage.getItem("center");
-            const last_n_result = n_result.map((node) => {
-              if (node.id === center_id) {
-                console.log(node);
-                const newNode = {
-                  id: node.id,
-                  type: "bubble",
-                  data: {
-                    id: node.id,
-                    label: node.data.label,
-                    position: {
-                      x: node.position.x - 250,
-                      y: node.position.y - 100
-                    },
-                    parentNode: node.data.parentNode,
-                    level: node.data.level
-                  },
-                  position: {
-                    x: node.position.x - 250,
-                    y: node.position.y - 100
-                  },
-                  parentNode: node.data.parentNode
-                };
+            const n_result = newNList.reverse().filter((node) => (!n_set.has(node.id) ? n_set.add(node.id) : false));
 
-                return newNode;
-              }
-              if (node.id !== center_id && node.id.indexOf("level1") > -1) {
-                const newNode = {
-                  id: node.id,
-                  type: "bubble",
-                  data: {
-                    id: node.data.id,
-                    label: node.data.label,
-                    position: {
-                      x: node.position.x + 100,
-                      y: node.position.y + 250
-                    },
-                    parentNode: node.data.parentNode,
-                    level: node.data.level
-                  },
-                  position: {
-                    x: node.position.x + 100,
-                    y: node.position.y + 250
-                  },
-                  parentNode: node.data.parentNode
-                };
-
-                return newNode;
-              }
-              return node;
-            });
-            setNodeList(last_n_result);
+            setNodeList(n_result.reverse());
           } catch (error) {
             console.log(error);
             const nlist = JSON.parse(data) as Node[];
@@ -191,10 +147,22 @@ const AddNodeOnEdgeDrop = () => {
 
             const elist = JSON.parse(data) as Edge[];
             const newEList = edgeList.concat(elist);
-            const e_set = new Set();
-            const e_result = newEList.filter((edge) => (!e_set.has(edge.id) ? e_set.add(edge.id) : false));
+            // setEdgeList(newEList);
 
-            setEdgeList(e_result);
+            const e_set = new Set();
+            const e_result = newEList.reverse().filter((edge) => (!e_set.has(edge.id) ? e_set.add(edge.id) : false));
+            const center_id = localStorage.getItem("center");
+            const last_e_result = e_result.reverse().map((edge) => {
+              if (edge.source !== center_id) {
+                edge.style = {
+                  stroke: "#F97316",
+                  strokeWidth: "3"
+                };
+                return edge;
+              }
+              return edge;
+            });
+            setEdgeList(last_e_result);
           } catch (error) {
             console.log(error);
 
@@ -213,13 +181,11 @@ const AddNodeOnEdgeDrop = () => {
       console.log("jsonData.edges", jsonData.edges);
       if (jsonData.nodes !== "") {
         const list = JSON.parse(jsonData.nodes) as Node[];
-        const newList = nodeList.concat(list);
-        setNodeList(newList);
+        setNodeList(list);
       }
       if (jsonData.edges !== "") {
         const list = JSON.parse(jsonData.edges) as Edge[];
-        const newList = edgeList.concat(list);
-        setEdgeList(newList);
+        setEdgeList(list);
       }
       // updateNodePosition(jsonData.nodes);
       // updateEdge(jsonData.edges);
@@ -239,6 +205,11 @@ const AddNodeOnEdgeDrop = () => {
     if (socket === undefined) return;
     if (myRound === false) return;
     console.log("emit ");
+    // socket?.emit("project_save", {
+    //   room: roomId,
+    //   nodes: JSON.stringify(nodeList),
+    //   edges: JSON.stringify(edgeList)
+    // });
     socket?.emit("project_write", {
       data: JSON.stringify(nodeList),
       room: roomId,
@@ -249,8 +220,19 @@ const AddNodeOnEdgeDrop = () => {
       room: roomId,
       type: "EDGE"
     });
+
     setMyRound(false);
   }, [myRound, nodeList, edgeList]);
+
+  useEffect(() => {
+    if (!isEdit) return;
+    socket?.emit("project_write", {
+      data: JSON.stringify(nodeList),
+      room: roomId,
+      type: "NODE"
+    });
+    setIsEdit(false);
+  }, [isEdit]);
 
   const onNodesChange = (event: NodeChange[]) => {
     // console.log("NodeChange", event[0]);
@@ -297,7 +279,6 @@ const AddNodeOnEdgeDrop = () => {
         parentNode: connectingNodeId.current
       };
       addNode(newNode);
-
       const EdgeId = connectingNodeId.current ? `edge1to2_${uuidv4()}` : `edge2to3_${uuidv4()}`;
       const newEdge: Edge = {
         id: EdgeId,

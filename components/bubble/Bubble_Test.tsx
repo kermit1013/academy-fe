@@ -20,19 +20,25 @@ interface props {
 
 const Bubble_Test = ({ data }: props) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isTextEdit, setIsTextEdit] = useState(false);
+  const { screenToFlowPosition } = useReactFlow();
   const [bubbleText, setBubbleText] = useState(data.label);
-  const { updateNode } = useClusterPosition();
+  const { updateNode, setIsEdit } = useClusterPosition();
   const center_id = localStorage.getItem("center");
   const isSelf = data.id === center_id || data.parentNode === center_id;
   const selfClass = isSelf ? "border-green-500" : "border-orange-500";
   const bubbleClass = data.parentNode === "" ? "h-40 w-40 text-md" : "h-fit w-64 text-gray-400 text-2xl";
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
-    setIsEdit(!isEdit);
+    setIsTextEdit(!isTextEdit);
   };
+
   useEffect(() => {
-    if (isEdit || bubbleText === "") return;
+    setBubbleText(data.label);
+  }, [data.label]);
+
+  useEffect(() => {
+    if (isTextEdit || bubbleText === "") return;
     console.log("update data");
     const editNode: Node = {
       id: data.id,
@@ -40,15 +46,21 @@ const Bubble_Test = ({ data }: props) => {
       data: {
         id: data.id,
         label: bubbleText,
-        position: data.position,
+        position: screenToFlowPosition(data.position),
         parentNode: data.parentNode,
         level: data.level
       },
-      position: data.position,
+      position: screenToFlowPosition(data.position),
       parentNode: data.parentNode
     };
     updateNode(editNode);
-  }, [isEdit, bubbleText]);
+    setIsEdit(true);
+  }, [isTextEdit, bubbleText]);
+
+  useEffect(() => {
+    console.log("bubble Text Update", bubbleText);
+  }, [bubbleText]);
+
   const onchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     let message = "";
     if (event.target.value.length >= 20) {
@@ -69,7 +81,7 @@ const Bubble_Test = ({ data }: props) => {
     if (bubbleText === "") {
       setBubbleText(data.label);
     }
-    setIsEdit(false);
+    setIsTextEdit(false);
   };
 
   return (
@@ -89,7 +101,7 @@ const Bubble_Test = ({ data }: props) => {
       ) : (
         <Handle
           type="target"
-          position={isSelf ? Position.Left : Position.Right}
+          position={Position.Left}
           style={{ background: isSelf ? "#22c55e" : "#F97316", height: 10, width: 10, borderRadius: 5 }}
           onConnect={(params) => console.log("handle onConnect", params)}
           isConnectable={true}
@@ -101,7 +113,7 @@ const Bubble_Test = ({ data }: props) => {
       ) : (
         <Handle
           type="source"
-          position={isSelf ? Position.Right : Position.Left}
+          position={Position.Right}
           style={{ background: isSelf ? "#22c55e" : "#F97316", height: 10, width: 10, borderRadius: 5 }}
           onConnect={(params) => console.log("handle onConnect", params)}
           isConnectable={true}
@@ -111,7 +123,7 @@ const Bubble_Test = ({ data }: props) => {
       <div
         className={`${bubbleClass} ${selfClass} flex items-center justify-center overflow-hidden rounded-full border-4  text-center`}
       >
-        {isEdit && data.level !== 1 ? (
+        {isTextEdit && data.level !== 1 ? (
           <textarea
             autoFocus
             value={bubbleText}

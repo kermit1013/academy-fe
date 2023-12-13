@@ -11,6 +11,8 @@ type State = {
   levelOneHintListType2: string[];
   levelTwoHintListType2: string[];
   isConnect: boolean;
+  isEdit: boolean;
+  MyRoomId: string;
 };
 
 type Actions = {
@@ -23,13 +25,17 @@ type Actions = {
   addEdge: (edge: Edge) => void;
   updateNodePosition: (id: string, x: number, y: number) => void;
   updateConnectStatus: (status: boolean) => void;
+  setIsEdit: (status: boolean) => void;
+  setsetMyRoomId: (RoomId: string) => void;
 };
 
 const useClusterPosition = create<State & Actions>()(
   immer((set) => ({
     nodeList: [],
     edgeList: [],
+    isEdit: false,
     isConnect: false,
+    MyRoomId: "",
     levelOneHintListType1: [
       "寫一項你喜歡的人事物",
       "寫一項令你困擾的人事物",
@@ -46,6 +52,10 @@ const useClusterPosition = create<State & Actions>()(
       "如果你有機會召開一個國際性的會議，那會是什麼樣的會議？"
     ],
     levelTwoHintListType2: ["你可以如何實現上述回覆？", "你需要先了解什麼？"],
+    setsetMyRoomId: (MyRoomId: string) =>
+      set((state) => {
+        return { ...state, MyRoomId };
+      }),
     updateConnectStatus: (status: boolean) =>
       set((state) => {
         return { ...state, isConnect: status };
@@ -60,9 +70,16 @@ const useClusterPosition = create<State & Actions>()(
         return { ...state, nodeList: newList };
       }),
     updateNode: (node: Node) =>
-      set((state) => ({
-        nodeList: state.nodeList.map((item) => (item.id === node.id ? node : item))
-      })),
+      set((state) => {
+        const newList = state.nodeList.map((item: Node) => {
+          if (item.id === node.id) {
+            return node;
+          }
+          return item;
+        });
+
+        return { ...state, nodeList: newList };
+      }),
     removeEdge: (id: string) =>
       set((state) => ({
         nodeList: state.edgeList.filter((edge: Edge) => edge.id !== id)
@@ -96,6 +113,10 @@ const useClusterPosition = create<State & Actions>()(
         });
 
         return { ...state, nodeList: newList };
+      }),
+    setIsEdit: (status: boolean) =>
+      set((state) => {
+        return { ...state, ised: status };
       })
   }))
 );
