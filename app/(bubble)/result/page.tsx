@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { message } from "antd";
 import axios from "axios";
-
+import useClusterPosition from "@/hooks/useClusterPosition";
+import { QRCode } from "antd";
 interface Props {
   QList: QList;
 }
@@ -20,6 +21,7 @@ interface QList {
 
 const Share = (prop: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
+  const { imgUrl, MyRoomId } = useClusterPosition();
   const [userMail, setUserMail] = useState("");
   const handleShare = async () => {
     messageApi.open({
@@ -27,13 +29,21 @@ const Share = (prop: Props) => {
       content: "已送出!"
     });
 
-    const res = await axios.post("http://139.162.82.246:8080/result", {
-      room: "65f47961-a680-45ab-85ee-d7fa82ebf027",
-      username: "小白",
-      screenShot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA",
-      email: userMail,
-      feedback: "{}"
-    });
+    const res = await axios.post(
+      "http://139.162.82.246:8080/result",
+      {
+        room: MyRoomId,
+        username: localStorage.getItem("user_name"),
+        screenShot: imgUrl,
+        email: userMail,
+        feedback: JSON.stringify(prop)
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
     console.log(prop, res);
   };
   return (
@@ -42,11 +52,7 @@ const Share = (prop: Props) => {
       <div className="flex h-fit w-4/5 flex-col gap-10 rounded-lg bg-white p-14">
         <p className="text-center text-3xl font-bold">祝你自主學習順利喔！</p>
         <div className="flex  items-center justify-center gap-10">
-          <img
-            className=" h-60 w-60"
-            src={"https://img.freepik.com/free-vector/bokeh-defocused-background_23-2148497833.jpg"}
-            alt="screenshot"
-          />
+          <img className=" h-60 w-60 rounded-sm border-2" src={imgUrl} alt="screenshot" />
           <div className="flex flex-col">
             <button>下載你的發想成果</button>
             <button>分享此網站給朋友</button>
@@ -54,11 +60,7 @@ const Share = (prop: Props) => {
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
-            <img
-              className=" h-20 w-20"
-              src={"https://img.freepik.com/free-vector/bokeh-defocused-background_23-2148497833.jpg"}
-              alt="QRCode"
-            />
+            <QRCode type="canvas" value="https://www.instagram.com/return_inn/" />
             <p>追蹤轉屋IG</p>
           </div>
           <div className="flex flex-col gap-2">
@@ -86,6 +88,8 @@ const Share = (prop: Props) => {
 };
 
 const Result = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const { imgUrl, MyRoomId } = useClusterPosition();
   const [isShare, setIsShare] = useState(false);
   const [Q1, SetQ1] = useState("");
   const [Q2, SetQ2] = useState("");
@@ -96,8 +100,7 @@ const Result = () => {
   const [Q7, SetQ7] = useState("");
   const [Q8, SetQ8] = useState("");
   const [toShare, SetToShare] = useState<Props>();
-  const handleSubmit = () => {
-    setIsShare(true);
+  const handleSubmit = async () => {
     const list: QList = {
       Q1,
       Q2,
@@ -108,20 +111,37 @@ const Result = () => {
       Q7,
       Q8
     };
+    const data = {
+      room: MyRoomId,
+      username: localStorage.getItem("user_name"),
+      screenShot: imgUrl,
+      email: "",
+      feedback: JSON.stringify(list)
+    };
+    console.log(data);
+    const res = await axios.post("http://139.162.82.246:8080/result", data, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if (res.status === 200) {
+      messageApi.open({
+        type: "success",
+        content: "已送出!"
+      });
+    }
     SetToShare({
       QList: list
     });
+    setIsShare(true);
   };
   return (
     <div>
+      {contextHolder}
       {!isShare ? (
         <div className=" flex h-screen w-screen flex-col items-center justify-between gap-8 overflow-y-scroll p-12">
           <p className=" text-3xl font-bold">取得你的發想成果之前，給Loudy一些回饋吧!</p>
-          <img
-            className=" h-60 w-60"
-            src={"https://img.freepik.com/free-vector/bokeh-defocused-background_23-2148497833.jpg"}
-            alt="screenshot"
-          />
+          <img className=" h-96 w-96 rounded-md border-2" src={imgUrl} alt="screenshot" />
           <div className=" flex h-fit w-2/3 flex-col gap-2">
             <div className="flex w-full justify-between">
               <p>

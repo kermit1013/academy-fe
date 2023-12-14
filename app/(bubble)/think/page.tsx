@@ -4,10 +4,19 @@ import Bubble from "@/components/bubble/Bubble_Test";
 import Cluster from "@/components/bubble/Cluster";
 import useClusterPosition from "@/hooks/useClusterPosition";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import ReactFlow, { Background, useReactFlow, ReactFlowProvider, Controls } from "reactflow";
+import ReactFlow, {
+  Background,
+  useReactFlow,
+  ReactFlowProvider,
+  Controls,
+  getRectOfNodes,
+  getTransformForBounds
+} from "reactflow";
 import { v4 as uuidv4 } from "uuid";
 import type { NodeChange, Edge, Node } from "reactflow";
 import "reactflow/dist/style.css";
+import { useRouter } from "next/navigation";
+import { toPng } from "html-to-image";
 
 const nodeTypes = {
   bubble: Bubble,
@@ -25,12 +34,13 @@ const TryConnectPage = () => {
 const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef<string | null>(null);
-  const { screenToFlowPosition } = useReactFlow();
-
+  const { screenToFlowPosition, getNodes } = useReactFlow();
   const [connecting, setConnecting] = useState(false);
   const [socket, setSocket] = useState();
   const [roomId, setRoomId] = useState("");
   const [myRound, setMyRound] = useState(false);
+  const router = useRouter();
+
   const {
     nodeList,
     edgeList,
@@ -43,7 +53,8 @@ const AddNodeOnEdgeDrop = () => {
     setIsEdit,
     updateNodePosition,
     updateConnectStatus,
-    setMyRoomId
+    setMyRoomId,
+    setImage
   } = useClusterPosition();
 
   useEffect(() => {
@@ -176,7 +187,9 @@ const AddNodeOnEdgeDrop = () => {
 
     const project_retrieve = (data) => {
       const jsonData = JSON.parse(data);
-      console.log("data", data);
+      console.log("data", jsonData);
+      console.log(jsonData.id);
+      setMyRoomId(jsonData.id);
       console.log("jsonData.nodes", jsonData.nodes);
       console.log("jsonData.edges", jsonData.edges);
       if (jsonData.nodes !== "") {
@@ -295,6 +308,22 @@ const AddNodeOnEdgeDrop = () => {
     setConnecting(true);
     setRoomId("123123");
   };
+
+  const handleGetResult = () => {
+    toPng(document.querySelector(".react-flow__viewport"), {
+      width: 900,
+      height: 650,
+      style: {
+        width: 900,
+        height: 650
+      }
+    }).then((dataUrl) => {
+      setImage(dataUrl);
+    });
+
+    router.push("/result");
+  };
+
   return (
     <div className=" relative h-screen w-screen " ref={reactFlowWrapper}>
       <div className=" absolute top-0 flex h-32 w-full flex-col items-center justify-end gap-4 ">
@@ -324,6 +353,18 @@ const AddNodeOnEdgeDrop = () => {
           <button
             className="rounded-xl border border-green-400 bg-green-200 p-4 text-2xl hover:border-2"
             onClick={handleConnectSocket}
+          >
+            下一步
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
+      {nodeList.length > 12 ? (
+        <div className="absolute bottom-10 right-10">
+          <button
+            className="rounded-xl border border-green-400 bg-green-200 p-4 text-2xl hover:border-2"
+            onClick={handleGetResult}
           >
             下一步
           </button>

@@ -13,6 +13,7 @@ type State = {
   isConnect: boolean;
   isEdit: boolean;
   MyRoomId: string;
+  imgUrl: string;
 };
 
 type Actions = {
@@ -26,7 +27,8 @@ type Actions = {
   updateNodePosition: (id: string, x: number, y: number) => void;
   updateConnectStatus: (status: boolean) => void;
   setIsEdit: (status: boolean) => void;
-  setsetMyRoomId: (RoomId: string) => void;
+  setMyRoomId: (RoomId: string) => void;
+  setImage: (url: string) => void;
 };
 
 const useClusterPosition = create<State & Actions>()(
@@ -36,6 +38,7 @@ const useClusterPosition = create<State & Actions>()(
     isEdit: false,
     isConnect: false,
     MyRoomId: "",
+    imgUrl: "",
     levelOneHintListType1: [
       "寫一項你喜歡的人事物",
       "寫一項令你困擾的人事物",
@@ -52,7 +55,11 @@ const useClusterPosition = create<State & Actions>()(
       "如果你有機會召開一個國際性的會議，那會是什麼樣的會議？"
     ],
     levelTwoHintListType2: ["你可以如何實現上述回覆？", "你需要先了解什麼？"],
-    setsetMyRoomId: (MyRoomId: string) =>
+    setImage: (url: string) =>
+      set((state) => {
+        return { ...state, imgUrl: url };
+      }),
+    setMyRoomId: (MyRoomId: string) =>
       set((state) => {
         return { ...state, MyRoomId };
       }),
