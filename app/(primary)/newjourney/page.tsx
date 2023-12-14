@@ -25,7 +25,7 @@ const nodeTypes = {
 };
 const FirstVisit = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center gap-10" onDoubleClick={() => initStatus()}>
+    <div className="flex h-full w-full items-center justify-center gap-10">
       <div className="relative h-40 w-40 overflow-hidden rounded-full">
         <svg
           className="absolute bottom-0"

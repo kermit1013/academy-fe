@@ -6,7 +6,6 @@ import useClusterPosition from "@/hooks/useClusterPosition";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, { Background, useReactFlow, ReactFlowProvider, Controls } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
-import type { NodeChange, Edge, Node } from "reactflow";
 import "reactflow/dist/style.css";
 
 const nodeTypes = {
@@ -24,7 +23,7 @@ const TryConnectPage = () => {
 
 const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef(null);
-  const connectingNodeId = useRef<string | null>(null);
+  const connectingNodeId = (useRef < string) | (null > null);
   const { screenToFlowPosition } = useReactFlow();
 
   const [connecting, setConnecting] = useState(false);
@@ -123,10 +122,10 @@ const AddNodeOnEdgeDrop = () => {
     const project_read = ({ data, type }) => {
       switch (type) {
         case "NODE":
-          console.log("NODE", JSON.parse(data) as Node[]);
+          console.log("NODE", JSON.parse(data));
           // setNodes(data);
           try {
-            const nlist = JSON.parse(data) as Node[];
+            const nlist = JSON.parse(data);
             const newNList = nodeList.concat(nlist);
             // setNodeList(newNList);
 
@@ -136,7 +135,7 @@ const AddNodeOnEdgeDrop = () => {
             setNodeList(n_result.reverse());
           } catch (error) {
             console.log(error);
-            const nlist = JSON.parse(data) as Node[];
+            const nlist = JSON.parse(data);
             setNodeList(nlist);
           }
           break;
@@ -145,7 +144,7 @@ const AddNodeOnEdgeDrop = () => {
           try {
             console.log("EDGE", JSON.parse(data));
 
-            const elist = JSON.parse(data) as Edge[];
+            const elist = JSON.parse(data);
             const newEList = edgeList.concat(elist);
             // setEdgeList(newEList);
 
@@ -166,7 +165,7 @@ const AddNodeOnEdgeDrop = () => {
           } catch (error) {
             console.log(error);
 
-            const elist = JSON.parse(data) as Edge[];
+            const elist = JSON.parse(data);
 
             setEdgeList(elist);
           }
@@ -180,11 +179,11 @@ const AddNodeOnEdgeDrop = () => {
       console.log("jsonData.nodes", jsonData.nodes);
       console.log("jsonData.edges", jsonData.edges);
       if (jsonData.nodes !== "") {
-        const list = JSON.parse(jsonData.nodes) as Node[];
+        const list = JSON.parse(jsonData.nodes);
         setNodeList(list);
       }
       if (jsonData.edges !== "") {
-        const list = JSON.parse(jsonData.edges) as Edge[];
+        const list = JSON.parse(jsonData.edges);
         setEdgeList(list);
       }
       // updateNodePosition(jsonData.nodes);
@@ -234,11 +233,11 @@ const AddNodeOnEdgeDrop = () => {
     setIsEdit(false);
   }, [isEdit]);
 
-  const onNodesChange = (event: NodeChange[]) => {
+  const onNodesChange = (event) => {
     // console.log("NodeChange", event[0]);
-    const selectNode = event[0] as Node;
+    const selectNode = event[0];
     if (selectNode.dragging) {
-      updateNodePosition(selectNode.id, selectNode.position!.x, selectNode.position!.y);
+      updateNodePosition(selectNode.id, selectNode.position.x, selectNode.position.y);
     }
   };
 
@@ -280,7 +279,7 @@ const AddNodeOnEdgeDrop = () => {
       };
       addNode(newNode);
       const EdgeId = connectingNodeId.current ? `edge1to2_${uuidv4()}` : `edge2to3_${uuidv4()}`;
-      const newEdge: Edge = {
+      const newEdge = {
         id: EdgeId,
         source: connectingNodeId.current,
         target: id,
