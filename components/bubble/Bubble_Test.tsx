@@ -46,11 +46,11 @@ const Bubble_Test = ({ data }: props) => {
       data: {
         id: data.id,
         label: bubbleText,
-        position: screenToFlowPosition(data.position),
+        position: data.position,
         parentNode: data.parentNode,
         level: data.level
       },
-      position: screenToFlowPosition(data.position),
+      position: data.position,
       parentNode: data.parentNode
     };
     updateNode(editNode);

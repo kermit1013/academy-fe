@@ -273,7 +273,7 @@ const AddNodeOnEdgeDrop = () => {
     if (!isConnect && connectingNodeId.current.indexOf("level2") > -1) return;
 
     const targetIsPane = event.target.classList.contains("react-flow__pane");
-
+    console.log(event);
     if (targetIsPane) {
       // we need to remove the wrapper bounds, in order to get the correct position
       const id = connectingNodeId.current.indexOf("level1") > -1 ? `level2_${uuidv4()}` : `level3_${uuidv4()}`;
@@ -283,11 +283,11 @@ const AddNodeOnEdgeDrop = () => {
         data: {
           id: id,
           label: "",
-          position: screenToFlowPosition({ x: event.clientX + 200, y: event.clientY - 25 }),
+          position: screenToFlowPosition({ x: event.clientX, y: event.clientY - 160 }),
           parentNode: connectingNodeId.current,
           level: connectingNodeId.current.indexOf("level1") > -1 ? 2 : 3
         },
-        position: screenToFlowPosition({ x: event.clientX + 200, y: event.clientY - 25 }),
+        position: screenToFlowPosition({ x: event.clientX, y: event.clientY - 160 }),
         parentNode: connectingNodeId.current
       };
       addNode(newNode);
@@ -309,13 +309,17 @@ const AddNodeOnEdgeDrop = () => {
   };
 
   const handleGetResult = () => {
+    const nodesBounds = getRectOfNodes(getNodes());
+    const transform = getTransformForBounds(nodesBounds, 900, 650, 0.5, 2);
+
     toPng(document.querySelector(".react-flow__viewport"), {
       width: 900,
       height: 650,
       style: {
         width: 900,
         height: 650
-      }
+      },
+      transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`
     }).then((dataUrl) => {
       setImage(dataUrl);
     });
@@ -341,8 +345,9 @@ const AddNodeOnEdgeDrop = () => {
         onConnectEnd={onConnectEnd}
         zoomOnDoubleClick={false}
         fitView
+        snapToGrid={true}
+        snapGrid={[25, 25]}
         fitViewOptions={{ padding: 2 }}
-        nodeOrigin={[0.5, 0]}
       >
         <Background />
         <Controls />

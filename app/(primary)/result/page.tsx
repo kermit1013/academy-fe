@@ -23,6 +23,13 @@ const Share = (prop: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const { imgUrl, MyRoomId } = useClusterPosition();
   const [userMail, setUserMail] = useState("");
+  const handleDownload = () => {
+    const a = document.createElement("a");
+
+    a.setAttribute("download", "reactflow.png");
+    a.setAttribute("href", imgUrl);
+    a.click();
+  };
   const handleShare = async () => {
     messageApi.open({
       type: "success",
@@ -47,24 +54,31 @@ const Share = (prop: Props) => {
     console.log(prop, res);
   };
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center bg-black/50">
+    <div className="flex  h-screen w-screen flex-col items-center justify-center bg-black/50">
       {contextHolder}
-      <div className="flex h-fit w-4/5 flex-col gap-10 rounded-lg bg-white p-14">
-        <p className="text-center text-3xl font-bold">祝你自主學習順利喔！</p>
+      <div className="flex h-fit w-3/5 flex-col gap-10 rounded-lg bg-white bg-gradient-to-r from-sky-500/30 to-indigo-500/30 p-14">
+        <p className="text-center text-4xl font-bold">祝你自主學習順利喔！</p>
         <div className="flex  items-center justify-center gap-10">
-          <img className=" h-60 w-60 rounded-sm border-2" src={imgUrl} alt="screenshot" />
-          <div className="flex flex-col">
-            <button>下載你的發想成果</button>
-            <button>分享此網站給朋友</button>
+          <img className=" h-80 w-96 rounded-lg border-2 bg-white" src={imgUrl} alt="screenshot" />
+          <div className="flex flex-col gap-2">
+            <button
+              className=" rounded-md border-2 bg-blue-100 p-2 text-xl font-bold  hover:bg-blue-200"
+              onClick={handleDownload}
+            >
+              下載你的發想成果
+            </button>
+            <button className=" rounded-md border-2 bg-blue-100 p-2 text-xl font-bold hover:bg-blue-200">
+              分享此網站給朋友
+            </button>
           </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <QRCode type="canvas" value="https://www.instagram.com/return_inn/" />
-            <p>追蹤轉屋IG</p>
+            <p className=" text-xl font-bold">追蹤轉屋IG</p>
           </div>
           <div className="flex flex-col gap-2">
-            <p>若想持續追蹤Loudy的新產品，請留下email</p>
+            <p className=" text-xl font-bold">若想持續追蹤Loudy的新產品，請留下email</p>
             <div className="flex gap-2">
               <input
                 className="w-full rounded-md border pl-2"
@@ -142,8 +156,8 @@ const Result = () => {
         <div className=" flex h-screen w-screen flex-col items-center justify-between gap-8 overflow-y-scroll p-12">
           <p className=" text-3xl font-bold">取得你的發想成果之前，給Loudy一些回饋吧!</p>
           <img className=" h-96 w-96 rounded-md border-2" src={imgUrl} alt="screenshot" />
-          <div className=" flex h-fit w-2/3 flex-col gap-2">
-            <div className="flex w-full justify-between">
+          <div className=" flex h-fit w-2/3 flex-col gap-3">
+            <div className="flex h-12 w-full justify-between">
               <p>
                 1. 1~5分，此網路幫助你發想自主學習主題的成效為何?
                 <br />
@@ -155,7 +169,7 @@ const Result = () => {
                   SetQ1(event.target.value);
                 }}
               >
-                <option value="">--Please choose--</option>
+                <option value="">--請選擇--</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -163,29 +177,49 @@ const Result = () => {
                 <option value="5">5</option>
               </select>
             </div>
-            <div className="w-full">
+            <div className="flex h-12 w-full justify-between">
               <p>2. 發想成果中，有幾個主題是你之前沒想過的？</p>
-              <textarea
-                className=" w-full border p-2"
-                cols={3}
-                rows={3}
+              <select
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ2(event.target.value);
                 }}
-              />
+              >
+                <option value="">--請選擇--</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
             </div>
-            <div className="w-full">
+            <div className="flex h-12 w-full justify-between">
               <p>3. 發想成果中，有幾個主題是你真的可能會執行的？</p>
-              <textarea
-                className=" w-full border p-2"
-                cols={3}
-                rows={3}
+              <select
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ3(event.target.value);
                 }}
-              />
+              >
+                <option value="">--請選擇--</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
             </div>
-            <div className="flex w-full justify-between">
+            <div className="flex h-12 w-full justify-between">
               <p>4. 你會推薦其他人使用此網站嗎？</p>
               <select
                 className=" rounded-lg border pl-2"
@@ -193,14 +227,14 @@ const Result = () => {
                   SetQ4(event.target.value);
                 }}
               >
-                <option value="">--Please choose--</option>
+                <option value="">--請選擇--</option>
                 <option value="yes">當然</option>
                 <option value="think">考慮一下</option>
                 <option value="maybe_no">應該不會</option>
                 <option value="no">絕對不會</option>
               </select>
             </div>
-            <div className="flex w-full justify-between">
+            <div className="flex h-12 w-full justify-between">
               <p>5. 你下學期會再回來使用此網站協助發想嗎？</p>
               <select
                 className=" rounded-lg border pl-2"
@@ -208,36 +242,42 @@ const Result = () => {
                   SetQ5(event.target.value);
                 }}
               >
-                <option value="">--Please choose--</option>
+                <option value="">--請選擇--</option>
                 <option value="yes">當然</option>
                 <option value="think">考慮一下</option>
                 <option value="maybe_no">應該不會</option>
                 <option value="no">絕對不會</option>
               </select>
             </div>
-            <div className="w-full">
+            <div className="flex h-12 w-full justify-between">
               <p>6. 若你已經選擇好主題，下列哪個是你最可能遇到困難的步驟？</p>
-              <textarea
-                className=" w-full border p-2"
-                cols={3}
-                rows={3}
+              <select
+                className=" rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ6(event.target.value);
                 }}
-              />
+              >
+                <option value="">--請選擇--</option>
+                <option value="擬定計畫">擬定計畫</option>
+                <option value="執行與紀錄">執行與紀錄</option>
+                <option value="學習歷程製作">學習歷程製作</option>
+                <option value="反思">反思</option>
+              </select>
             </div>
-            <div className="w-full">
+            <div className="flex h-12 w-full justify-between">
               <p> 7. 你最喜歡此網站的哪個橋段？</p>
-              <textarea
-                className=" w-full border p-2"
-                cols={3}
-                rows={3}
+              <select
+                className=" rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ7(event.target.value);
                 }}
-              />
+              >
+                <option value="">--請選擇--</option>
+                <option value="發想理想中的自已">發想理想中的自已</option>
+                <option value="跟陌生人發想自主學習主題">跟陌生人發想自主學習主題</option>
+              </select>
             </div>
-            <div className="w-full">
+            <div className="flex w-full flex-col justify-between gap-2">
               <p>8. 為什麼喜歡以上橋段？也可留下任何回饋...</p>
               <textarea
                 className=" w-full border p-2"
