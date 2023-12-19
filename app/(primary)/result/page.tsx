@@ -15,6 +15,7 @@ interface QList {
   Q6: string;
   Q7: string;
   Q8: string;
+  Q9: string;
 }
 
 const Share = () => {
@@ -71,7 +72,18 @@ const Result = () => {
   const [Q6, SetQ6] = useState("");
   const [Q7, SetQ7] = useState("");
   const [Q8, SetQ8] = useState("");
+  const [Q9, SetQ9] = useState("");
   const handleSubmit = async () => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const result = re.test(String(userMail).toLowerCase());
+    if (!result) {
+      messageApi.open({
+        type: "warning",
+        content: "信箱格式錯誤!"
+      });
+      return;
+    }
     const list: QList = {
       Q1,
       Q2,
@@ -80,7 +92,8 @@ const Result = () => {
       Q5,
       Q6,
       Q7,
-      Q8
+      Q8,
+      Q9
     };
     const data = {
       room: MyRoomId,
@@ -90,7 +103,7 @@ const Result = () => {
       feedback: JSON.stringify(list)
     };
     console.log(data);
-    const res = await axios.post("http://139.162.82.246:8080/result", data, {
+    const res = await axios.post("https://api.loudy.in/result", data, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -112,39 +125,28 @@ const Result = () => {
         <div className=" flex h-screen w-screen flex-col items-center justify-between gap-8 overflow-y-scroll p-12">
           <p className=" text-3xl font-bold">取得你的發想成果之前，給Loudy一些回饋吧!</p>
           <img className=" h-96 w-96 rounded-md border-2" src={imgUrl} alt="screenshot" />
-          <div className="flex flex-col gap-2">
-            <p className=" text-xl font-bold">若想持續追蹤Loudy的新產品，請留下email</p>
-            <input
-              className="w-full rounded-md border pl-2"
-              type="text"
-              onChange={(event) => {
-                setUserMail(event.target.value);
-              }}
-            />
-          </div>
+
           <div className=" flex h-fit w-2/3 flex-col gap-3">
-            <div className="flex h-12 w-full justify-between">
-              <p>
-                1. 1~5分，此網路幫助你發想自主學習主題的成效為何?
-                <br />
-                (此版本為測試雛形，請先忽略視覺設計的評分)
-              </p>
-              <select
-                className="h-12 rounded-lg border pl-2"
+            <div className="flex items-center justify-between">
+              <p className=" font-bold">若想持續追蹤Loudy的新產品，請留下email</p>
+              <input
+                className="h-12 w-60  rounded-md border pl-2"
+                type="email"
                 onChange={(event) => {
-                  SetQ1(event.target.value);
+                  setUserMail(event.target.value);
                 }}
-              >
-                <option value="">--請選擇--</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <p>1. 就讀學校</p>
+              <input
+                className="h-12 w-60 rounded-md border pl-2"
+                type="text"
+                onChange={(event) => SetQ1(event.target.value)}
+              />
             </div>
             <div className="flex h-12 w-full justify-between">
-              <p>2. 發想成果中，有幾個主題是你之前沒想過的？</p>
+              <p>2. 年級</p>
               <select
                 className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
@@ -152,20 +154,13 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+                <option value="一年級">一年級</option>
+                <option value="二年級">二年級</option>
+                <option value="三年級">三年級</option>
               </select>
             </div>
             <div className="flex h-12 w-full justify-between">
-              <p>3. 發想成果中，有幾個主題是你真的可能會執行的？</p>
+              <p>3. 性別</p>
               <select
                 className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
@@ -173,6 +168,19 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+            </div>
+            <div className="flex h-12 w-full justify-between">
+              <p>4. 1~10分， Loudy 幫助你發想自主學習主題的成效為何?（此為測試版，請先不評論視覺設計）</p>
+              <select
+                className=" rounded-lg border pl-2"
+                onChange={(event) => {
+                  SetQ4(event.target.value);
+                }}
+              >
+                <option value="">--請選擇--</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -186,22 +194,7 @@ const Result = () => {
               </select>
             </div>
             <div className="flex h-12 w-full justify-between">
-              <p>4. 你會推薦其他人使用此網站嗎？</p>
-              <select
-                className=" rounded-lg border pl-2"
-                onChange={(event) => {
-                  SetQ4(event.target.value);
-                }}
-              >
-                <option value="">--請選擇--</option>
-                <option value="yes">當然</option>
-                <option value="think">考慮一下</option>
-                <option value="maybe_no">應該不會</option>
-                <option value="no">絕對不會</option>
-              </select>
-            </div>
-            <div className="flex h-12 w-full justify-between">
-              <p>5. 你下學期會再回來使用此網站協助發想嗎？</p>
+              <p>5. 發想成果中，有幾個主題是你之前沒想過的？</p>
               <select
                 className=" rounded-lg border pl-2"
                 onChange={(event) => {
@@ -209,14 +202,20 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
-                <option value="yes">當然</option>
-                <option value="think">考慮一下</option>
-                <option value="maybe_no">應該不會</option>
-                <option value="no">絕對不會</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
               </select>
             </div>
             <div className="flex h-12 w-full justify-between">
-              <p>6. 若你已經選擇好主題，下列哪個是你最可能遇到困難的步驟？</p>
+              <p>6. 發想成果中，有幾個主題是你真的可能會執行的？</p>
               <select
                 className=" rounded-lg border pl-2"
                 onChange={(event) => {
@@ -224,14 +223,20 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
-                <option value="擬定計畫">擬定計畫</option>
-                <option value="執行與紀錄">執行與紀錄</option>
-                <option value="學習歷程製作">學習歷程製作</option>
-                <option value="反思">反思</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
               </select>
             </div>
             <div className="flex h-12 w-full justify-between">
-              <p> 7. 你最喜歡此網站的哪個橋段？</p>
+              <p> 7. 你會向朋友推薦 Loudy 的可能性有多大？</p>
               <select
                 className=" rounded-lg border pl-2"
                 onChange={(event) => {
@@ -239,18 +244,47 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
-                <option value="發想理想中的自已">發想理想中的自已</option>
-                <option value="跟陌生人發想自主學習主題">跟陌生人發想自主學習主題</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+            <div className="flex h-12 w-full justify-between">
+              <p> 8. 你下學期再回來使用 Loudy 的可能性有多大？</p>
+              <select
+                className=" rounded-lg border pl-2"
+                onChange={(event) => {
+                  SetQ8(event.target.value);
+                }}
+              >
+                <option value="">--請選擇--</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
               </select>
             </div>
             <div className="flex w-full flex-col justify-between gap-2">
-              <p>8. 為什麼喜歡以上橋段？也可留下任何回饋...</p>
+              <p>9. 你喜歡 Loudy 的什麼？不喜歡什麼？留下你的任何建議！</p>
               <textarea
                 className=" w-full border p-2"
                 cols={3}
                 rows={3}
                 onChange={(event) => {
-                  SetQ8(event.target.value);
+                  SetQ9(event.target.value);
                 }}
               />
             </div>

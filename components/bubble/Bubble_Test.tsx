@@ -13,6 +13,7 @@ interface props {
       x: number;
       y: number;
     };
+    center_id: string;
     parentNode: string;
     level: number;
   };
@@ -25,7 +26,7 @@ const Bubble_Test = ({ data }: props) => {
   const [bubbleText, setBubbleText] = useState(data.label);
   const { updateNode, setIsEdit } = useClusterPosition();
   const center_id = localStorage.getItem("center");
-  const isSelf = data.id === center_id || data.parentNode === center_id;
+  const isSelf = data.center_id === center_id;
   const selfClass = isSelf ? "border-green-500" : "border-orange-500";
   const bubbleClass = data.parentNode === "" ? "h-40 w-40 text-md" : "h-fit w-64 text-gray-400 text-2xl";
   const handlerEdited = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -39,7 +40,6 @@ const Bubble_Test = ({ data }: props) => {
 
   useEffect(() => {
     if (isTextEdit || bubbleText === "") return;
-    console.log("update data");
     const editNode: Node = {
       id: data.id,
       type: "bubble",
@@ -48,6 +48,7 @@ const Bubble_Test = ({ data }: props) => {
         label: bubbleText,
         position: data.position,
         parentNode: data.parentNode,
+        center_id: data.center_id,
         level: data.level
       },
       position: data.position,
@@ -56,10 +57,6 @@ const Bubble_Test = ({ data }: props) => {
     updateNode(editNode);
     setIsEdit(true);
   }, [isTextEdit, bubbleText]);
-
-  useEffect(() => {
-    console.log("bubble Text Update", bubbleText);
-  }, [bubbleText]);
 
   const onchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     let message = "";
