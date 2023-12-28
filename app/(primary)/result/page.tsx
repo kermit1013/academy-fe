@@ -177,6 +177,8 @@ const Result = () => {
                 <option value="">--請選擇--</option>
                 <option value="男">男</option>
                 <option value="女">女</option>
+                <option value="非二元性別">非二元性別</option>
+                <option value="不願意回答">不願意回答</option>
               </select>
             </div>
             <div className="flex h-12 w-full justify-between">
