@@ -113,86 +113,97 @@ const AddNodeOnEdgeDrop = () => {
         room: roomId,
         type: "EDGE"
       });
-      console.log("sent data out");
     }
   }, [roomId, socket]);
 
-  const project_read = ({ data, type }) => {
-    switch (type) {
-      case "NODE":
-        // setNodes(data);
-        try {
-          const nlist = JSON.parse(data);
-          const newNList = nodeList.concat(nlist);
-          // setNodeList(newNList);
+  // useEffect(() => {
+  //   if (socket === undefined) return;
+  //   if (!socket?.connected) return;
 
-          const n_set = new Set();
-          const n_result = newNList.reverse().filter((node) => (!n_set.has(node.id) ? n_set.add(node.id) : false));
+  //   const interval = setInterval(() => {
+  //     socket?.emit("project_save", {
+  //       room: roomId,
+  //       nodes: JSON.stringify(nodeList),
+  //       edges: JSON.stringify(edgeList)
+  //     });
+  //   }, 2000);
 
-          setNodeList(n_result.reverse());
-        } catch (error) {
-          const nlist = JSON.parse(data);
-          setNodeList(nlist);
-        }
-        break;
-      case "EDGE":
-        // setEdges(data);
-        try {
-          const elist = JSON.parse(data);
-          const newEList = edgeList.concat(elist);
-          // setEdgeList(newEList);
-
-          const e_set = new Set();
-          const e_result = newEList.reverse().filter((edge) => (!e_set.has(edge.id) ? e_set.add(edge.id) : false));
-          const center_id = localStorage.getItem("center");
-          const last_e_result = e_result.reverse().map((edge) => {
-            console.log(edge);
-            if (edge.source !== center_id) {
-              edge.style = {
-                stroke: "#F97316",
-                strokeWidth: "3"
-              };
-              return edge;
-            }
-            return edge;
-          });
-          setEdgeList(last_e_result);
-        } catch (error) {
-          const elist = JSON.parse(data);
-
-          setEdgeList(elist);
-        }
-        break;
-    }
-  };
-
-  const project_retrieve = (data) => {
-    const jsonData = JSON.parse(data);
-    console.log(jsonData.id);
-    setMyRoomId(jsonData.id);
-    if (jsonData.nodes !== "") {
-      const list = JSON.parse(jsonData.nodes);
-      setNodeList(list);
-    }
-    if (jsonData.edges !== "") {
-      const list = JSON.parse(jsonData.edges);
-      setEdgeList(list);
-    }
-    // updateNodePosition(jsonData.nodes);
-    // updateEdge(jsonData.edges);
-  };
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [socket, nodeList, edgeList]);
 
   useEffect(() => {
-    console.log(socket);
     if (socket === null || socket === undefined) return;
     if (!isConnect) return;
-    console.log(socket);
+
+    const project_read = ({ data, type }) => {
+      switch (type) {
+        case "NODE":
+          // setNodes(data);
+          try {
+            const nlist = JSON.parse(data);
+            const newNList = nodeList.concat(nlist);
+            // setNodeList(newNList);
+
+            const n_set = new Set();
+            const n_result = newNList.reverse().filter((node) => (!n_set.has(node.id) ? n_set.add(node.id) : false));
+
+            setNodeList(n_result.reverse());
+          } catch (error) {
+            const nlist = JSON.parse(data);
+            setNodeList(nlist);
+          }
+          break;
+        case "EDGE":
+          // setEdges(data);
+          try {
+            const elist = JSON.parse(data);
+            const newEList = edgeList.concat(elist);
+            // setEdgeList(newEList);
+
+            const e_set = new Set();
+            const e_result = newEList.reverse().filter((edge) => (!e_set.has(edge.id) ? e_set.add(edge.id) : false));
+            const center_id = localStorage.getItem("center");
+            const last_e_result = e_result.reverse().map((edge) => {
+              if (edge.source !== center_id) {
+                edge.style = {
+                  stroke: "#F97316",
+                  strokeWidth: "3"
+                };
+                return edge;
+              }
+              return edge;
+            });
+            setEdgeList(last_e_result);
+          } catch (error) {
+            const elist = JSON.parse(data);
+
+            setEdgeList(elist);
+          }
+          break;
+      }
+    };
+
+    const project_retrieve = (data) => {
+      const jsonData = JSON.parse(data);
+      setMyRoomId(jsonData.id);
+      if (jsonData.nodes !== "") {
+        const list = JSON.parse(jsonData.nodes);
+        setNodeList(list);
+      }
+      if (jsonData.edges !== "") {
+        const list = JSON.parse(jsonData.edges);
+        setEdgeList(list);
+      }
+      // updateNodePosition(jsonData.nodes);
+      // updateEdge(jsonData.edges);
+    };
 
     socket.on("project_read", project_read);
     socket.on("project_retrieved", project_retrieve);
 
     return () => {
-      // console.log("socket off");
       // socket.off("project_read", project_read);
       // socket.off("project_retrieved", project_retrieve);
     };
@@ -201,7 +212,6 @@ const AddNodeOnEdgeDrop = () => {
   useEffect(() => {
     if (socket === undefined) return;
     if (myRound === false) return;
-    console.log("emit ");
     // socket?.emit("project_save", {
     //   room: roomId,
     //   nodes: JSON.stringify(nodeList),
@@ -232,7 +242,6 @@ const AddNodeOnEdgeDrop = () => {
   }, [isEdit]);
 
   const onNodesChange = (event) => {
-    // console.log("NodeChange", event[0]);
     const selectNode = event[0];
     if (selectNode.dragging) {
       updateNodePosition(selectNode.id, selectNode.position.x, selectNode.position.y);
@@ -263,7 +272,6 @@ const AddNodeOnEdgeDrop = () => {
         // we need to remove the wrapper bounds, in order to get the correct position
         const position_padding =
           connectingNodeId.current.indexOf("level1") > -1 ? { x: 347, y: -115 } : { x: -50, y: -100 };
-        console.log(position_padding);
         const id = connectingNodeId.current.indexOf("level1") > -1 ? `level2_${uuidv4()}` : `level3_${uuidv4()}`;
         const newNode = {
           id: id,
@@ -313,12 +321,9 @@ const AddNodeOnEdgeDrop = () => {
   };
 
   const handleGetResult = () => {
-    socket.off("project_read", project_read);
-    socket.off("project_retrieved", project_retrieve);
     const nodesBounds = getRectOfNodes(getNodes());
 
     const transform = getTransformForBounds(nodesBounds, window.innerWidth, window.innerHeight, 0.5, 2);
-    console.log(transform);
     toPng(document.getElementsByTagName("main")[0], {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -337,7 +342,7 @@ const AddNodeOnEdgeDrop = () => {
   const [title2, setTitle2] = useState("");
   useEffect(() => {
     setTitle1("請透過心智圖來發想：");
-    setTitle2("十年後理想中的你擁有哪些特質？");
+    setTitle2("十年後理想中的你擁有哪些特質？（個人特質、理想生活等等）");
   }, []);
   return (
     <div className=" relative h-screen w-screen " ref={reactFlowWrapper}>
@@ -351,6 +356,7 @@ const AddNodeOnEdgeDrop = () => {
           <p>房間編號:</p>
           <input
             type="text"
+            disabled={connecting}
             onChange={(event) => {
               setModifyRoomText(event.target.value);
             }}
