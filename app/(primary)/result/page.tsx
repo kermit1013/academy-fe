@@ -75,16 +75,19 @@ const Result = () => {
   const [Q8, SetQ8] = useState("");
   const [Q9, SetQ9] = useState("");
   const handleSubmit = async () => {
-    const re =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const result = re.test(String(userMail).toLowerCase());
-    if (!result) {
-      messageApi.open({
-        type: "warning",
-        content: "信箱格式錯誤!"
-      });
-      return;
+    if (userMail !== "") {
+      const re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const result = re.test(String(userMail).toLowerCase());
+      if (!result) {
+        messageApi.open({
+          type: "warning",
+          content: "信箱格式錯誤!"
+        });
+        return;
+      }
     }
+
     if (Q1 == "" && Q2 == "" && Q3 == "" && Q4 == "" && Q5 == "" && Q6 == "" && Q7 == "" && Q8 == "" && Q9 == "") {
       messageApi.open({
         type: "warning",
