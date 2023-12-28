@@ -1,21 +1,30 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { message } from "antd";
 
 const UserDataInit = () => {
   const router = useRouter();
   const [userName, setUserName] = useState("");
-
+  const [messageApi, contextHolder] = message.useMessage();
   const handleTypeUserName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
   };
   const handleNextStep = () => {
+    if (userName == "") {
+      messageApi.open({
+        type: "warning",
+        content: "請輸入名字!"
+      });
+      return;
+    }
     localStorage.setItem("user_name", userName);
     router.push("think");
   };
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-between gap-10 py-10">
+      {contextHolder}
       <p></p>
       <p className="text-3xl font-bold">
         你好，歡迎一起來發想自主學習主題！ <br />
