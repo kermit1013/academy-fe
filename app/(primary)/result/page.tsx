@@ -84,6 +84,13 @@ const Result = () => {
       });
       return;
     }
+    if (Q1 == "" && Q2 == "" && Q3 == "" && Q4 == "" && Q5 == "" && Q6 == "" && Q7 == "" && Q8 == "" && Q9 == "") {
+      messageApi.open({
+        type: "warning",
+        content: "請至少選擇一個題目回答，感謝~~"
+      });
+      return;
+    }
     const list: QList = {
       Q1,
       Q2,
@@ -202,6 +209,7 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
+                <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -223,6 +231,7 @@ const Result = () => {
                 }}
               >
                 <option value="">--請選擇--</option>
+                <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
