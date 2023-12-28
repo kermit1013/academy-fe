@@ -5,7 +5,7 @@ import axios from "axios";
 import useClusterPosition from "@/hooks/useClusterPosition";
 import { QRCode } from "antd";
 import { useRouter } from "next/navigation";
-
+import { Image } from "antd";
 interface QList {
   Q1: string;
   Q2: string;
@@ -36,7 +36,7 @@ const Share = () => {
       <div className="flex h-fit w-3/5 flex-col gap-10 rounded-lg bg-white bg-gradient-to-r from-sky-500/30 to-indigo-500/30 p-14">
         <p className="text-center text-4xl font-bold">祝你自主學習順利喔！</p>
         <div className="flex  items-center justify-center gap-10">
-          <img className=" h-80 w-96 rounded-lg border-2 bg-white" src={imgUrl} alt="screenshot" />
+          <Image width={384} src={imgUrl} alt="screenshot" />
           <div className="flex h-full flex-col justify-between gap-2">
             <button
               className=" rounded-md border-2 bg-blue-100 p-2 text-xl font-bold  hover:bg-blue-200"
@@ -49,6 +49,7 @@ const Share = () => {
             </button>
             <div className="flex items-center gap-5">
               <QRCode type="canvas" value="https://www.instagram.com/return_inn/" />
+              <QRCode type="canvas" value="https://discord.gg/m3JK5h4R" />
               <p className=" text-xl font-bold">追蹤轉屋IG</p>
             </div>
           </div>
@@ -131,8 +132,7 @@ const Result = () => {
       {!isShare ? (
         <div className=" flex h-screen w-screen flex-col items-center justify-between gap-8 overflow-y-scroll p-12">
           <p className=" text-3xl font-bold">取得你的發想成果之前，給Loudy一些回饋吧!</p>
-          <img className=" h-96 w-96 rounded-md border-2" src={imgUrl} alt="screenshot" />
-
+          <Image width={384} src={imgUrl} alt="screenshot" />
           <div className=" flex h-fit w-2/3 flex-col gap-3">
             <div className="flex items-center justify-between">
               <p className=" font-bold">若想持續追蹤Loudy的新產品，請留下email</p>
