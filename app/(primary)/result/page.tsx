@@ -137,7 +137,7 @@ const Result = () => {
           <p className=" text-3xl font-bold">取得你的發想成果之前，給Loudy一些回饋吧!</p>
           <Image width={384} src={imgUrl} alt="screenshot" />
           <div className=" flex h-fit w-2/3 flex-col gap-3">
-            <div className="flex items-center justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p className=" font-bold">若想持續追蹤Loudy的新產品，請留下email</p>
               <input
                 className="h-12 w-60  rounded-md border pl-2"
@@ -147,7 +147,7 @@ const Result = () => {
                 }}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>1. 就讀學校</p>
               <input
                 className="h-12 w-60 rounded-md border pl-2"
@@ -155,7 +155,7 @@ const Result = () => {
                 onChange={(event) => SetQ1(event.target.value)}
               />
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>2. 年級</p>
               <select
                 className="h-12 rounded-lg border pl-2"
@@ -169,7 +169,7 @@ const Result = () => {
                 <option value="三年級">三年級</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>3. 性別</p>
               <select
                 className="h-12 rounded-lg border pl-2"
@@ -184,10 +184,10 @@ const Result = () => {
                 <option value="不願意回答">不願意回答</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>4. 1~10分， Loudy 幫助你發想自主學習主題的成效為何?（此為測試版，請先不評論視覺設計）</p>
               <select
-                className=" rounded-lg border pl-2"
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ4(event.target.value);
                 }}
@@ -205,10 +205,10 @@ const Result = () => {
                 <option value="10">10</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>5. 發想成果中，有幾個主題是你之前沒想過的？</p>
               <select
-                className=" rounded-lg border pl-2"
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ5(event.target.value);
                 }}
@@ -227,10 +227,10 @@ const Result = () => {
                 <option value="10">10</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p>6. 發想成果中，有幾個主題是你真的可能會執行的？</p>
               <select
-                className=" rounded-lg border pl-2"
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ6(event.target.value);
                 }}
@@ -249,10 +249,10 @@ const Result = () => {
                 <option value="10">10</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p> 7. 你會向朋友推薦 Loudy 的可能性有多大？</p>
               <select
-                className=" rounded-lg border pl-2"
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ7(event.target.value);
                 }}
@@ -270,10 +270,10 @@ const Result = () => {
                 <option value="10">10</option>
               </select>
             </div>
-            <div className="flex h-12 w-full justify-between">
+            <div className="flex h-12 w-full items-center justify-between ">
               <p> 8. 你下學期再回來使用 Loudy 的可能性有多大？</p>
               <select
-                className=" rounded-lg border pl-2"
+                className="h-12 rounded-lg border pl-2"
                 onChange={(event) => {
                   SetQ8(event.target.value);
                 }}
