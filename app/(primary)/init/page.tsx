@@ -23,7 +23,7 @@ const UserDataInit = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-between gap-10 py-10">
+    <div className="flex h-screen w-screen flex-col items-center justify-between gap-10 bg-gradient-to-tl from-gray-200/30 to-green-400/30 py-10">
       {contextHolder}
       <p></p>
       <p className="text-3xl font-bold">

@@ -8,7 +8,7 @@ const StartPage = () => {
     router.push("/init");
   };
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-between gap-10 py-10">
+    <div className="flex h-screen w-screen flex-col items-center justify-between gap-10 bg-gradient-to-br from-gray-200/30 to-green-400/30 py-10">
       <p className="text-3xl font-bold">Loudy</p>
       <p className="text-3xl font-bold">高中生自主學習發想工具</p>
       <button

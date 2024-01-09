@@ -30,9 +30,7 @@
   justify-content: center;
   align-items: center;
   font-weight: 700;
-  border-radius: 1px;
-  border-width: 2px;
-  box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
+  border-radius: 50px;
 }
 
 /* .intersection-flow .react-flow__node.selected {
@@ -41,14 +39,13 @@
 } */
 .intersection-flow .react-flow__node:focus {
   box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
-  border-color: #f97316 !important;
-  border-width: 6px;
+  border-color: #22c55e !important;
+  border-width: 4px;
   /* background-color: blue !important; */
 }
 
 .intersection-flow .react-flow__node:hover {
   box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
-  background-color: #e2e4e6 !important;
 }
 
 .react-flow__handle:hover {

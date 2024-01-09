@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { message } from "antd";
 import axios from "axios";
-import useClusterPosition from "@/hooks/useClusterPosition";
+import useBubble from "@/hooks/useBubble";
 import { QRCode } from "antd";
 import { useRouter } from "next/navigation";
 import { Image } from "antd";
@@ -19,7 +19,7 @@ interface QList {
 }
 
 const Share = () => {
-  const { imgUrl } = useClusterPosition();
+  const { imgUrl } = useBubble();
   const router = useRouter();
   const handleDownload = () => {
     const a = document.createElement("a");
@@ -37,7 +37,7 @@ const Share = () => {
         <p className="text-center text-4xl font-bold">祝你自主學習順利喔！</p>
         <div className="flex  items-center justify-center gap-10">
           <Image width={384} src={imgUrl} alt="screenshot" />
-          <div className="flex h-full flex-col justify-between gap-2">
+          <div className="flex h-full flex-col items-center justify-between gap-2">
             <button
               className=" rounded-md border-2 bg-blue-100 p-2 text-xl font-bold  hover:bg-blue-200"
               onClick={handleDownload}
@@ -47,10 +47,16 @@ const Share = () => {
             <button className=" rounded-md border-2 bg-blue-100 p-2 text-xl font-bold hover:bg-blue-200">
               分享此網站給朋友
             </button>
+            <p className=" text-xl font-bold">追蹤轉屋IG</p>
             <div className="flex items-center gap-5">
-              <QRCode type="canvas" value="https://www.instagram.com/return_inn/" />
-              <QRCode type="canvas" value="https://discord.gg/m3JK5h4R" />
-              <p className=" text-xl font-bold">追蹤轉屋IG</p>
+              <div className="flex flex-col items-center">
+                <QRCode type="canvas" value="https://www.instagram.com/return_inn/" />
+                <p>轉屋IG</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <QRCode type="canvas" value="https://discord.gg/HSFK8qfJZU" />
+                <p>轉屋DISCORD</p>
+              </div>
             </div>
           </div>
         </div>
@@ -61,7 +67,7 @@ const Share = () => {
 
 const Result = () => {
   const [messageApi, contextHolder] = message.useMessage();
-  const { imgUrl, MyRoomId } = useClusterPosition();
+  const { imgUrl, MyRoomId } = useBubble();
   const [userMail, setUserMail] = useState("");
 
   const [isShare, setIsShare] = useState(false);
