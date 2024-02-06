@@ -65,9 +65,11 @@ const Cluster = ({ data }: props) => {
   };
   return (
     <div
-      className={`${bubbleSize} flex items-center justify-center overflow-hidden rounded-[50px] border-2 text-center`}
+      className={`${bubbleSize} z-10 flex items-center justify-center overflow-hidden rounded-[50px] border-2 text-center`}
       onDoubleClick={() => {
-        onEdit(true);
+        if (data.level !== 1) {
+          onEdit(true);
+        }
       }}
       onBlur={() => {
         onEdit(false);
@@ -104,7 +106,9 @@ const Cluster = ({ data }: props) => {
           onChange={(e) => setModifyText(e.target.value)}
         />
       ) : (
-        <p>{data.label}</p>
+        <div>
+          <p>{data.label}</p>
+        </div>
       )}
     </div>
   );

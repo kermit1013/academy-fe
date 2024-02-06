@@ -64,27 +64,25 @@ const AddNodeOnEdgeDrop = () => {
   useEffect(() => {
     const userName = localStorage.getItem("user_name");
 
-    // Set Center Bubble
     const id = `level1_${uuidv4()}`;
     localStorage.setItem("center", id);
+
     const Center = {
       id: id,
       type: "bubble",
       data: {
         id: id,
         label: `十年後的${userName}`,
-        position: { x: 0, y: 50 },
+        position: { x: 0, y: 0 },
         center_id: id,
         parentNode: "",
         level: 1
       },
-      position: { x: 0, y: 50 },
+      position: { x: 0, y: 0 },
       parentNode: ""
     };
+    setNode(nodes.concat(Center));
 
-    setNode([Center]);
-
-    // Set Title
     setTitle1("請透過心智圖來發想：");
     setTitle2("十年後理想中的你擁有哪些特質？（個人特質、理想生活等等）");
   }, []);
@@ -101,6 +99,7 @@ const AddNodeOnEdgeDrop = () => {
 
   const onConnectEnd = useCallback(
     (event) => {
+      event.stopPropagation();
       if (!connectingNodeId.current) return;
 
       setMyRound(true);
@@ -109,7 +108,8 @@ const AddNodeOnEdgeDrop = () => {
       if (targetIsPane) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const id = connectingNodeId.current.indexOf("level1") > -1 ? `level2_${uuidv4()}` : `level3_${uuidv4()}`;
-
+        const connectNode = nodes.filter((node) => node.id === connectingNodeId.current)[0];
+        console.log(connectNode);
         const newNode = {
           id,
           type: "bubble",
@@ -128,9 +128,12 @@ const AddNodeOnEdgeDrop = () => {
             y: event.clientY - (80 * zoom) / 2
           }),
           origin: [0.5, 0.0]
+          // 正常會在這邊加上parentNode就可以一起拖移
+          // 但是加上去之就會有偏移
         };
         const newNodeList = nodes.concat(newNode);
         setNode(newNodeList);
+
         const EdgeId = `${localStorage.getItem("center")}_${uuidv4()}`;
         const newEdge = {
           id: EdgeId,
@@ -182,11 +185,11 @@ const AddNodeOnEdgeDrop = () => {
   const onNodesChange = useCallback(
     (event) => {
       const selectNode = event[0];
-
       if (selectNode.dragging) {
         const updateNodeList = nodes.map((node) => {
           if (node.id == selectNode.id) {
-            const newNode = { ...node, position: selectNode.position };
+            const data = { ...node.data, position: selectNode.position };
+            const newNode = { ...node, position: selectNode.position, data: data };
             return newNode;
           }
           return node;
