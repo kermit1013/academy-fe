@@ -48,18 +48,15 @@
   box-shadow: 6px 6px 0 1px rgba(0, 0, 0, 0.7);
 }
 
-.react-flow__handle:hover {
-  height: 15px;
-  width: 15px;
-  border-radius: 7.5px !important;
+.intersection-flow .react-flow__handle {
+  height: 40px;
+  width: 40px;
+  border-radius: 20px !important;
   border-color: #22c55e !important;
   border-width: 3px;
-  background-color: #e2e4e6 !important;
-}
-
-.intersection-flow .react-flow__handle {
-  border-color: transparent;
-  background-color: transparent;
+  margin-right: -15px;
+  margin-left: -15px;
+  background-color: white !important;
 }
 
 .react-flow__handle-left {
