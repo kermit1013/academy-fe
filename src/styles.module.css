@@ -1,0 +1,126 @@
+.center {
+  height: 225px !important;
+  width: 225px !important;
+  border-radius: 50%;
+  background-image: url('public/center.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 32px !important;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(50px);
+  justify-content: center;
+  text-align: center;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.level1_node {
+  height: 180px !important;
+  width: 180px !important;
+  border-radius: 50%;
+  background-image: url('public/center.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 32px !important;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(50px);
+  justify-content: center;
+  text-align: center;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.level2_node {
+  height: 125px !important;
+  width: 125px !important;
+  border-radius: 50%;
+  background-image: url('public/center.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 32px !important;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(50px);
+  justify-content: center;
+  text-align: center;
+  word-break: break-all;
+  white-space: normal;
+  padding: 20px 0px;
+}
+
+.level3_node {
+  height: 120px !important;
+  width: 120px !important;
+  border-radius: 50%;
+  background-image: url('public/center.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 32px !important;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(50px);
+  justify-content: center;
+  word-break: break-all;
+  text-align: center;
+  white-space: normal;
+}
+/* box-shadow: 0px 0px 8px 0px rgba(255, 255, 255, 0.8) !important; */
+
+.center :global .react-flow__handle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.level1_node :global .react-flow__handle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.level2_node :global .react-flow__handle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.level3_node :global .react-flow__handle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.center:global.selectable.selected,
+.level1_node:global.selectable.selected,
+.level2_node:global.selectable.selected,
+.level3_node:global.selectable.selected {
+  border-color: rgb(255, 185, 231) !important;
+  cursor: pointer;
+  border-width: 8px;
+}
+
+/* .center{
+    border-radius: 50%;
+  height: 225px !important;
+  width: 225px !important;
+  font-size: 32px !important;
+  border-width: 8px;
+  border-color: #ff66aa;
+  border-style: dashed;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(50px);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;} */

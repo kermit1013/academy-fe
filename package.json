@@ -1,0 +1,43 @@
+{
+  "name": "force-layout",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "generate-js": "npx tsc --jsx preserve -t es2020 --outDir srcJs --noEmit false && npx prettier srcJs --write && npx shx cp src/*.css srcJs"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "d3-force": "^3.0.0",
+    "immer": "^10.0.3",
+    "leva": "^0.9.35",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.1",
+    "reactflow": "^11.10.4",
+    "y-webrtc": "^10.3.0",
+    "yjs": "^13.6.14",
+    "zod": "^3.22.4",
+    "zustand": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-mkcert": "^1.17.4"
+  }
+}
