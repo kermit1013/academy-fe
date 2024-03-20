@@ -127,6 +127,8 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       }
     })
     setEdges(edges.concat(edgeList))
+
+    localStorage.setItem('user_id', result.data.id)
   }
 
   useEffect(() => {
@@ -248,7 +250,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     } else {
       setIsConnect(false)
       initProvider()
-      getPersonData()
     }
   }
 
@@ -299,7 +300,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       }
       return node
     })
-    //React.SetStateAction<Node[]>
     setNodes(selectedNodes)
   }
 
