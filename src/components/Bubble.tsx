@@ -51,7 +51,12 @@ const Bubble = ({ data }: props) => {
         id: childId,
         type: 'bubble',
         position: { x: data.position.x * 2, y: data.position.y * 2 },
-        data: { id: childId, label: modifyData },
+        data: {
+          id: childId,
+          label: modifyData,
+          category: null,
+          position: { x: data.position.x * 2, y: data.position.y * 2 },
+        },
         className:
           data.category === 'ABOUT'
             ? styles.level1_node
@@ -72,6 +77,7 @@ const Bubble = ({ data }: props) => {
   }
 
   const handleDeleteNode = async () => {
+    console.log(data.category)
     if (data.category !== null) {
       console.log('不可刪除')
       return
@@ -113,7 +119,7 @@ const Bubble = ({ data }: props) => {
           >
             <button
               onClick={handleDeleteNode}
-              className="h-8 w-8 rounded-full border-2 border-black scale-75 bg-white hover:bg-gray-300"
+              className="z-50 h-8 w-8 rounded-full border-2 border-black scale-75 bg-white hover:bg-gray-300"
             >
               x
             </button>
@@ -121,24 +127,30 @@ const Bubble = ({ data }: props) => {
         </div>
       )}
       <NodeToolbar isVisible={data.isVisble} position={Position.Bottom}>
-        <div className="w-40 flex gap-2">
-          <input
-            className="rounded-lg w-36 border border-black pl-2"
-            type="text"
-            value={modifyData}
-            onChange={(e) => modifyText(e)}
-            onKeyDown={(e) => onKeyDown(e)}
-          />
-          <button
-            className="hover:bg-white/70 border border-black rounded-lg bg-white/50 px-4 py-1"
-            onClick={submitData}
-          >
-            Enter
-          </button>
-        </div>
+        {data.id.includes('level3') ? (
+          <></>
+        ) : (
+          <div className="w-40 flex gap-2">
+            <input
+              className="rounded-lg w-36 border border-black pl-2"
+              type="text"
+              value={modifyData}
+              onChange={(e) => modifyText(e)}
+              onKeyDown={(e) => onKeyDown(e)}
+            />
+            <button
+              className="hover:bg-white/70 border border-black rounded-lg bg-white/50 px-4 py-1"
+              onClick={submitData}
+            >
+              Enter
+            </button>
+          </div>
+        )}
       </NodeToolbar>
 
-      <div>{data.label}</div>
+      <div>
+        {data.label}-{data.id}
+      </div>
 
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />

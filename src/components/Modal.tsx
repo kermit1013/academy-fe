@@ -3,7 +3,7 @@ import useYDoc from '../hooks/useYDoc'
 
 const Modal = () => {
   const [connectText, SetConnectText] = useState('')
-  const { setProvider, setVisible } = useYDoc()
+  const { setProvider, setVisible, setIsConnectProcess } = useYDoc()
   const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handlerConnect()
@@ -12,7 +12,12 @@ const Modal = () => {
   const handlerConnect = () => {
     setProvider(connectText)
     setVisible(false)
+    setIsConnectProcess(true)
+    setTimeout(() => {
+      setIsConnectProcess(false)
+    }, 3000)
   }
+
   const handlerClose = () => {
     setVisible(false)
   }
