@@ -41,7 +41,6 @@ const HintToolBox = () => {
       label: item.name,
       category: '',
     })
-    console.log(result)
     if (result.status === 200) {
       onSelectItem(result.data.id, result.data.source, result.data.label)
     }

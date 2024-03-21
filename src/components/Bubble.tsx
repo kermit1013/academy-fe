@@ -77,11 +77,16 @@ const Bubble = ({ data }: props) => {
   }
 
   const handleDeleteNode = async () => {
-    console.log(data.category)
     if (data.category !== null) {
-      console.log('不可刪除')
+      alert('不可刪除')
       return
     }
+    const edges = getEdges()
+    edges.forEach((edge) => {
+      if (edge.source === data.id) {
+        alert('還有下層的bubble不可刪除')
+      }
+    })
 
     if (confirm(`是否刪除「${data.label}」?`)) {
       const originId = data.id.split('_')[1]

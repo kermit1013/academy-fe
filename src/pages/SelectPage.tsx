@@ -284,9 +284,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   useEffect(() => {
     if (!isInit) return
 
-    console.log('reset data')
-    console.log(nodes, node_list)
-    console.log(edges, edge_list)
     const nl_1 = nodes.map((node) => {
       return {
         ...node,
@@ -320,8 +317,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   }, [ydoc, provider, isInit])
 
   const handleSelectAll = () => {
-    console.log(nodes)
-
     const myNodeIdList = myNodeList.map((node) => node.id)
     const selectedNodes = nodes.map((node) => {
       if (myNodeIdList.includes(node.id)) {
