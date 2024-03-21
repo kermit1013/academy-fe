@@ -1,11 +1,11 @@
 import { Doc } from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
+import { WebsocketProvider } from 'y-websocket'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
 type State = {
   ydoc: Doc
-  provider: WebrtcProvider | null
+  provider: WebsocketProvider | null
   isVisible: boolean
   isConnect: boolean
   isConnectProcess: boolean
@@ -41,10 +41,15 @@ const useYDoc = create<State & Actions>()(
 
         const roomName = generateRandomRoomName()
         localStorage.setItem('roomName', roomName!)
-        const provider = new WebrtcProvider(roomName!, ydoc, {
-          signaling: [`wss://api.loudy.in/ws/room`],
+        const provider = new WebsocketProvider(
+          'ws://172.234.86.158:8000/ws',
+          roomName,
+          ydoc
+        )
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        provider.on('status', (event: any) => {
+          console.log(event.status) // logs "connected" or "disconnected"
         })
-
         return { ...state, ydoc, provider }
       }),
     setProvider: (roomName: string) =>
@@ -56,17 +61,16 @@ const useYDoc = create<State & Actions>()(
 
         const ydoc = new Doc()
         localStorage.setItem('roomName', roomName!)
-        const provider = new WebrtcProvider(roomName, ydoc, {
-          signaling: [`wss://api.loudy.in/ws/room`],
-          peerOpts: {
-            // STUN/TURN 配置示例
-            iceServers: [
-              { urls: 'stun:stun.l.google.com:19302' }, // 公共STUN服务器
-              // 在生产环境中，你还需要配置TURN服务器
-            ],
-          },
-        })
 
+        const provider = new WebsocketProvider(
+          'ws://172.234.86.158:8000/ws',
+          roomName,
+          ydoc
+        )
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        provider.on('status', (event: any) => {
+          console.log(event.status) // logs "connected" or "disconnected"
+        })
         const isConnect = true
         return { ...state, ydoc, provider, isConnect }
       }),
