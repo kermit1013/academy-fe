@@ -277,6 +277,8 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       setVisible(true)
     } else {
       setIsConnect(false)
+      setNodes([])
+      setEdges([])
       initProvider()
     }
   }

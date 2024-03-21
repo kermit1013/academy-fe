@@ -153,9 +153,7 @@ const Bubble = ({ data }: props) => {
         )}
       </NodeToolbar>
 
-      <div>
-        {data.label}-{data.id}
-      </div>
+      <div>{data.label}</div>
 
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
