@@ -42,7 +42,7 @@ const useYDoc = create<State & Actions>()(
         const roomName = generateRandomRoomName()
         localStorage.setItem('roomName', roomName!)
         const provider = new WebsocketProvider(
-          'ws://172.234.86.158:8000/ws',
+          'wss://172.234.86.158:8000/ws',
           roomName,
           ydoc
         )
@@ -63,7 +63,7 @@ const useYDoc = create<State & Actions>()(
         localStorage.setItem('roomName', roomName!)
 
         const provider = new WebsocketProvider(
-          'ws://172.234.86.158:8000/ws',
+          'wss://172.234.86.158:8000/ws',
           roomName,
           ydoc
         )
