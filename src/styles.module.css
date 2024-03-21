@@ -2,7 +2,7 @@
   height: 225px !important;
   width: 225px !important;
   border-radius: 50%;
-  background-image: url('public/center.svg');
+  background-image: url('center.svg');
   background-size: cover;
   background-repeat: no-repeat;
   color: white;
@@ -20,7 +20,7 @@
   height: 180px !important;
   width: 180px !important;
   border-radius: 50%;
-  background-image: url('public/center.svg');
+  background-image: url('center.svg');
   background-size: cover;
   background-repeat: no-repeat;
   color: white;
@@ -38,7 +38,7 @@
   height: 125px !important;
   width: 125px !important;
   border-radius: 50%;
-  background-image: url('public/center.svg');
+  background-image: url('center.svg');
   background-size: cover;
   background-repeat: no-repeat;
   color: white;
@@ -57,7 +57,7 @@
   height: 120px !important;
   width: 120px !important;
   border-radius: 50%;
-  background-image: url('public/center.svg');
+  background-image: url('center.svg');
   background-size: cover;
   background-repeat: no-repeat;
   color: white;
