@@ -42,7 +42,7 @@ const useYDoc = create<State & Actions>()(
         const roomName = generateRandomRoomName()
         localStorage.setItem('roomName', roomName!)
         const provider = new WebrtcProvider(roomName!, ydoc, {
-          signaling: [`wss://api.loudy.in/ws`],
+          signaling: [`wss://api.loudy.in/ws/${roomName}`],
         })
 
         return { ...state, ydoc, provider }
@@ -58,7 +58,7 @@ const useYDoc = create<State & Actions>()(
         const ydoc = new Doc()
         localStorage.setItem('roomName', roomName!)
         const provider = new WebrtcProvider(roomName, ydoc, {
-          signaling: [`wss://api.loudy.in/ws`],
+          signaling: [`wss://api.loudy.in/ws/${roomName}`],
         })
         const isConnect = true
         return { ...state, ydoc, provider, isConnect }
