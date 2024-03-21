@@ -44,16 +44,7 @@ const useYDoc = create<State & Actions>()(
         const provider = new WebrtcProvider(roomName!, ydoc, {
           signaling: [`wss://api.loudy.in/ws/room`],
         })
-        provider.on('synced', (isSynced) => {
-          // isSynced 是一个布尔值，表示是否与其他客户端同步
-          if (isSynced) {
-            console.log('已成功连接并同步')
-            // 这里可以设置状态或执行其他操作来反映同步状态
-          } else {
-            console.log('连接已断开或同步失败')
-            // 根据需要处理断开连接的情况
-          }
-        })
+
         return { ...state, ydoc, provider }
       }),
     setProvider: (roomName: string) =>
@@ -67,17 +58,15 @@ const useYDoc = create<State & Actions>()(
         localStorage.setItem('roomName', roomName!)
         const provider = new WebrtcProvider(roomName, ydoc, {
           signaling: [`wss://api.loudy.in/ws/room`],
+          peerOpts: {
+            // STUN/TURN 配置示例
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' }, // 公共STUN服务器
+              // 在生产环境中，你还需要配置TURN服务器
+            ],
+          },
         })
-        provider.on('synced', (isSynced) => {
-          // isSynced 是一个布尔值，表示是否与其他客户端同步
-          if (isSynced) {
-            console.log('已成功连接并同步')
-            // 这里可以设置状态或执行其他操作来反映同步状态
-          } else {
-            console.log('连接已断开或同步失败')
-            // 根据需要处理断开连接的情况
-          }
-        })
+
         const isConnect = true
         return { ...state, ydoc, provider, isConnect }
       }),
