@@ -37,6 +37,12 @@ const useYDoc = create<State & Actions>()(
     isConnectProcess: false,
     initProvider: () =>
       set((state) => {
+        if (state.provider) {
+          console.log(state.provider.roomname)
+          state.provider.disconnect()
+          state.provider.destroy()
+          state.ydoc.destroy()
+        }
         const ydoc = new Doc()
 
         const roomName = generateRandomRoomName()
@@ -50,11 +56,15 @@ const useYDoc = create<State & Actions>()(
         provider.on('status', (event: any) => {
           console.log(event.status) // logs "connected" or "disconnected"
         })
+        console.log(provider.roomname)
         return { ...state, ydoc, provider }
       }),
     setProvider: (roomName: string) =>
       set((state) => {
         if (state.provider) {
+          console.log(state.provider.roomname)
+
+          state.provider.disconnect()
           state.provider.destroy()
           state.ydoc.destroy()
         }
@@ -67,10 +77,14 @@ const useYDoc = create<State & Actions>()(
           roomName,
           ydoc
         )
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         provider.on('status', (event: any) => {
+          console.log(event)
+
           console.log(event.status) // logs "connected" or "disconnected"
         })
+        console.log(provider.roomname)
         const isConnect = true
         return { ...state, ydoc, provider, isConnect }
       }),

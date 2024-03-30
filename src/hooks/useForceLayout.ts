@@ -35,7 +35,7 @@ function useForceLayout({
   const { setNodes, getNodes, getEdges } = useReactFlow()
 
   useEffect(() => {
-    if (times < 500) {
+    if (times !== 0) {
       const nodes = getNodes()
       const edges = getEdges()
       if (!nodes.length || !nodesInitialized) {

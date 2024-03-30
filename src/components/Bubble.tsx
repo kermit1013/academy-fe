@@ -10,7 +10,7 @@ interface props {
     id: string
     label: string
     category: string
-    isVisble: boolean
+    isVisible: boolean
     position: {
       x: number
       y: number
@@ -41,28 +41,35 @@ const Bubble = ({ data }: props) => {
     })
 
     if (result.status === 200) {
+      const user_id = localStorage.getItem('user_id')
       const childId =
         data.category === 'ABOUT'
-          ? `level1_${result.data.id}`
+          ? `level1_${result.data.id}_${user_id}`
           : data.category === null
-          ? `level3_${result.data.id}`
-          : `level2_${result.data.id}`
+          ? `level3_${result.data.id}_${user_id}`
+          : `level2_${result.data.id}_${user_id}`
       const childNode = {
         id: childId,
         type: 'bubble',
-        position: { x: data.position.x * 2, y: data.position.y * 2 },
+        position: { x: data.position.x * 1.5, y: data.position.y * 1.5 },
         data: {
           id: childId,
           label: modifyData,
           category: null,
-          position: { x: data.position.x * 2, y: data.position.y * 2 },
+          position: { x: data.position.x * 1.5, y: data.position.y * 1.5 },
         },
         className:
           data.category === 'ABOUT'
-            ? styles.level1_node
+            ? data.id != user_id
+              ? styles.node1_level1_node
+              : styles.node2_level1_node
             : data.category === null
-            ? styles.level3_node
-            : styles.level2_node,
+            ? data.id != user_id
+              ? styles.node1_level3_node
+              : styles.node2_level3_node
+            : data.id != user_id
+            ? styles.node1_level2_node
+            : styles.node2_level2_node,
       }
       const childEdge = {
         id: `${data.id}->${childId}`,
@@ -70,7 +77,20 @@ const Bubble = ({ data }: props) => {
         target: childId,
         type: 'straight',
       }
-      setNodes((nds) => [...nds, childNode])
+
+      const nodesList = getNodes().map((node) => {
+        if (node.id === data.id) {
+          const newNode = { ...node }
+          newNode.data = { ...node.data, isVisible: false }
+
+          return newNode
+        }
+        return node
+      })
+
+      const newNodeList = nodesList.concat(childNode)
+
+      setNodes(newNodeList)
       setEdges((eds) => [...eds, childEdge])
       setModifyData('')
     }
@@ -119,7 +139,7 @@ const Bubble = ({ data }: props) => {
                 : -25
             }
             align="end"
-            isVisible={data.isVisble}
+            isVisible={data.isVisible}
             position={Position.Top}
           >
             <button
@@ -131,12 +151,13 @@ const Bubble = ({ data }: props) => {
           </NodeToolbar>
         </div>
       )}
-      <NodeToolbar isVisible={data.isVisble} position={Position.Bottom}>
+      <NodeToolbar isVisible={data.isVisible} position={Position.Bottom}>
         {data.id.includes('level3') ? (
           <></>
         ) : (
           <div className="w-40 flex gap-2">
             <input
+              autoFocus
               className="rounded-lg w-36 border border-black pl-2"
               type="text"
               value={modifyData}

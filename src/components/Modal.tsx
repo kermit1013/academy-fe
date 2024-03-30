@@ -15,7 +15,7 @@ const Modal = () => {
     setIsConnectProcess(true)
     setTimeout(() => {
       setIsConnectProcess(false)
-    }, 3000)
+    }, 1500)
   }
 
   const handlerClose = () => {
@@ -33,6 +33,7 @@ const Modal = () => {
       </div>
       <input
         type="text"
+        autoFocus
         value={connectText}
         onChange={(e) => SetConnectText(e.target.value)}
         onKeyDown={(e) => handlerKeyDown(e)}

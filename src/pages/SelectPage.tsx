@@ -91,7 +91,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     isConnect,
     isConnectProcess,
     setVisible,
-    setIsConnect,
     initProvider,
   } = useYDoc()
   // const { setProvider } = useYDoc()
@@ -99,7 +98,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 
   const { node_list, edge_list, setNode, setEdge } = useBubble()
 
-  const [times, setTimes] = useState(0)
+  const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
   const [isInit, setIsInit] = useState(false)
   const [userName, SetUserName] = useState('')
@@ -109,22 +108,23 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     const result = await axios.get(
       `https://api.loudy.in/api/users/me?email=${email}`
     )
+    const user_id = result.data.id
     SetUserName(result.data.username)
     const nodeRealIDList: string[] = []
     const nodeIDList: number[] = []
     const nodeList = result.data.nodes.map((item: InputNode) => {
       const Id =
         item.category === 'ABOUT'
-          ? `level0_${item.id}`
+          ? `level0_${item.id}_user${user_id}`
           : item.category === null
-          ? `level2_${item.id}`
-          : `level1_${item.id}`
+          ? `level2_${item.id}_user${user_id}`
+          : `level1_${item.id}_user${user_id}`
       const node_class =
         item.category === 'ABOUT'
-          ? styles.center
+          ? styles.node1_center
           : item.category === null
-          ? styles.level2_node
-          : styles.level1_node
+          ? styles.node1_level2_node
+          : styles.node1_level1_node
       nodeRealIDList.push(Id)
       nodeIDList.push(item.id)
       return {
@@ -148,15 +148,21 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       const target_index = nodeIDList.indexOf(item.target)
       const target = nodeRealIDList[target_index]
       return {
-        id: `${source}->${target}`,
+        id: `${source}->${target}_user${user_id}`,
         source: source,
         target: target,
         type: 'straight',
       }
     })
     setEdges(edges.concat(edgeList))
-
-    localStorage.setItem('user_id', result.data.id)
+    localStorage.setItem('user_id', user_id)
+    localStorage.setItem('user_name', result.data.username)
+  }
+  const InitBubbles = () => {
+    setNodes([])
+    setEdges([])
+    getPersonData()
+    setTimes(1)
   }
 
   useEffect(() => {
@@ -171,12 +177,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   useEffect(() => {
     setIsInit(true)
   }, [])
-
-  useEffect(() => {
-    if (times <= 500) {
-      setTimes((prevTimes) => prevTimes + 1)
-    }
-  }, [times])
 
   useForceLayout({ strength, distance, times })
 
@@ -276,56 +276,97 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     if (!isConnect) {
       setVisible(true)
     } else {
-      setIsConnect(false)
-      setNodes([])
-      setEdges([])
-      initProvider()
+      window.location.reload()
     }
   }
 
   useEffect(() => {
     if (!isInit) return
+    const user_id = localStorage.getItem('user_id')
 
     const nl_1 = nodes.map((node) => {
+      console.log(node.id)
+      const node_class =
+        node.id.includes('level0') && node.id.includes(`user${user_id}`)
+          ? styles.node2_center
+          : node.id.includes('level1') && node.id.includes(`user${user_id}`)
+          ? styles.node2_level2_node
+          : node.id.includes('level2') && node.id.includes(`user${user_id}`)
+          ? styles.node2_level2_node
+          : styles.node2_level3_node
       return {
         ...node,
         position: {
           x: node.position.x - 500,
           y: node.position.y,
         },
+        className: node_class,
       }
     })
     const nl_2 = node_list.map((node) => {
+      console.log(node.id)
+      const node_class =
+        node.id.includes('level0') && node.id.includes(`user${user_id}`)
+          ? styles.node2_center
+          : node.id.includes('level1') && node.id.includes(`user${user_id}`)
+          ? styles.node2_level2_node
+          : node.id.includes('level2') && node.id.includes(`user${user_id}`)
+          ? styles.node2_level2_node
+          : styles.node2_level3_node
       return {
         ...node,
         position: {
-          x: node.position.x + 500,
+          x: node.position.x + 1500,
           y: node.position.y,
         },
+        className: node_class,
       }
     })
-    const nList = nl_1.concat(nl_2)
-    const eList = edges.concat(edge_list)
-    setNodes(nList)
-    setEdges(eList)
+
+    const el_1 = edges.map((edge) => {
+      if (edge.id.includes(`user${user_id}`)) {
+        const newEdge = {
+          ...edge,
+          style: { stroke: 'url(#otherEdge)', strokeWidth: 10 },
+        }
+        return newEdge
+      }
+      return edge
+    })
+    const el_2 = edge_list.map((edge) => {
+      if (edge.id.includes(`user${user_id}`)) {
+        const newEdge = {
+          ...edge,
+          style: { stroke: 'url(#otherEdge)', strokeWidth: 10 },
+        }
+        return newEdge
+      }
+      return edge
+    })
+    setNodes(nl_1.concat(nl_2))
+    setEdges(el_1.concat(el_2))
   }, [node_list, edge_list, isInit])
 
   useEffect(() => {
     if (!isInit) return
-    console.log(ydoc)
-    console.log(provider)
+
     setNode(nodes)
     setEdge(edges)
   }, [ydoc, provider, isInit])
 
   const handleSelectAll = () => {
+    const myNodes = nodes.map((node) => {
+      return { ...node, selected: false }
+    })
+
     const myNodeIdList = myNodeList.map((node) => node.id)
-    const selectedNodes = nodes.map((node) => {
+    const selectedNodes = myNodes.map((node) => {
       if (myNodeIdList.includes(node.id)) {
         return { ...node, selected: true }
       }
       return node
     })
+
     setNodes(selectedNodes)
   }
 
@@ -417,54 +458,64 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
         <HintToolBox />
       </Panel>
       <Panel position="bottom-left">
-        <div className="flex gap-2 text-white">
+        <div className="flex gap-2 text-white items-end h-12 w-[435px] overflow-hidden">
           <button
-            className=" border-2 border-white bg-white/30 rounded-md px-2 py-1"
+            className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
             onClick={handleSelectAll}
           >
             Select Mine
           </button>
           <button
-            className=" border-2 border-white bg-white/30 rounded-md px-2 py-1"
-            onClick={() => setTimes(0)}
+            hidden={isConnect}
+            className="h-12  border-2 border-white bg-white/30 rounded-md px-2 py-1"
+            onClick={() => setTimes(1)}
           >
             RunEffect
           </button>
+          <button
+            hidden={isConnect}
+            className="h-12  border-2 border-white bg-white/30 rounded-md px-2 py-1"
+            onClick={() => setTimes(0)}
+          >
+            StopEffect
+          </button>
+          <button
+            className="h-12  border-2 border-white bg-white/30 rounded-md px-2 py-1"
+            onClick={() => InitBubbles()}
+          >
+            ReConnect
+          </button>
+          <svg className="-z-0">
+            <defs>
+              <linearGradient
+                id="otherEdge"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+                spreadMethod="pad"
+              >
+                <stop offset="0%" stopColor="#291EA4" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#43B85C" stopOpacity="0.35" />
+              </linearGradient>
+            </defs>
+            <defs>
+              <linearGradient
+                id="myEdge"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+                spreadMethod="pad"
+              >
+                <stop offset="0%" stopColor="#FEC0E6" stopOpacity="1" />
+                <stop offset="100%" stopColor="#F4DBCC" stopOpacity="1" />
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
       </Panel>
-      <Panel position="top-center">
-        <div className="flex  justify-between"></div>
-      </Panel>
-      <Panel position="bottom-center">
-        <svg>
-          <defs>
-            <linearGradient
-              id="otherEdge"
-              x1="0%"
-              y1="0%"
-              x2="0%"
-              y2="100%"
-              spreadMethod="pad"
-            >
-              <stop offset="0%" stopColor="#291EA4" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#43B85C" stopOpacity="0.35" />
-            </linearGradient>
-          </defs>
-          <defs>
-            <linearGradient
-              id="myEdge"
-              x1="0%"
-              y1="0%"
-              x2="0%"
-              y2="100%"
-              spreadMethod="pad"
-            >
-              <stop offset="0%" stopColor="#FEC0E6" stopOpacity="1" />
-              <stop offset="100%" stopColor="#F4DBCC" stopOpacity="1" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </Panel>
+
       {isVisible ? <Modal /> : <></>}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />

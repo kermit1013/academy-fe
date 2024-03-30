@@ -13,6 +13,9 @@ const HintToolBox = () => {
 
   useEffect(() => {
     const user_id = localStorage.getItem('user_id')
+    while (user_id !== null) {
+      break
+    }
     setUserId(parseInt(user_id!))
     let _list: IItem[] = []
     const api = async () => {
@@ -32,7 +35,7 @@ const HintToolBox = () => {
       setHintList(_list)
     }
     api()
-  }, [])
+  }, [localStorage.getItem('user_id')])
 
   const handlerSelectItem = async (item: IItem) => {
     const result = await axios.post('https://api.loudy.in/api/graphs/nodes', {
@@ -58,12 +61,12 @@ const HintToolBox = () => {
       {isVisible ? (
         <>
           <button
-            className="absolute -top-2 right-2 border-2 border-white z-10 w-12 rounded-lg text-white backdrop-blur-lg"
+            className="absolute top-8 right-2 border-2 border-white z-10 w-12 rounded-lg text-white backdrop-blur-lg"
             onClick={() => setIsVisible(false)}
           >
             -
           </button>
-          <div className="w-[calc(25vw)] h-[calc(70vh)] border-2 border-white rounded-[50px] bg-white/20 flex flex-col overflow-hidden backdrop-blur-xl absolute top-0">
+          <div className="w-[calc(25vw)] h-[calc(65vh)] border-2 border-white rounded-[50px] bg-white/20 flex flex-col overflow-hidden backdrop-blur-xl absolute bottom-0">
             <p className="border border-white h-18 w-full scale-105 text-white text-center items-center text-3xl py-5">
               想法小補帖
             </p>
