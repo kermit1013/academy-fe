@@ -24,6 +24,7 @@ import useYDoc from '../hooks/useYDoc'
 import Modal from '../components/Modal'
 import Cursors from '../components/Cursors'
 import useBubble from '../hooks/useBubble'
+import { useControls } from 'leva'
 
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
@@ -526,10 +527,19 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 function ReactFlowWrapper() {
   // 👇 This hook is used to display a leva (https://github.com/pmndrs/leva) control panel for this example.
   // You can safely remove it, if you don't want to use it.
-  const levaProps = {
-    strength: -200,
-    distance: 300,
-  }
+
+  const levaProps = useControls({
+    strength: {
+      value: -200,
+      min: -2000,
+      max: 0,
+    },
+    distance: {
+      value: 300,
+      min: 0,
+      max: 1000,
+    },
+  })
 
   return (
     <ReactFlowProvider>
