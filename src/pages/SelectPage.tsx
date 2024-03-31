@@ -275,6 +275,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 
   const handlerConnect = () => {
     if (!isConnect) {
+      setTimes(0)
       setVisible(true)
     } else {
       window.location.reload()
