@@ -410,7 +410,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 
   const handlerConnect = () => {
     if (!isConnect) {
-      setTimes(0)
       setVisible(true)
     } else {
       window.location.reload()
@@ -422,6 +421,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     const user_id = localStorage.getItem('user_id')
 
     const nl_1 = nodes.map((node) => {
+      console.log(node)
       const node_class =
         node.id.includes('level0') && node.id.includes(`user${user_id}`)
           ? styles.node2_center
@@ -462,7 +462,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       if (edge.id.includes(`user${user_id}`)) {
         const newEdge = {
           ...edge,
-          style: { stroke: 'url(#otherEdge)', strokeWidth: 10 },
+          style: { stroke: '#fff', strokeWidth: 2 },
         }
         return newEdge
       }
@@ -472,7 +472,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
       if (edge.id.includes(`user${user_id}`)) {
         const newEdge = {
           ...edge,
-          style: { stroke: 'url(#otherEdge)', strokeWidth: 10 },
+          style: { stroke: '#fff', strokeWidth: 2 },
         }
         return newEdge
       }
@@ -541,7 +541,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
             <img src={light_bulb} alt="" />
           </button>
           <button
-            title="連線"
+            title={!isConnect ? '連線' : '停止連線'}
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center"
             onClick={handlerConnect}
           >
