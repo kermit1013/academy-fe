@@ -9,6 +9,7 @@ type State = {
   isConnect: boolean
   MyRoomId: string
   imgUrl: string
+  need_refresh: boolean
 }
 
 type Actions = {
@@ -20,6 +21,7 @@ type Actions = {
   setIsEdit: (status: boolean) => void
   onNodeChange: (node: NodeChange[]) => void
   onEdgeChange: (edge: EdgeChange[]) => void
+  SetRefresh: (status: boolean) => void
 }
 
 const useBubble = create<State & Actions>()(
@@ -29,6 +31,7 @@ const useBubble = create<State & Actions>()(
     isEdit: false,
     isConnect: false,
     MyRoomId: '',
+    need_refresh: false,
     imgUrl: '',
     setNode: (list: Node[]) =>
       set((state) => {
@@ -57,6 +60,10 @@ const useBubble = create<State & Actions>()(
     onNodeChange: (node: NodeChange[]) =>
       set((state) => {
         return { ...state, nodes: node }
+      }),
+    SetRefresh: (status: boolean) =>
+      set((state) => {
+        return { ...state, need_refresh: status }
       }),
     onEdgeChange: (node: EdgeChange[]) =>
       set((state) => {

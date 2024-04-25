@@ -16,7 +16,7 @@ body,
 }
 
 .intersection-flow .react-flow__node:hover {
-  border-color: rgb(255, 185, 231) !important;
+  border-color: rgb(255, 255, 255) !important;
   cursor: pointer;
   border-width: 8px;
 }
@@ -39,6 +39,12 @@ body,
 }
 
 .selected {
-  border-color: red !important;
+  border-color: orange !important;
   z-index: 9999 !important;
+}
+
+.react-flow__selection {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: orange !important;
+  border-width: 5px !important;
 }

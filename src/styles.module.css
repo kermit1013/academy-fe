@@ -1,15 +1,14 @@
 .node1_center {
-  height: 225px !important;
-  width: 225px !important;
+  height: 160px !important;
+  width: 160px !important;
   border-radius: 50%;
-  background-image: url('/node1.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
   color: white;
-  font-size: 32px !important;
+  border: 2px solid white;
+  font-size: 24px !important;
   display: flex;
   align-items: center;
   backdrop-filter: blur(50px);
+  overflow: hidden;
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -17,17 +16,16 @@
 }
 
 .node2_center {
-  height: 225px !important;
-  width: 225px !important;
+  height: 160px !important;
+  width: 160px !important;
   border-radius: 50%;
-  background-image: url('/node2.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 2px solid mistyrose;
   color: white;
-  font-size: 32px !important;
+  font-size: 24px !important;
   display: flex;
   align-items: center;
   backdrop-filter: blur(50px);
+  overflow: hidden;
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -35,17 +33,16 @@
 }
 
 .node1_level1_node {
-  height: 180px !important;
-  width: 180px !important;
+  height: 120px !important;
+  width: 120px !important;
   border-radius: 50%;
-  background-image: url('/node1.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 2px solid white;
   color: white;
-  font-size: 32px !important;
+  font-size: 24px !important;
   display: flex;
   align-items: center;
   backdrop-filter: blur(50px);
+  overflow: hidden;
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -53,16 +50,15 @@
 }
 
 .node2_level1_node {
-  height: 180px !important;
-  width: 180px !important;
+  height: 120px !important;
+  width: 120px !important;
   border-radius: 50%;
-  background-image: url('/node2.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 2px solid mistyrose;
   color: white;
-  font-size: 32px !important;
+  font-size: 24px !important;
   display: flex;
   align-items: center;
+  overflow: hidden;
   backdrop-filter: blur(50px);
   justify-content: center;
   text-align: center;
@@ -71,16 +67,15 @@
 }
 
 .node1_level2_node {
-  height: 125px !important;
-  width: 125px !important;
+  height: 100px !important;
+  width: 100px !important;
   border-radius: 50%;
-  background-image: url('/node1.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 2px solid white;
   color: white;
-  font-size: 32px !important;
+  font-size: 16px !important;
   display: flex;
   align-items: center;
+  overflow: hidden;
   backdrop-filter: blur(50px);
   justify-content: center;
   text-align: center;
@@ -90,16 +85,15 @@
 }
 
 .node2_level2_node {
-  height: 125px !important;
-  width: 125px !important;
+  height: 100px !important;
+  width: 100px !important;
   border-radius: 50%;
-  background-image: url('/node2.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 2px solid mistyrose;
   color: white;
-  font-size: 32px !important;
+  font-size: 16px !important;
   display: flex;
   align-items: center;
+  overflow: hidden;
   backdrop-filter: blur(50px);
   justify-content: center;
   text-align: center;
@@ -109,16 +103,15 @@
 }
 
 .node1_level3_node {
-  height: 120px !important;
-  width: 120px !important;
-  border-radius: 50%;
-  background-image: url('/node1.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  height: 58px !important;
+  width: 192px !important;
+  border-radius: 12px;
+  border: 2px solid mistyrose;
   color: white;
-  font-size: 32px !important;
+  font-size: 16px !important;
   display: flex;
   align-items: center;
+  overflow: hidden;
   backdrop-filter: blur(50px);
   justify-content: center;
   word-break: break-all;
@@ -127,16 +120,15 @@
 }
 
 .node2_level3_node {
-  height: 120px !important;
-  width: 120px !important;
-  border-radius: 50%;
-  background-image: url('/node2.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  height: 58px !important;
+  width: 192px !important;
+  border-radius: 12px;
+  border: 2px solid mistyrose;
   color: white;
-  font-size: 32px !important;
+  font-size: 16px !important;
   display: flex;
   align-items: center;
+  overflow: hidden;
   backdrop-filter: blur(50px);
   justify-content: center;
   word-break: break-all;
@@ -200,19 +192,6 @@
   transform: translate(-50%, -50%);
   opacity: 0;
   pointer-events: none;
-}
-
-.node1_center:global.selectable.selected,
-.node2_center:global.selectable.selected,
-.node1_level1_node:global.selectable.selected,
-.node1_level2_node:global.selectable.selected,
-.node1_level3_node:global.selectable.selected,
-.node2_level1_node:global.selectable.selected,
-.node2_level2_node:global.selectable.selected,
-.node2_level3_node:global.selectable.selected {
-  border-color: rgb(255, 185, 231) !important;
-  cursor: pointer;
-  border-width: 8px;
 }
 
 /* .center{

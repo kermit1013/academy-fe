@@ -22,7 +22,7 @@ const Modal = () => {
     setVisible(false)
   }
   return (
-    <div className=" absolute top-10 left-1/3 bg-white/50 rounded-lg w-1/3 h-12 border border-white z-20 flex pr-3">
+    <div className=" absolute top-20 left-1/3 bg-white/50 rounded-lg w-1/3 h-12 border border-white z-20 flex pr-3">
       <div className="relative">
         <button
           onClick={handlerClose}

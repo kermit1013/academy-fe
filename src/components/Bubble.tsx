@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { KeyboardEvent, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
 import axios from 'axios'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
+import { message } from 'antd'
+import useBubble from '../hooks/useBubble'
 
 interface props {
   data: {
@@ -22,24 +24,81 @@ const Bubble = ({ data }: props) => {
   const { getNodes, getEdges } = useReactFlow()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
-  const [modifyData, setModifyData] = useState('')
+  const [modifyData, setModifyData] = useState(data.label)
+  const [messageApi, contextHolder] = message.useMessage()
+  const { SetRefresh } = useBubble()
 
-  const modifyText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setModifyData(e.target.value)
+  const [isEdit, setIsEdit] = useState(false)
+  const handlerEdit = () => {
+    setIsEdit(true)
+    setModifyData(data.label)
   }
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter') {
-      submitData()
+
+  const handlerFinishEdit = () => {
+    if (modifyData === '') {
+      messageApi.warning('不可為空白!')
+      return
+    }
+
+    setIsEdit(false)
+
+    if (data.label !== modifyData) {
+      handlerEditBubble()
     }
   }
-  const submitData = async () => {
-    const result = await axios.post('https://api.loudy.in/api/graphs/nodes', {
-      user_id: 47,
-      source: parseInt(data.id.split('_')[1]),
-      label: modifyData,
-      category: '',
+  const handlerRemoveBubble = async () => {
+    const edges = getEdges()
+    let hasChild = false
+    edges.forEach((edge) => {
+      if (edge.source === data.id) {
+        hasChild = true
+        return
+      }
     })
+    if (hasChild) {
+      messageApi.warning('還有下層的bubble不可刪除')
+      return
+    }
+    if (confirm('是否要刪除?')) {
+      const origin_id = data.id.split('_')[1]
+      const access_token = localStorage.getItem('access_token')
+      const result = await axios.delete(
+        `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      )
+      if (result.status === 204) {
+        const nodes = getNodes()
+        const edges = getEdges()
+        const nodeList = nodes.filter((node) => node.id !== data.id)
+        const edgeList = edges.filter((edge) => edge.target !== data.id)
+        setNodes(nodeList)
+        setEdges(edgeList)
+        messageApi.info('已刪除')
+      }
+    }
+  }
 
+  const handlerNewBubble = async () => {
+    const access_token = localStorage.getItem('access_token')
+    const origin_id = data.id.split('_')[1]
+    const result = await axios.post(
+      'https://api.loudy.in/api/graphs/nodes',
+      {
+        source: parseInt(origin_id),
+        label: 'NewBubble',
+        category: '',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    )
+    console.log(result)
     if (result.status === 200) {
       const user_id = localStorage.getItem('user_id')
       const childId =
@@ -48,6 +107,7 @@ const Bubble = ({ data }: props) => {
           : data.category === null
           ? `level3_${result.data.id}_${user_id}`
           : `level2_${result.data.id}_${user_id}`
+      console.log(childId)
       const childNode = {
         id: childId,
         type: 'bubble',
@@ -55,6 +115,7 @@ const Bubble = ({ data }: props) => {
         data: {
           id: childId,
           label: modifyData,
+          isVisable: false,
           category: null,
           position: { x: data.position.x * 1.5, y: data.position.y * 1.5 },
         },
@@ -89,44 +150,73 @@ const Bubble = ({ data }: props) => {
       })
 
       const newNodeList = nodesList.concat(childNode)
-
+      console.log(newNodeList)
       setNodes(newNodeList)
       setEdges((eds) => [...eds, childEdge])
       setModifyData('')
+
+      messageApi.info('已新增')
+      SetRefresh(true)
     }
   }
 
-  const handleDeleteNode = async () => {
-    if (data.category !== null) {
-      alert('不可刪除')
-      return
-    }
-    const edges = getEdges()
-    edges.forEach((edge) => {
-      if (edge.source === data.id) {
-        alert('還有下層的bubble不可刪除')
+  const handlerEditBubble = async () => {
+    setIsEdit(false)
+
+    const origin_id = data.id.split('_')[1]
+    const access_token = localStorage.getItem('access_token')
+    const result = await axios.put(
+      `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
+      {
+        label: modifyData,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
       }
-    })
+    )
 
-    if (confirm(`是否刪除「${data.label}」?`)) {
-      const originId = data.id.split('_')[1]
-      const result = await axios.delete(
-        `https://api.loudy.in/api/graphs/nodes/${originId}`
-      )
+    if (result.status === 200) {
+      const nodes = getNodes()
+      const newNodeList = nodes.map((node) => {
+        if (node.id === data.id) {
+          let newNode = { ...node }
+          let newNode_data = node.data
+          newNode_data.label = modifyData
+          newNode.data = newNode_data
+          console.log(newNode)
+          return newNode
+        }
+        return node
+      })
+      setNodes(newNodeList)
+      setModifyData('')
+      SetRefresh(true)
+      messageApi.info('已編輯')
+    }
+  }
 
-      if (result.status === 204) {
-        const nodes = getNodes()
-        const edges = getEdges()
-        const nodeList = nodes.filter((node) => node.id !== data.id)
-        const edgeList = edges.filter((edge) => edge.target !== data.id)
-        setNodes(nodeList)
-        setEdges(edgeList)
+  const handlerKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+      if (modifyData === '') {
+        messageApi.warning('不可為空白!')
+        return
+      } else {
+        handlerEditBubble()
       }
     }
   }
+
   return (
-    <div key={data.id}>
-      {data.category ? (
+    <div
+      className="w-full h-full text-center flex items-center justify-center overflow-hidden relative"
+      onDoubleClick={() => handlerEdit()}
+      onBlur={() => handlerFinishEdit()}
+      key={data.id}
+    >
+      {contextHolder}
+      {/* {data.category ? (
         <></>
       ) : (
         <div>
@@ -172,9 +262,58 @@ const Bubble = ({ data }: props) => {
             </button>
           </div>
         )}
-      </NodeToolbar>
+      </NodeToolbar> */}
+      {data.category ? (
+        <></>
+      ) : (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
+          <button
+            className=" bg-white/40 w-6 h-6 rounded-full absolute -top-3 -left-5 flex items-center justify-center"
+            onClick={() => handlerRemoveBubble()}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.82667 5.99986L9.596 11.9999M6.404 11.9999L6.17333 5.99986M12.8187 3.85986C13.0467 3.89453 13.2733 3.93119 13.5 3.97053M12.8187 3.86053L12.1067 13.1152C12.0776 13.492 11.9074 13.844 11.63 14.1007C11.3527 14.3574 10.9886 14.5 10.6107 14.4999H5.38933C5.0114 14.5 4.64735 14.3574 4.36999 14.1007C4.09262 13.844 3.92239 13.492 3.89333 13.1152L3.18133 3.85986M12.8187 3.85986C12.0492 3.74354 11.2758 3.65526 10.5 3.59519M2.5 3.96986C2.72667 3.93053 2.95333 3.89386 3.18133 3.85986M3.18133 3.85986C3.95076 3.74354 4.72416 3.65526 5.5 3.59519M10.5 3.59519V2.98453C10.5 2.19786 9.89333 1.54186 9.10667 1.51719C8.36908 1.49362 7.63092 1.49362 6.89333 1.51719C6.10667 1.54186 5.5 2.19853 5.5 2.98453V3.59519M10.5 3.59519C8.83581 3.46658 7.16419 3.46658 5.5 3.59519"
+                stroke="white"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </NodeToolbar>
+      )}
+      {data.id.indexOf('level3') ? (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+          <button
+            className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1"
+            onClick={() => handlerNewBubble()}
+          >
+            +
+          </button>
+        </NodeToolbar>
+      ) : (
+        <></>
+      )}
 
-      <div>{data.label}</div>
+      {!isEdit || data.category !== null ? (
+        <div>{data.label}</div>
+      ) : (
+        <textarea
+          maxLength={20}
+          className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
+          value={modifyData}
+          autoFocus
+          placeholder="請輸入您的想法"
+          onChange={(e) => setModifyData(e.target.value)}
+          onKeyDown={(e) => handlerKeyDown(e)}
+        />
+      )}
 
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />

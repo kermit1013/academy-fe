@@ -56,7 +56,7 @@ const useYDoc = create<State & Actions>()(
         provider.on('status', (event: any) => {
           console.log(event.status) // logs "connected" or "disconnected"
         })
-        console.log(provider.roomname)
+        // console.log(provider.roomname)
         return { ...state, ydoc, provider }
       }),
     setProvider: (roomName: string) =>
