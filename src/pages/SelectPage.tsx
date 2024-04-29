@@ -306,10 +306,9 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   }, [])
 
   useEffect(() => {
-    console.log(times)
-    if (times < 500) {
-      setTimes((prev) => prev + 1)
-    }
+    setTimeout(() => {
+      setTimes(500)
+    }, 5000)
   }, [times])
 
   useForceLayout({ strength, distance, times })
