@@ -93,7 +93,7 @@ declare global {
   }
 }
 
-function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
+function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [myNodeList, setMyNodeList] = useNodesState([])
@@ -106,7 +106,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
     setVisible,
     initProvider,
   } = useYDoc()
-  const { zoomIn, zoomOut } = useReactFlow()
+  const { getNodes, zoomIn, zoomOut } = useReactFlow()
   const getViewport = useViewport()
   // const { setProvider } = useYDoc()
 
@@ -154,7 +154,7 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 
   const [cursors, onMouseMove] = useCursorStateSynced()
 
-  const { node_list, edge_list, setNode, setEdge, need_refresh } = useBubble()
+  const { node_list, edge_list, setNode, setEdge } = useBubble()
 
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
@@ -165,12 +165,6 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   useEffect(() => {
     getPersonData()
   }, [])
-
-  useEffect(() => {
-    if (need_refresh) {
-      setTimes(0)
-    }
-  }, [need_refresh])
 
   const getPersonData = async () => {
     const access_token = localStorage.getItem('access_token')
@@ -489,7 +483,8 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
   }, [ydoc, provider, isInit])
 
   const handleSelectAll = () => {
-    const myNodes = nodes.map((node) => {
+    const node_list = getNodes()
+    const myNodes = node_list.map((node) => {
       return { ...node, selected: false }
     })
 
@@ -592,12 +587,12 @@ function ReactFlowPro({ strength = -200, distance = 300 }: ExampleProps = {}) {
 function ReactFlowWrapper() {
   const levaProps = useControls({
     strength: {
-      value: -200,
+      value: -300,
       min: -2000,
       max: 0,
     },
     distance: {
-      value: 300,
+      value: 200,
       min: 0,
       max: 1000,
     },

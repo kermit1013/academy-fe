@@ -7,7 +7,7 @@
   font-size: 24px !important;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px) !important;
   overflow: hidden;
   justify-content: center;
   text-align: center;
@@ -24,7 +24,7 @@
   font-size: 24px !important;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   overflow: hidden;
   justify-content: center;
   text-align: center;
@@ -41,7 +41,7 @@
   font-size: 24px !important;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   overflow: hidden;
   justify-content: center;
   text-align: center;
@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -76,7 +76,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   justify-content: center;
   text-align: center;
   word-break: break-all;
@@ -112,7 +112,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   justify-content: center;
   word-break: break-all;
   text-align: center;
@@ -129,7 +129,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   justify-content: center;
   word-break: break-all;
   text-align: center;
@@ -203,7 +203,7 @@
   border-color: #ff66aa;
   border-style: dashed;
   background-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   color: white;
   display: flex;
   align-items: center;

@@ -5,7 +5,7 @@ import { type Node, type Edge, NodeChange, EdgeChange } from 'reactflow'
 type State = {
   node_list: Node[]
   edge_list: Edge[]
-  isEdit: boolean
+  edit_bubble_id: string
   isConnect: boolean
   MyRoomId: string
   imgUrl: string
@@ -18,7 +18,7 @@ type Actions = {
   setImage: (url: string) => void
   setMyRoomId: (RoomId: string) => void
   setConnect: (status: boolean) => void
-  setIsEdit: (status: boolean) => void
+  setEditBubbleId: (id: string) => void
   onNodeChange: (node: NodeChange[]) => void
   onEdgeChange: (edge: EdgeChange[]) => void
   SetRefresh: (status: boolean) => void
@@ -28,7 +28,7 @@ const useBubble = create<State & Actions>()(
   immer((set) => ({
     node_list: [],
     edge_list: [],
-    isEdit: false,
+    edit_bubble_id: '',
     isConnect: false,
     MyRoomId: '',
     need_refresh: false,
@@ -53,9 +53,9 @@ const useBubble = create<State & Actions>()(
       set((state) => {
         return { ...state, isConnect: status }
       }),
-    setIsEdit: (status: boolean) =>
+    setEditBubbleId: (id: string) =>
       set((state) => {
-        return { ...state, ised: status }
+        return { ...state, edit_bubble_id: id }
       }),
     onNodeChange: (node: NodeChange[]) =>
       set((state) => {

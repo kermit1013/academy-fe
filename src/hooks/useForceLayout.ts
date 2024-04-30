@@ -26,8 +26,8 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
   ) && state.nodeInternals.size
 
 function useForceLayout({
-  strength = -200,
-  distance = 300,
+  strength = -300,
+  distance = 200,
   times = 0,
 }: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
@@ -70,7 +70,12 @@ function useForceLayout({
             simulationNodes.map((node) => ({
               id: node.id,
               type: 'bubble',
-              data: node.data,
+              data: {
+                id: node.id,
+                label: node.data.label,
+                position: { x: node.x ?? 0, y: node.y ?? 0 },
+                category: node.data.category,
+              },
               position: { x: node.x ?? 0, y: node.y ?? 0 },
               className: node.className,
             }))

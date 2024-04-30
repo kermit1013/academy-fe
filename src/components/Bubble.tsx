@@ -1,4 +1,4 @@
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, useCallback, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
 import axios from 'axios'
@@ -26,21 +26,19 @@ const Bubble = ({ data }: props) => {
   const setEdges = useEdgesStateSynced()[1]
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
-  const { SetRefresh } = useBubble()
-
-  const [isEdit, setIsEdit] = useState(false)
   const handlerEdit = () => {
-    setIsEdit(true)
+    setEditBubbleId(data.id)
     setModifyData(data.label)
   }
+  const { edit_bubble_id, setEditBubbleId } = useBubble()
 
   const handlerFinishEdit = () => {
-    if (modifyData === '') {
-      messageApi.warning('不可為空白!')
-      return
-    }
+    // if (modifyData === '' && edit_bubble_id != '') {
+    //   messageApi.warning('不可為空白!')
+    //   return
+    // }
 
-    setIsEdit(false)
+    setEditBubbleId('')
 
     if (data.label !== modifyData) {
       handlerEditBubble()
@@ -82,14 +80,14 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  const handlerNewBubble = async () => {
+  const handlerNewBubble = useCallback(async () => {
     const access_token = localStorage.getItem('access_token')
     const origin_id = data.id.split('_')[1]
     const result = await axios.post(
       'https://api.loudy.in/api/graphs/nodes',
       {
         source: parseInt(origin_id),
-        label: 'NewBubble',
+        label: '',
         category: '',
       },
       {
@@ -98,26 +96,36 @@ const Bubble = ({ data }: props) => {
         },
       }
     )
-    console.log(result)
     if (result.status === 200) {
+      const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
       const user_id = localStorage.getItem('user_id')
+      if (user_id == null) {
+        messageApi.warning('取不到使用者id')
+        return
+      }
       const childId =
         data.category === 'ABOUT'
-          ? `level1_${result.data.id}_${user_id}`
+          ? `level1_${result.data.id}_user${user_id}`
           : data.category === null
-          ? `level3_${result.data.id}_${user_id}`
-          : `level2_${result.data.id}_${user_id}`
-      console.log(childId)
+          ? `level3_${result.data.id}_user${user_id}`
+          : `level2_${result.data.id}_user${user_id}`
+
       const childNode = {
         id: childId,
         type: 'bubble',
-        position: { x: data.position.x * 1.5, y: data.position.y * 1.5 },
+        position: {
+          x: this_bubble.position.x * 1.5,
+          y: this_bubble.position.y * 1.5,
+        },
         data: {
           id: childId,
-          label: modifyData,
-          isVisable: false,
+          label: '',
+          isVisible: true,
           category: null,
-          position: { x: data.position.x * 1.5, y: data.position.y * 1.5 },
+          position: {
+            x: this_bubble.position.x * 1.5,
+            y: this_bubble.position.y * 1.5,
+          },
         },
         className:
           data.category === 'ABOUT'
@@ -153,15 +161,14 @@ const Bubble = ({ data }: props) => {
       console.log(newNodeList)
       setNodes(newNodeList)
       setEdges((eds) => [...eds, childEdge])
+      setEditBubbleId(childId)
       setModifyData('')
-
       messageApi.info('已新增')
-      SetRefresh(true)
     }
-  }
+  }, [])
 
   const handlerEditBubble = async () => {
-    setIsEdit(false)
+    setEditBubbleId('')
 
     const origin_id = data.id.split('_')[1]
     const access_token = localStorage.getItem('access_token')
@@ -192,7 +199,6 @@ const Bubble = ({ data }: props) => {
       })
       setNodes(newNodeList)
       setModifyData('')
-      SetRefresh(true)
       messageApi.info('已編輯')
     }
   }
@@ -281,8 +287,8 @@ const Bubble = ({ data }: props) => {
               <path
                 d="M9.82667 5.99986L9.596 11.9999M6.404 11.9999L6.17333 5.99986M12.8187 3.85986C13.0467 3.89453 13.2733 3.93119 13.5 3.97053M12.8187 3.86053L12.1067 13.1152C12.0776 13.492 11.9074 13.844 11.63 14.1007C11.3527 14.3574 10.9886 14.5 10.6107 14.4999H5.38933C5.0114 14.5 4.64735 14.3574 4.36999 14.1007C4.09262 13.844 3.92239 13.492 3.89333 13.1152L3.18133 3.85986M12.8187 3.85986C12.0492 3.74354 11.2758 3.65526 10.5 3.59519M2.5 3.96986C2.72667 3.93053 2.95333 3.89386 3.18133 3.85986M3.18133 3.85986C3.95076 3.74354 4.72416 3.65526 5.5 3.59519M10.5 3.59519V2.98453C10.5 2.19786 9.89333 1.54186 9.10667 1.51719C8.36908 1.49362 7.63092 1.49362 6.89333 1.51719C6.10667 1.54186 5.5 2.19853 5.5 2.98453V3.59519M10.5 3.59519C8.83581 3.46658 7.16419 3.46658 5.5 3.59519"
                 stroke="white"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </button>
@@ -301,18 +307,22 @@ const Bubble = ({ data }: props) => {
         <></>
       )}
 
-      {!isEdit || data.category !== null ? (
-        <div>{data.label}</div>
+      {edit_bubble_id == data.id ? (
+        data.category == null ? (
+          <textarea
+            maxLength={20}
+            className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
+            value={modifyData}
+            autoFocus
+            placeholder="請輸入您的想法"
+            onChange={(e) => setModifyData(e.target.value)}
+            onKeyDown={(e) => handlerKeyDown(e)}
+          />
+        ) : (
+          <div>{data.label}</div>
+        )
       ) : (
-        <textarea
-          maxLength={20}
-          className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
-          value={modifyData}
-          autoFocus
-          placeholder="請輸入您的想法"
-          onChange={(e) => setModifyData(e.target.value)}
-          onKeyDown={(e) => handlerKeyDown(e)}
-        />
+        <div>{data.label}</div>
       )}
 
       <Handle type="target" position={Position.Top} />
