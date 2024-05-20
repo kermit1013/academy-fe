@@ -1,4 +1,4 @@
-import { KeyboardEvent, useCallback, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
 import axios from 'axios'
@@ -22,13 +22,44 @@ interface props {
 
 const Bubble = ({ data }: props) => {
   const { getNodes, getEdges } = useReactFlow()
+  const { setSelectBubble } = useBubble()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
+
+  const selectBubble = () => {
+    const node = getNodes().filter((node) => node.id === data.id)[0]
+    if (node.data.category == null) {
+      setSelectBubble(node)
+    }
+  }
+
   const handlerEdit = () => {
-    setEditBubbleId(data.id)
-    setModifyData(data.label)
+    if (data.category != null && data.category !== 'ABOUT') {
+      const node_list = getNodes()
+      const edge_list = getEdges()
+      const myNodes = node_list.map((node) => {
+        return { ...node, selected: false }
+      })
+
+      const child_edge_List = edge_list.filter((edge) => edge.source == data.id)
+      const myEdgeList = child_edge_List.map((edge) => edge.target)
+      const selectedNodes = myNodes.map((node) => {
+        if (myEdgeList.includes(node.id)) {
+          return { ...node, selected: true }
+        } else if (node.id === data.id) {
+          return { ...node, selected: true }
+        }
+
+        return node
+      })
+
+      setNodes(selectedNodes)
+    } else {
+      setEditBubbleId(data.id)
+      setModifyData(data.label)
+    }
   }
   const { edit_bubble_id, setEditBubbleId } = useBubble()
 
@@ -217,6 +248,7 @@ const Bubble = ({ data }: props) => {
   return (
     <div
       className="w-full h-full text-center flex items-center justify-center overflow-hidden relative"
+      onClick={() => selectBubble()}
       onDoubleClick={() => handlerEdit()}
       onBlur={() => handlerFinishEdit()}
       key={data.id}

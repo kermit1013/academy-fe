@@ -10,6 +10,7 @@ type State = {
   MyRoomId: string
   imgUrl: string
   need_refresh: boolean
+  select_bubble: Node | null
 }
 
 type Actions = {
@@ -22,12 +23,14 @@ type Actions = {
   onNodeChange: (node: NodeChange[]) => void
   onEdgeChange: (edge: EdgeChange[]) => void
   SetRefresh: (status: boolean) => void
+  setSelectBubble: (bubble: Node | null) => void
 }
 
 const useBubble = create<State & Actions>()(
   immer((set) => ({
     node_list: [],
     edge_list: [],
+    select_bubble: null,
     edit_bubble_id: '',
     isConnect: false,
     MyRoomId: '',
@@ -68,6 +71,10 @@ const useBubble = create<State & Actions>()(
     onEdgeChange: (node: EdgeChange[]) =>
       set((state) => {
         return { ...state, nodes: node }
+      }),
+    setSelectBubble: (node: Node | null) =>
+      set((state) => {
+        return { ...state, select_bubble: node }
       }),
   }))
 )

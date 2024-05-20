@@ -7,10 +7,10 @@ import ReactFlow, {
   NodeMouseHandler,
   useNodesState,
   useReactFlow,
+  MiniMap,
   useViewport,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-
 import useForceLayout from '../hooks/useForceLayout'
 
 import styles from '../styles.module.css'
@@ -32,6 +32,8 @@ import light_bulb from '../../public/light_bulb.svg'
 import chat_bubble from '../../public/chat_bubble.svg'
 import setting from '../../public/setting.svg'
 import disconnect from '../../public/disconnect.svg'
+import ThinkContent from '../components/ThinkContent'
+import useThinkContent from '../hooks/useThinkContent'
 
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
@@ -93,7 +95,7 @@ declare global {
   }
 }
 
-function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
+function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [myNodeList, setMyNodeList] = useNodesState([])
@@ -106,7 +108,8 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
     setVisible,
     initProvider,
   } = useYDoc()
-  const { getNodes, zoomIn, zoomOut } = useReactFlow()
+  const { setIsContentVisible, isContentVisible } = useThinkContent()
+  const { fitView, getNodes, zoomIn, zoomOut } = useReactFlow()
   const getViewport = useViewport()
   // const { setProvider } = useYDoc()
 
@@ -122,10 +125,12 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
             if (access_token == null) {
               navigate('/')
             }
+            const data = JSON.stringify(payload)
+            let encoded = encodeURI(data)
             const result = await axios.post(
               'https://api.loudy.in/api/graphs/thoughts',
               {
-                data: payload,
+                data: encoded,
               },
               {
                 headers: {
@@ -184,7 +189,7 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
     }
     const user_id = result.data.id
     SetUserName(result.data.username)
-    console.log(userName)
+
     const nodeRealIDList: string[] = []
     const nodeIDList: number[] = []
     interface nodeLevel {
@@ -208,12 +213,18 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
       result.data.edges.forEach((item: InputEdge) => {
         if (item.source === node_level.Center) {
           node_level.Level1.push(item.target)
-        } else if (
+        }
+      })
+      result.data.edges.forEach((item: InputEdge) => {
+        if (
           node_level.Level1.includes(item.source) &&
           !node_level.Level2.includes(item.target)
         ) {
           node_level.Level2.push(item.target)
-        } else if (
+        }
+      })
+      result.data.edges.forEach((item: InputEdge) => {
+        if (
           node_level.Level2.includes(item.source) &&
           !node_level.Level3.includes(item.target)
         ) {
@@ -302,7 +313,8 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
   useEffect(() => {
     setTimeout(() => {
       setTimes(500)
-    }, 8000)
+      fitView({ duration: 800, maxZoom: 0.5 })
+    }, 3000)
   }, [times])
 
   useForceLayout({ strength, distance, times })
@@ -368,6 +380,7 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
     if (item_id == -1) return
     if (source == -1) return
 
+    console.log(nodes)
     const source_node = nodes.filter(
       (node) => node.id.split('_')[1] === source.toString()
     )[0]
@@ -406,6 +419,13 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
       setVisible(true)
     } else {
       window.location.reload()
+    }
+  }
+  const handlerContentVisible = () => {
+    if (!isContentVisible) {
+      setIsContentVisible(true)
+    } else {
+      setIsContentVisible(false)
     }
   }
 
@@ -513,7 +533,7 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
       // onPaneClick={onPaneClick}
       nodeOrigin={nodeOrigin}
       zoomOnDoubleClick={false}
-      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.png')] relative"
+      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.png')] relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
       defaultViewport={{
         x: typeof window !== 'undefined' ? window.innerWidth / 2 : 0,
@@ -531,6 +551,7 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
           <button
             title="發想互動"
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+            onClick={handlerContentVisible}
           >
             <img src={light_bulb} alt="" />
           </button>
@@ -567,6 +588,9 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
           </button>
         </div>
       </Panel>
+      <Panel position="bottom-center">
+        <ThinkContent />
+      </Panel>
       <Panel position="bottom-right">
         <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
           <button
@@ -580,6 +604,7 @@ function ReactFlowPro({ strength = -300, distance = 200 }: ExampleProps = {}) {
       {isVisible ? <Modal /> : <></>}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />
+      <MiniMap pannable zoomable />
     </ReactFlow>
   )
 }
@@ -592,7 +617,7 @@ function ReactFlowWrapper() {
       max: 0,
     },
     distance: {
-      value: 150,
+      value: 300,
       min: 0,
       max: 1000,
     },

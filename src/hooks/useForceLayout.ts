@@ -27,7 +27,7 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
 
 function useForceLayout({
   strength = -300,
-  distance = 200,
+  distance = 300,
   times = 0,
 }: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
@@ -51,6 +51,8 @@ function useForceLayout({
       const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
         (edge) => edge
       )
+      const center_x = window.innerWidth / 2
+      const center_y = window.innerHeight / 2
 
       const simulation = forceSimulation()
         .nodes(simulationNodes)
@@ -60,11 +62,11 @@ function useForceLayout({
           forceLink(simulationLinks)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .id((d: any) => d.id)
-            .strength(0.05)
+            .strength(1)
             .distance(distance)
         )
-        .force('x', forceX().x(0).strength(0.01))
-        .force('y', forceY().y(0).strength(0.01))
+        .force('x', forceX().x(center_x).strength(0.01))
+        .force('y', forceY().y(center_y).strength(0.01))
         .on('tick', () => {
           setNodes(
             simulationNodes.map((node) => ({
