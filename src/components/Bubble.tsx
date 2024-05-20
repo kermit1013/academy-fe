@@ -1,4 +1,4 @@
-import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
+import { KeyboardEvent, useCallback, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
 import axios from 'axios'

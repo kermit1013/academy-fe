@@ -166,7 +166,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [isInit, setIsInit] = useState(false)
   const [userName, SetUserName] = useState('')
   const navigate = useNavigate()
-
+  console.log(userName)
   useEffect(() => {
     getPersonData()
   }, [])
