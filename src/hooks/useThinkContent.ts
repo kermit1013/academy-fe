@@ -18,6 +18,7 @@ const useThinkContent = create<State & Actions>()(
     times: 60,
     setIsContentVisible: (status: boolean) =>
       set((state) => {
+        console.log(status)
         return { ...state, isContentVisible: status }
       }),
     setTimer: (timer: number | null) =>

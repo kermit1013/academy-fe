@@ -164,9 +164,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
   const [isInit, setIsInit] = useState(false)
-  const [userName, SetUserName] = useState('')
+
   const navigate = useNavigate()
-  console.log(userName)
   useEffect(() => {
     getPersonData()
   }, [])
@@ -188,7 +187,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       return
     }
     const user_id = result.data.id
-    SetUserName(result.data.username)
 
     const nodeRealIDList: string[] = []
     const nodeIDList: number[] = []

@@ -30,7 +30,7 @@ const Bubble = ({ data }: props) => {
 
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
-    if (node.data.category == null) {
+    if (node.data.id.includes('level2')) {
       setSelectBubble(node)
     }
   }

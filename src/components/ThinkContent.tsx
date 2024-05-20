@@ -29,10 +29,6 @@ const Thinking = ({ action_type }: props) => {
   const setEdges = useEdgesStateSynced()[1]
   const handlerNewBubble = useCallback(async () => {
     const data = select_bubble?.data
-    console.log(data)
-    if (data.category != null) {
-      return
-    }
     const access_token = localStorage.getItem('access_token')
     const origin_id = data.id.split('_')[1]
     const result = await axios.post(
@@ -112,24 +108,26 @@ const Thinking = ({ action_type }: props) => {
       const newNodeList = nodesList.concat(childNode)
       setNodes(newNodeList)
       setEdges((eds) => [...eds, childEdge])
+      setModifyData('')
       messageApi.info('已新增')
     }
   }, [select_bubble, modifyText])
 
-  const sentData = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter') {
-      if (select_bubble?.data.label == null) {
+  const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+      if (select_bubble == null) {
         messageApi.warning('請選擇一顆泡泡後在送出資料!')
         return
       }
       handlerNewBubble()
     }
   }
+
   const ActionType1 = () => {
     return (
       <>
         <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
-          {select_bubble?.data.label == null ? (
+          {select_bubble == null ? (
             <div className="text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
@@ -150,13 +148,12 @@ const Thinking = ({ action_type }: props) => {
         <div className="font-sans font-normal text-3xl">=</div>
         <div className="flex gap-2">
           <input
-            autoFocus
             type="text"
             placeholder="輸入..."
             value={modifyText}
             className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
             onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => sentData(e)}
+            onKeyDown={(e) => handlerKeyDown(e)}
           />
           <img src={icon_enter} alt="" />
         </div>
@@ -179,7 +176,7 @@ const Thinking = ({ action_type }: props) => {
         </div>
         <div className="font-sans font-normal text-3xl">+</div>
         <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
-          {select_bubble?.data.label == null ? (
+          {select_bubble == null ? (
             <div className="text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
@@ -194,7 +191,7 @@ const Thinking = ({ action_type }: props) => {
             value={modifyText}
             className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
             onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => sentData(e)}
+            onKeyDown={(e) => handlerKeyDown(e)}
           />
           <img src={icon_enter} alt="" />
         </div>
@@ -209,7 +206,7 @@ const Thinking = ({ action_type }: props) => {
         </div>
         <div className="font-sans font-normal text-3xl">+</div>
         <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
-          {select_bubble?.data.label == null ? (
+          {select_bubble == null ? (
             <div className="text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
@@ -236,7 +233,7 @@ const Thinking = ({ action_type }: props) => {
             value={modifyText}
             className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
             onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => sentData(e)}
+            onKeyDown={(e) => handlerKeyDown(e)}
           />
           <img src={icon_enter} alt="" />
         </div>
@@ -246,7 +243,7 @@ const Thinking = ({ action_type }: props) => {
 
   const handler_refresh_api = async () => {
     if (action_type === 1) {
-      const node = getNodes().filter((node) => node.data.category === null)
+      const node = getNodes().filter((node) => node.data.id.includes('level2'))
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data.label)
     } else if (action_type === 2) {
@@ -303,17 +300,25 @@ const ThinkDone = () => {
 const ThinkContent = () => {
   const [action_type, setActionType] = useState(1)
   const [times, setTimes] = useState(60)
-  const { isContentVisible, timer, setTimer } = useThinkContent()
-  const { setSelectBubble } = useBubble()
+  const { isContentVisible, setIsContentVisible, timer, setTimer } =
+    useThinkContent()
+  const { setSelectBubble, select_bubble } = useBubble()
+
   useEffect(() => {
-    const t = setInterval(() => {
-      setTimes((prev) => prev - 1)
-    }, 1000)
-    setTimer(t)
-    return () => {
-      clearInterval(t)
-    }
+    setSelectBubble(null)
   }, [])
+
+  useEffect(() => {
+    if (select_bubble != null) {
+      const t = setInterval(() => {
+        setTimes((prev) => prev - 1)
+      }, 1000)
+      setTimer(t)
+      return () => {
+        clearInterval(t)
+      }
+    }
+  }, [select_bubble])
 
   useEffect(() => {
     if (times === 0) {
@@ -321,22 +326,24 @@ const ThinkContent = () => {
       setTimeout(() => {
         setTimes(60)
         setSelectBubble(null)
-        const t = setInterval(() => {
-          console.log(times)
-          setTimes((prev) => prev - 1)
-        }, 1000)
-        setTimer(t)
       }, 3000)
     }
   }, [times])
 
   useEffect(() => {
+    setSelectBubble(null)
     setTimes(60)
   }, [action_type])
-
+  const handlerCloseContent = () => {
+    console.log('close')
+    setIsContentVisible(false)
+  }
   return isContentVisible ? (
     <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg flex flex-col rounded-2xl mb-12 relative">
-      <button className=" absolute -right-5 -top-5 h-6 w-6 text-sm rounded-full bg-white/30 border border-white hover:bg-white/40">
+      <button
+        onClick={() => handlerCloseContent()}
+        className=" absolute -right-5 -top-5 h-6 w-6 text-sm rounded-full bg-white/30 border border-white hover:bg-white/40"
+      >
         x
       </button>
       <div className="w-full h-7 flex justify-between">
