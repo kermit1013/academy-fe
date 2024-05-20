@@ -420,11 +420,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }
   }
   const handlerContentVisible = () => {
-    if (!isContentVisible) {
-      setIsContentVisible(true)
-    } else {
-      setIsContentVisible(false)
-    }
+    setIsContentVisible(true)
   }
 
   useEffect(() => {
@@ -432,7 +428,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     const user_id = localStorage.getItem('user_id')
 
     const nl_1 = nodes.map((node) => {
-      console.log(node)
       const node_class =
         node.id.includes('level0') && node.id.includes(`user${user_id}`)
           ? styles.node2_center
@@ -586,9 +581,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </button>
         </div>
       </Panel>
-      <Panel position="bottom-center">
-        <ThinkContent />
-      </Panel>
       <Panel position="bottom-right">
         <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
           <button
@@ -600,6 +592,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         </div>
       </Panel>
       {isVisible ? <Modal /> : <></>}
+      {isContentVisible ? <ThinkContent /> : <></>}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />
       <MiniMap pannable zoomable />

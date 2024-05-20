@@ -23,7 +23,7 @@ const Thinking = ({ action_type }: props) => {
   const { getNodes } = useReactFlow()
 
   const [messageApi, contextHolder] = message.useMessage()
-  const [modifyText, setModifyData] = useState('')
+  const [modifyText, setModifyText] = useState('')
 
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -108,12 +108,16 @@ const Thinking = ({ action_type }: props) => {
       const newNodeList = nodesList.concat(childNode)
       setNodes(newNodeList)
       setEdges((eds) => [...eds, childEdge])
-      setModifyData('')
+      setModifyText('')
       messageApi.info('已新增')
     }
   }, [select_bubble, modifyText])
 
-  const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setModifyText(e.target.value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === 'Enter' || e.code === 'NumpadEnter') {
       if (select_bubble == null) {
         messageApi.warning('請選擇一顆泡泡後在送出資料!')
@@ -146,17 +150,6 @@ const Thinking = ({ action_type }: props) => {
           />
         </div>
         <div className="font-sans font-normal text-3xl">=</div>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="輸入..."
-            value={modifyText}
-            className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
-            onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => handlerKeyDown(e)}
-          />
-          <img src={icon_enter} alt="" />
-        </div>
       </>
     )
   }
@@ -183,21 +176,10 @@ const Thinking = ({ action_type }: props) => {
           )}
         </div>
         <div className="font-sans font-normal text-3xl">=</div>
-        <div className="flex gap-2">
-          <input
-            autoFocus
-            type="text"
-            placeholder="輸入..."
-            value={modifyText}
-            className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
-            onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => handlerKeyDown(e)}
-          />
-          <img src={icon_enter} alt="" />
-        </div>
       </>
     )
   }
+
   const ActionType3 = () => {
     return (
       <>
@@ -225,18 +207,6 @@ const Thinking = ({ action_type }: props) => {
           />
         </div>
         <div className="font-sans font-normal text-3xl">=</div>
-        <div className="flex gap-2">
-          <input
-            autoFocus
-            type="text"
-            placeholder="輸入..."
-            value={modifyText}
-            className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white text-base rounded-lg focus:outline-none"
-            onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => handlerKeyDown(e)}
-          />
-          <img src={icon_enter} alt="" />
-        </div>
       </>
     )
   }
@@ -274,7 +244,7 @@ const Thinking = ({ action_type }: props) => {
   }, [action_type])
 
   return (
-    <div className="w-full h-full  flex justify-center items-center text-white text-base font-semibold gap-6 pl-16">
+    <div className="w-full h-full  flex justify-center items-center text-white text-base font-semibold gap-6 pl-16 ">
       {contextHolder}
       {action_type == 1 ? (
         <ActionType1 />
@@ -285,6 +255,17 @@ const Thinking = ({ action_type }: props) => {
       ) : (
         <></>
       )}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={modifyText}
+          placeholder="輸入..."
+          className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white  text-center  text-base rounded-lg focus:outline-none"
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        <img src={icon_enter} alt="" />
+      </div>
     </div>
   )
 }
@@ -300,8 +281,7 @@ const ThinkDone = () => {
 const ThinkContent = () => {
   const [action_type, setActionType] = useState(1)
   const [times, setTimes] = useState(60)
-  const { isContentVisible, setIsContentVisible, timer, setTimer } =
-    useThinkContent()
+  const { setIsContentVisible, timer, setTimer } = useThinkContent()
   const { setSelectBubble, select_bubble } = useBubble()
 
   useEffect(() => {
@@ -338,8 +318,8 @@ const ThinkContent = () => {
     console.log('close')
     setIsContentVisible(false)
   }
-  return isContentVisible ? (
-    <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg flex flex-col rounded-2xl mb-12 relative">
+  return (
+    <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg flex flex-col rounded-2xl mb-12 z-20 absolute bottom-10 left-1/3">
       <button
         onClick={() => handlerCloseContent()}
         className=" absolute -right-5 -top-5 h-6 w-6 text-sm rounded-full bg-white/30 border border-white hover:bg-white/40"
@@ -391,8 +371,6 @@ const ThinkContent = () => {
         {times ? <Thinking action_type={action_type} /> : <ThinkDone />}
       </div>
     </div>
-  ) : (
-    <div></div>
   )
 }
 
