@@ -264,7 +264,7 @@ const Thinking = ({ action_type }: props) => {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
-        <img src={icon_enter} alt="" />
+        <img onClick={() => handlerNewBubble()} src={icon_enter} alt="" />
       </div>
     </div>
   )
