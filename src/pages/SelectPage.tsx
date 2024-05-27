@@ -147,7 +147,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             )
             if (result.data === 200) {
               window.Tally.closePopup('n0x5Z6')
-              getPersonData()
+              window.location.reload()
             }
           },
         })
