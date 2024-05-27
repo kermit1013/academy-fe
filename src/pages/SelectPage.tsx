@@ -435,7 +435,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const logoutReferenceThink = () => {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
-    window.location.reload()
+
+    getPersonData()
+
+    setReferenceUserId('')
+    setTimes(0)
   }
   useEffect(() => {
     if (!isInit) return
@@ -525,7 +529,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
     setNodes(selectedNodes)
   }
-  const [hoverIndex, setHoverIndex] = useState(0)
+  const [hoverIndex, setHoverIndex] = useState(-1)
   const selectTypeInHoverIn = (index: number) => {
     setHoverIndex(index)
   }
