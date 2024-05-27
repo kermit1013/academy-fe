@@ -421,9 +421,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }, [item_id, source, label])
 
   const handlerConnect = () => {
-    setCanReferenced(false)
-    localStorage.removeItem('reference_user_id')
-    setReferenceUserId('')
+    logoutReferenceThink()
     if (!isConnect) {
       setVisible(true)
     } else {
@@ -431,12 +429,17 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }
   }
   const handlerContentVisible = () => {
+    logoutReferenceThink()
     setIsContentVisible(true)
+  }
+  const logoutReferenceThink = () => {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
+    setEdges([])
+    setNodes([])
+    getPersonData()
     setReferenceUserId('')
   }
-
   useEffect(() => {
     if (!isInit) return
     const user_id = localStorage.getItem('user_id')
@@ -664,13 +667,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }
 
   const handlerSetting = () => {
-    localStorage.removeItem('reference_user_id')
-    setReferenceUserId('')
+    logoutReferenceThink()
   }
   const handlerCloseReferenceThink = () => {
-    setCanReferenced(false)
-    localStorage.removeItem('reference_user_id')
-    setReferenceUserId('')
+    logoutReferenceThink()
   }
   return (
     <ReactFlow
