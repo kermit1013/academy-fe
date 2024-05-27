@@ -28,6 +28,8 @@ const Bubble = ({ data }: props) => {
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
 
+  const canEditButtonWhenReference = localStorage.getItem('reference_user_id')
+
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
     if (node.data.id.includes('level2')) {
@@ -301,7 +303,7 @@ const Bubble = ({ data }: props) => {
           </div>
         )}
       </NodeToolbar> */}
-      {data.category ? (
+      {data.category || canEditButtonWhenReference !== '' ? (
         <></>
       ) : (
         <NodeToolbar isVisible={data.isVisible} position={Position.Left}>

@@ -6,6 +6,7 @@ import ReactFlow, {
   NodeOrigin,
   NodeMouseHandler,
   useNodesState,
+  useEdgesState,
   useReactFlow,
   MiniMap,
   useViewport,
@@ -31,7 +32,10 @@ import main_logo from '../../public/main_page_logo.svg'
 import light_bulb from '../../public/light_bulb.svg'
 import chat_bubble from '../../public/chat_bubble.svg'
 import setting from '../../public/setting.svg'
+import change_think from '../../public/change_think.svg'
 import disconnect from '../../public/disconnect.svg'
+import prev_button from '../../public/prev_button.svg'
+import next_button from '../../public/next_button.svg'
 import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
 
@@ -99,6 +103,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [myNodeList, setMyNodeList] = useNodesState([])
+  const [myEdgeList, setMyEdgeList] = useEdgesState([])
   const {
     ydoc,
     provider,
@@ -284,6 +289,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       }
     })
     setEdges(edges.concat(edgeList))
+    setMyEdgeList(edgeList)
     localStorage.setItem('user_id', user_id)
     localStorage.setItem('user_name', result.data.username)
   }
@@ -373,12 +379,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     },
     [nodes, edges]
   )
+  const [canReferenced, setCanReferenced] = useState(false)
 
   useEffect(() => {
     if (item_id == -1) return
     if (source == -1) return
 
-    console.log(nodes)
     const source_node = nodes.filter(
       (node) => node.id.split('_')[1] === source.toString()
     )[0]
@@ -413,6 +419,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }, [item_id, source, label])
 
   const handlerConnect = () => {
+    setCanReferenced(false)
+    localStorage.removeItem('reference_user_id')
     if (!isConnect) {
       setVisible(true)
     } else {
@@ -421,6 +429,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }
   const handlerContentVisible = () => {
     setIsContentVisible(true)
+    setCanReferenced(false)
+    localStorage.removeItem('reference_user_id')
   }
 
   useEffect(() => {
@@ -511,7 +521,150 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
     setNodes(selectedNodes)
   }
+  const [hoverIndex, setHoverIndex] = useState(0)
+  const selectTypeInHoverIn = (index: number) => {
+    setHoverIndex(index)
+  }
 
+  const getReferencedUserData = async (prev: boolean) => {
+    const access_token = localStorage.getItem('access_token')
+    let url = 'https://api.loudy.in/api/users'
+    if (prev) {
+      const user_id = localStorage.getItem('reference_user_id')
+      if (user_id === null) {
+        url = 'https://api.loudy.in/api/users'
+      } else {
+        url = `https://api.loudy.in/api/users/${user_id}`
+      }
+    }
+    const result = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+    if (result.status === 200) {
+      const reference_user_id = result.data.id
+      localStorage.setItem('reference_user_id', reference_user_id)
+      const nodeRealIDList: string[] = []
+      const nodeIDList: number[] = []
+      interface nodeLevel {
+        Center: number
+        Level1: number[]
+        Level2: number[]
+        Level3: number[]
+      }
+      const node_level: nodeLevel = {
+        Center: 0,
+        Level1: [],
+        Level2: [],
+        Level3: [],
+      }
+      const getNodeLevel = () => {
+        const centerNode = result.data.nodes.filter(
+          (item: InputNode) => item.category === 'ABOUT'
+        )[0] as InputNode
+
+        node_level.Center = centerNode.id
+        result.data.edges.forEach((item: InputEdge) => {
+          if (item.source === node_level.Center) {
+            node_level.Level1.push(item.target)
+          }
+        })
+        result.data.edges.forEach((item: InputEdge) => {
+          if (
+            node_level.Level1.includes(item.source) &&
+            !node_level.Level2.includes(item.target)
+          ) {
+            node_level.Level2.push(item.target)
+          }
+        })
+        result.data.edges.forEach((item: InputEdge) => {
+          if (
+            node_level.Level2.includes(item.source) &&
+            !node_level.Level3.includes(item.target)
+          ) {
+            node_level.Level3.push(item.target)
+          }
+        })
+      }
+      getNodeLevel()
+      const nodeList = result.data.nodes.map((item: InputNode) => {
+        const Id =
+          node_level.Center === item.id
+            ? `level0_${item.id}_user${reference_user_id}`
+            : node_level.Level1.includes(item.id)
+            ? `level1_${item.id}_user${reference_user_id}`
+            : node_level.Level2.includes(item.id)
+            ? `level2_${item.id}_user${reference_user_id}`
+            : node_level.Level3.includes(item.id)
+            ? `level3_${item.id}_user${reference_user_id}`
+            : `level4_${item.id}_user${reference_user_id}`
+        const node_class =
+          node_level.Center === item.id
+            ? styles.node1_center
+            : node_level.Level1.includes(item.id)
+            ? styles.node1_level1_node
+            : node_level.Level2.includes(item.id)
+            ? styles.node1_level2_node
+            : node_level.Level3.includes(item.id)
+            ? styles.node1_level3_node
+            : styles.node1_level4_node
+
+        nodeRealIDList.push(Id)
+        nodeIDList.push(item.id)
+        return {
+          id: Id,
+          type: 'bubble',
+          position: { x: 0, y: 0 },
+          data: {
+            id: Id,
+            label:
+              item.category === 'ABOUT'
+                ? result.data.username
+                : item.data.label,
+            position: { x: 0, y: 0 },
+            category: item.category,
+          },
+          className: node_class,
+        }
+      })
+      setNodes(nodeList)
+      setMyNodeList(nodeList)
+      const edgeList = result.data.edges.map((item: InputEdge) => {
+        const source_index = nodeIDList.indexOf(item.source)
+        const source = nodeRealIDList[source_index]
+        const target_index = nodeIDList.indexOf(item.target)
+        const target = nodeRealIDList[target_index]
+        return {
+          id: `${source}->${target}_user${reference_user_id}`,
+          source: source,
+          target: target,
+          type: 'straight',
+        }
+      })
+      setEdges(edgeList)
+    }
+    //   {
+    //     "id": 10,
+    //     "username": "Jojo",
+    //     "gender": "",
+    //     "email": "jojo@gmail.con",
+    //     "school": "",
+    //     "grade": "",
+    //     "is_public": true,
+    //     "nodes": [ ],
+    //     "edges": [  ]
+    // }
+    setTimes(0)
+  }
+
+  const handlerSetting = () => {
+    localStorage.removeItem('reference_user_id')
+  }
+  const handlerCloseReferenceThink = () => {
+    setCanReferenced(false)
+    localStorage.removeItem('reference_user_id')
+  }
   return (
     <ReactFlow
       nodes={nodes}
@@ -543,14 +696,41 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <div className="flex gap-3">
           <button
             title="發想互動"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            onMouseEnter={() => selectTypeInHoverIn(0)}
+            onMouseLeave={() => setHoverIndex(-1)}
             onClick={handlerContentVisible}
           >
             <img src={light_bulb} alt="" />
+            {hoverIndex == 0 ? (
+              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+                發想互動
+              </p>
+            ) : (
+              <></>
+            )}
+          </button>
+          <button
+            title="畫廊漫步"
+            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            onMouseEnter={() => selectTypeInHoverIn(1)}
+            onMouseLeave={() => setHoverIndex(-1)}
+            onClick={() => setCanReferenced(true)}
+          >
+            <img src={change_think} alt="" />
+            {hoverIndex == 1 ? (
+              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+                畫廊漫步
+              </p>
+            ) : (
+              <></>
+            )}
           </button>
           <button
             title={!isConnect ? '連線' : '停止連線'}
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center"
+            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
+            onMouseEnter={() => selectTypeInHoverIn(2)}
+            onMouseLeave={() => setHoverIndex(-1)}
             onClick={handlerConnect}
           >
             {!isConnect ? (
@@ -558,41 +738,90 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             ) : (
               <img src={disconnect} alt="" />
             )}
+            {hoverIndex == 2 ? (
+              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+                {!isConnect ? '連線' : '停止連線'}
+              </p>
+            ) : (
+              <></>
+            )}
           </button>
           <button
             title="設定"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center"
+            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
+            onMouseEnter={() => selectTypeInHoverIn(3)}
+            onMouseLeave={() => setHoverIndex(-1)}
+            onClick={() => handlerSetting}
           >
             <img src={setting} alt="" />
+            {hoverIndex == 3 ? (
+              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+                設定
+              </p>
+            ) : (
+              <></>
+            )}
           </button>
         </div>
       </Panel>
 
       <Panel position="bottom-left">
-        <div className="bg-white/30 flex gap-1 text-white w-fit rounded-lg items-center justify-center h-7">
-          <button className="p-2" onClick={() => zoomOut({ duration: 800 })}>
-            -
-          </button>
-          <p className="border-l border-r border-white px-2">
-            {Math.floor(getViewport.zoom * 100)}%
-          </p>
-          <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
-            +
-          </button>
-        </div>
-      </Panel>
-      <Panel position="bottom-right">
-        <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
-          <button
-            className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
-            onClick={handleSelectAll}
-          >
-            Select Mine
-          </button>
-        </div>
+        <data className="flex justify-center items-end gap-2">
+          <div className="bg-white/30 flex gap-1 text-white w-fit rounded-lg items-center justify-center h-7">
+            <button className="p-2" onClick={() => zoomOut({ duration: 800 })}>
+              -
+            </button>
+            <p className="border-l border-r border-white px-2">
+              {Math.floor(getViewport.zoom * 100)}%
+            </p>
+            <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
+              +
+            </button>
+          </div>
+          <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
+            <button
+              className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
+              onClick={handleSelectAll}
+            >
+              Select Mine
+            </button>
+          </div>
+        </data>
       </Panel>
       {isVisible ? <Modal /> : <></>}
-      {isContentVisible ? <ThinkContent /> : <></>}
+      {isContentVisible && !isConnect ? <ThinkContent /> : <></>}
+      {canReferenced ? (
+        <div className="flex w-full h-full p-4 flex-col justify-center items-center">
+          <div className="flex w-full h-full justify-between items-center ">
+            <button
+              onClick={() => getReferencedUserData(true)}
+              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+            >
+              <img src={prev_button} alt="" />
+            </button>
+            <button
+              onClick={() => getReferencedUserData(false)}
+              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+            >
+              <img src={next_button} alt="" />
+            </button>
+          </div>
+          <div className=" z-10 w-fit h-10 rounded bg-white/20 flex items-center justify-center px-2 py-1">
+            <p className="text-white text-[13px]">
+              按左右鍵可以逛逛他人的心智圖
+            </p>
+            <p className="border-l border-white w-1 h-full mx-2"></p>
+            <button
+              className="hover:scale-110"
+              onClick={handlerCloseReferenceThink}
+            >
+              <img src={disconnect} alt="" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <> </>
+      )}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />
       <MiniMap pannable zoomable />
