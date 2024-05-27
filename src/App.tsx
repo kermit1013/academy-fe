@@ -231,7 +231,7 @@ const Login = () => {
   const { isRegister } = useLogin()
 
   return (
-    <div className="w-screen h-screen bg-[url('/public/CoralBG.png')] relative">
+    <div className="w-screen h-screen bg-[url('/public/CoralBG.webp')] relative">
       <div className="flex w-screen h-screen pt-[115px] p-[50px] lg:p-[134px] bg-repeat-y justify-center items-center bg-contain">
         <div className="w-1/2 flex items-center flex-col gap-4 justify-center h-full ">
           <div className=" w-[400px] h-20">

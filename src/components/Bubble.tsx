@@ -1,4 +1,4 @@
-import { KeyboardEvent, useCallback, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
 import axios from 'axios'
@@ -6,6 +6,9 @@ import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import { message } from 'antd'
 import useBubble from '../hooks/useBubble'
+import useReferenceThink from '../hooks/useReferenceThink'
+import connect_discord from '../../public/connect_discord.svg'
+import delete_bubble from '../../public/delete_bubble.svg'
 
 interface props {
   data: {
@@ -28,8 +31,7 @@ const Bubble = ({ data }: props) => {
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
 
-  const canEditButtonWhenReference = localStorage.getItem('reference_user_id')
-
+  const { ReferenceUserId } = useReferenceThink()
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
     if (node.data.id.includes('level2')) {
@@ -303,38 +305,40 @@ const Bubble = ({ data }: props) => {
           </div>
         )}
       </NodeToolbar> */}
-      {data.category || canEditButtonWhenReference !== '' ? (
+      {data.category ? (
         <></>
-      ) : (
+      ) : ReferenceUserId === '' ? (
         <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
           <button
             className=" bg-white/40 w-6 h-6 rounded-full absolute -top-3 -left-5 flex items-center justify-center"
             onClick={() => handlerRemoveBubble()}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.82667 5.99986L9.596 11.9999M6.404 11.9999L6.17333 5.99986M12.8187 3.85986C13.0467 3.89453 13.2733 3.93119 13.5 3.97053M12.8187 3.86053L12.1067 13.1152C12.0776 13.492 11.9074 13.844 11.63 14.1007C11.3527 14.3574 10.9886 14.5 10.6107 14.4999H5.38933C5.0114 14.5 4.64735 14.3574 4.36999 14.1007C4.09262 13.844 3.92239 13.492 3.89333 13.1152L3.18133 3.85986M12.8187 3.85986C12.0492 3.74354 11.2758 3.65526 10.5 3.59519M2.5 3.96986C2.72667 3.93053 2.95333 3.89386 3.18133 3.85986M3.18133 3.85986C3.95076 3.74354 4.72416 3.65526 5.5 3.59519M10.5 3.59519V2.98453C10.5 2.19786 9.89333 1.54186 9.10667 1.51719C8.36908 1.49362 7.63092 1.49362 6.89333 1.51719C6.10667 1.54186 5.5 2.19853 5.5 2.98453V3.59519M10.5 3.59519C8.83581 3.46658 7.16419 3.46658 5.5 3.59519"
-                stroke="white"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <img src={delete_bubble} alt="" />
           </button>
         </NodeToolbar>
+      ) : (
+        <></>
       )}
       {data.id.indexOf('level3') ? (
+        ReferenceUserId === '' ? (
+          <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+            <button
+              className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1"
+              onClick={() => handlerNewBubble()}
+            >
+              +
+            </button>
+          </NodeToolbar>
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      )}
+      {ReferenceUserId !== '' ? (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-          <button
-            className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1"
-            onClick={() => handlerNewBubble()}
-          >
-            +
+          <button className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1 flex justify-center items-center">
+            <img src={connect_discord} alt="" />
           </button>
         </NodeToolbar>
       ) : (

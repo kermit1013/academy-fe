@@ -38,6 +38,7 @@ import prev_button from '../../public/prev_button.svg'
 import next_button from '../../public/next_button.svg'
 import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
+import useReferenceThink from '../hooks/useReferenceThink'
 
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
@@ -71,7 +72,7 @@ interface s {
 }
 const ConnectProcess = ({ status }: s) => {
   return status ? (
-    <div className="w-screen h-screen bg-[url('/public/CoralBG.png')] relative flex justify-center items-center z-50">
+    <div className="w-screen h-screen bg-[url('/public/CoralBG.webp')] relative flex justify-center items-center z-50">
       <div className="w-[946px] h-[91px] rounded-full border-2 border-white text-white flex gap-4 justify-center items-center text-2xl font-bold">
         <svg
           width="55"
@@ -115,6 +116,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   } = useYDoc()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
   const { fitView, getNodes, zoomIn, zoomOut } = useReactFlow()
+  const { setReferenceUserId } = useReferenceThink()
   const getViewport = useViewport()
   // const { setProvider } = useYDoc()
 
@@ -421,6 +423,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const handlerConnect = () => {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
+    setReferenceUserId('')
     if (!isConnect) {
       setVisible(true)
     } else {
@@ -431,6 +434,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setIsContentVisible(true)
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
+    setReferenceUserId('')
   }
 
   useEffect(() => {
@@ -545,6 +549,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     if (result.status === 200) {
       const reference_user_id = result.data.id
       localStorage.setItem('reference_user_id', reference_user_id)
+      setReferenceUserId(reference_user_id.toString())
       const nodeRealIDList: string[] = []
       const nodeIDList: number[] = []
       interface nodeLevel {
@@ -660,10 +665,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   const handlerSetting = () => {
     localStorage.removeItem('reference_user_id')
+    setReferenceUserId('')
   }
   const handlerCloseReferenceThink = () => {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
+    setReferenceUserId('')
   }
   return (
     <ReactFlow
@@ -679,7 +686,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       // onPaneClick={onPaneClick}
       nodeOrigin={nodeOrigin}
       zoomOnDoubleClick={false}
-      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.png')] relative font-serif"
+      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
       defaultViewport={{
         x: typeof window !== 'undefined' ? window.innerWidth / 2 : 0,

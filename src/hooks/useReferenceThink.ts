@@ -14,6 +14,7 @@ const useReferenceThink = create<State & Actions>()(
     ReferenceUserId: '',
     setReferenceUserId: (user_id: string) =>
       set((state) => {
+        console.log(user_id)
         return { ...state, ReferenceUserId: user_id }
       }),
   }))
