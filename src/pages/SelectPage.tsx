@@ -435,10 +435,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const logoutReferenceThink = () => {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
-    setEdges([])
-    setNodes([])
-    getPersonData()
-    setReferenceUserId('')
+    window.location.reload()
   }
   useEffect(() => {
     if (!isInit) return
@@ -541,7 +538,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       if (user_id === null) {
         url = 'https://api.loudy.in/api/users'
       } else {
-        url = `https://api.loudy.in/api/users/${user_id}`
+        url = `https://api.loudy.in/api/users/?user_id=${user_id}`
       }
     }
     const result = await axios.get(url, {

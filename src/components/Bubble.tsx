@@ -347,15 +347,19 @@ const Bubble = ({ data }: props) => {
 
       {edit_bubble_id == data.id ? (
         data.category == null ? (
-          <textarea
-            maxLength={20}
-            className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
-            value={modifyData}
-            autoFocus
-            placeholder="請輸入您的想法"
-            onChange={(e) => setModifyData(e.target.value)}
-            onKeyDown={(e) => handlerKeyDown(e)}
-          />
+          ReferenceUserId === '' ? (
+            <textarea
+              maxLength={20}
+              className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
+              value={modifyData}
+              autoFocus
+              placeholder="請輸入您的想法"
+              onChange={(e) => setModifyData(e.target.value)}
+              onKeyDown={(e) => handlerKeyDown(e)}
+            />
+          ) : (
+            <div>{data.label}</div>
+          )
         ) : (
           <div>{data.label}</div>
         )
