@@ -510,7 +510,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     const myNodes = node_list.map((node) => {
       return { ...node, selected: false }
     })
-
+    console.log(myEdgeList)
     const myNodeIdList = myNodeList.map((node) => node.id)
     const selectedNodes = myNodes.map((node) => {
       if (myNodeIdList.includes(node.id)) {
