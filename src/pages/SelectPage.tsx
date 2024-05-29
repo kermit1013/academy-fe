@@ -103,6 +103,7 @@ declare global {
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
+  const [cursors, onMouseMove] = useCursorStateSynced()
   const [myNodeList, setMyNodeList] = useNodesState([])
   const [myEdgeList, setMyEdgeList] = useEdgesState([])
   const {
@@ -155,6 +156,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }
     document.body.appendChild(script)
 
+    getPersonData()
+    initProvider()
+    setIsInit(true)
+
     return () => {
       if (window.Tally) {
         window.Tally.closePopup('n0x5Z6')
@@ -164,18 +169,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }
   }, [])
 
-  const [cursors, onMouseMove] = useCursorStateSynced()
-
   const { node_list, edge_list, setNode, setEdge } = useBubble()
-
+  const [isReferenceThinkLoding, setIsReferenceThinkLoding] = useState(false)
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
   const [isInit, setIsInit] = useState(false)
 
   const navigate = useNavigate()
-  useEffect(() => {
-    getPersonData()
-  }, [])
 
   const getPersonData = async () => {
     const access_token = localStorage.getItem('access_token')
@@ -183,12 +183,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       navigate('/')
       return
     }
+
     const result = await axios.get('https://api.loudy.in/api/users/me', {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
     })
-
+    console.log(result)
     if (result.status === 401) {
       navigate('/')
       return
@@ -237,6 +238,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         }
       })
     }
+    console.log(node_level)
     getNodeLevel()
     const nodeList = result.data.nodes.map((item: InputNode) => {
       const Id =
@@ -276,8 +278,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         className: node_class,
       }
     })
-    setNodes(nodes.concat(nodeList))
-    setMyNodeList(nodeList)
+
     const edgeList = result.data.edges.map((item: InputEdge) => {
       const source_index = nodeIDList.indexOf(item.source)
       const source = nodeRealIDList[source_index]
@@ -290,10 +291,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         type: 'straight',
       }
     })
-    setEdges(edges.concat(edgeList))
-    setMyEdgeList(edgeList)
-    localStorage.setItem('user_id', user_id)
-    localStorage.setItem('user_name', result.data.username)
+    setTimeout(() => {
+      setNodes(nodeList)
+      setMyNodeList(nodeList)
+      setEdges(edgeList)
+      setMyEdgeList(edgeList)
+      localStorage.setItem('user_id', user_id)
+      localStorage.setItem('user_name', result.data.username)
+    }, 1000)
   }
 
   // const InitBubbles = () => {
@@ -304,17 +309,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   // }
 
   useEffect(() => {
-    initProvider()
-  }, [])
-  useEffect(() => {
     if (isInit) return
 
     getPersonData()
   }, [ydoc, provider])
-
-  useEffect(() => {
-    setIsInit(true)
-  }, [])
 
   useEffect(() => {
     setTimeout(() => {
@@ -436,6 +434,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setCanReferenced(false)
     localStorage.removeItem('reference_user_id')
 
+    setNodes([])
+    setEdges([])
+    setMyNodeList([])
+    setMyEdgeList([])
     getPersonData()
 
     setReferenceUserId('')
@@ -534,138 +536,140 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setHoverIndex(index)
   }
 
-  const getReferencedUserData = async (prev: boolean) => {
-    const access_token = localStorage.getItem('access_token')
-    let url = 'https://api.loudy.in/api/users'
-    if (prev) {
-      const user_id = localStorage.getItem('reference_user_id')
-      if (user_id === null) {
-        url = 'https://api.loudy.in/api/users'
-      } else {
-        url = `https://api.loudy.in/api/users/?user_id=${user_id}`
+  const getReferencedUserData = useCallback(
+    async (prev: boolean) => {
+      console.log(isReferenceThinkLoding)
+      if (isReferenceThinkLoding) return
+      setIsReferenceThinkLoding(true)
+      const access_token = localStorage.getItem('access_token')
+      let url = 'https://api.loudy.in/api/users'
+      if (prev) {
+        const user_id = localStorage.getItem('reference_user_id')
+        if (user_id === null) {
+          url = 'https://api.loudy.in/api/users'
+        } else {
+          url = `https://api.loudy.in/api/users/?user_id=28`
+        }
       }
-    }
-    const result = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    })
-    if (result.status === 200) {
-      const reference_user_id = result.data.id
-      localStorage.setItem('reference_user_id', reference_user_id)
-      setReferenceUserId(reference_user_id.toString())
-      const nodeRealIDList: string[] = []
-      const nodeIDList: number[] = []
-      interface nodeLevel {
-        Center: number
-        Level1: number[]
-        Level2: number[]
-        Level3: number[]
-      }
-      const node_level: nodeLevel = {
-        Center: 0,
-        Level1: [],
-        Level2: [],
-        Level3: [],
-      }
-      const getNodeLevel = () => {
-        const centerNode = result.data.nodes.filter(
-          (item: InputNode) => item.category === 'ABOUT'
-        )[0] as InputNode
 
-        node_level.Center = centerNode.id
-        result.data.edges.forEach((item: InputEdge) => {
-          if (item.source === node_level.Center) {
-            node_level.Level1.push(item.target)
-          }
-        })
-        result.data.edges.forEach((item: InputEdge) => {
-          if (
-            node_level.Level1.includes(item.source) &&
-            !node_level.Level2.includes(item.target)
-          ) {
-            node_level.Level2.push(item.target)
-          }
-        })
-        result.data.edges.forEach((item: InputEdge) => {
-          if (
-            node_level.Level2.includes(item.source) &&
-            !node_level.Level3.includes(item.target)
-          ) {
-            node_level.Level3.push(item.target)
-          }
-        })
-      }
-      getNodeLevel()
-      const nodeList = result.data.nodes.map((item: InputNode) => {
-        const Id =
-          node_level.Center === item.id
-            ? `level0_${item.id}_user${reference_user_id}`
-            : node_level.Level1.includes(item.id)
-            ? `level1_${item.id}_user${reference_user_id}`
-            : node_level.Level2.includes(item.id)
-            ? `level2_${item.id}_user${reference_user_id}`
-            : node_level.Level3.includes(item.id)
-            ? `level3_${item.id}_user${reference_user_id}`
-            : `level4_${item.id}_user${reference_user_id}`
-        const node_class =
-          node_level.Center === item.id
-            ? styles.node1_center
-            : node_level.Level1.includes(item.id)
-            ? styles.node1_level1_node
-            : node_level.Level2.includes(item.id)
-            ? styles.node1_level2_node
-            : node_level.Level3.includes(item.id)
-            ? styles.node1_level3_node
-            : styles.node1_level4_node
-
-        nodeRealIDList.push(Id)
-        nodeIDList.push(item.id)
-        return {
-          id: Id,
-          type: 'bubble',
-          position: { x: 0, y: 0 },
-          data: {
-            id: Id,
-            label:
-              item.category === 'ABOUT'
-                ? result.data.username
-                : item.data.label,
-            position: { x: 0, y: 0 },
-            category: item.category,
+      try {
+        const result = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
           },
-          className: node_class,
+        })
+        if (result.status === 200) {
+          const reference_user_id = result.data.id
+          localStorage.setItem('reference_user_id', reference_user_id)
+          setReferenceUserId(reference_user_id.toString())
+          const nodeRealIDList: string[] = []
+          const nodeIDList: number[] = []
+          interface nodeLevel {
+            Center: number
+            Level1: number[]
+            Level2: number[]
+            Level3: number[]
+          }
+          const node_level: nodeLevel = {
+            Center: 0,
+            Level1: [],
+            Level2: [],
+            Level3: [],
+          }
+          const getNodeLevel = () => {
+            const centerNode = result.data.nodes.filter(
+              (item: InputNode) => item.category === 'ABOUT'
+            )[0] as InputNode
+
+            node_level.Center = centerNode.id
+            result.data.edges.forEach((item: InputEdge) => {
+              if (item.source === node_level.Center) {
+                node_level.Level1.push(item.target)
+              }
+            })
+            result.data.edges.forEach((item: InputEdge) => {
+              if (
+                node_level.Level1.includes(item.source) &&
+                !node_level.Level2.includes(item.target)
+              ) {
+                node_level.Level2.push(item.target)
+              }
+            })
+            result.data.edges.forEach((item: InputEdge) => {
+              if (
+                node_level.Level2.includes(item.source) &&
+                !node_level.Level3.includes(item.target)
+              ) {
+                node_level.Level3.push(item.target)
+              }
+            })
+          }
+          getNodeLevel()
+          const nodeList = result.data.nodes.map((item: InputNode) => {
+            const Id =
+              node_level.Center === item.id
+                ? `level0_${item.id}_user${reference_user_id}`
+                : node_level.Level1.includes(item.id)
+                ? `level1_${item.id}_user${reference_user_id}`
+                : node_level.Level2.includes(item.id)
+                ? `level2_${item.id}_user${reference_user_id}`
+                : node_level.Level3.includes(item.id)
+                ? `level3_${item.id}_user${reference_user_id}`
+                : `level4_${item.id}_user${reference_user_id}`
+            const node_class =
+              node_level.Center === item.id
+                ? styles.node1_center
+                : node_level.Level1.includes(item.id)
+                ? styles.node1_level1_node
+                : node_level.Level2.includes(item.id)
+                ? styles.node1_level2_node
+                : node_level.Level3.includes(item.id)
+                ? styles.node1_level3_node
+                : styles.node1_level4_node
+
+            nodeRealIDList.push(Id)
+            nodeIDList.push(item.id)
+            return {
+              id: Id,
+              type: 'bubble',
+              position: { x: 0, y: 0 },
+              data: {
+                id: Id,
+                label:
+                  item.category === 'ABOUT'
+                    ? result.data.username
+                    : item.data.label,
+                position: { x: 0, y: 0 },
+                category: item.category,
+              },
+              className: node_class,
+            }
+          })
+          await setNodes(nodeList)
+          await setMyNodeList(nodeList)
+          const edgeList = result.data.edges.map((item: InputEdge) => {
+            const source_index = nodeIDList.indexOf(item.source)
+            const source = nodeRealIDList[source_index]
+            const target_index = nodeIDList.indexOf(item.target)
+            const target = nodeRealIDList[target_index]
+            return {
+              id: `${source}->${target}_user${reference_user_id}`,
+              source: source,
+              target: target,
+              type: 'straight',
+            }
+          })
+          await setEdges(edgeList)
+          setIsReferenceThinkLoding(false)
         }
-      })
-      setNodes(nodeList)
-      setMyNodeList(nodeList)
-      const edgeList = result.data.edges.map((item: InputEdge) => {
-        const source_index = nodeIDList.indexOf(item.source)
-        const source = nodeRealIDList[source_index]
-        const target_index = nodeIDList.indexOf(item.target)
-        const target = nodeRealIDList[target_index]
-        return {
-          id: `${source}->${target}_user${reference_user_id}`,
-          source: source,
-          target: target,
-          type: 'straight',
-        }
-      })
-      setEdges(edgeList)
-    }
-    //   {
-    //     "id": 10,
-    //     "username": "Jojo",
-    //     "gender": "",
-    //     "email": "jojo@gmail.con",
-    //     "school": "",
-    //     "grade": "",
-    //     "is_public": true,
-    //     "nodes": [ ],
-    //     "edges": [  ]
-    // }
-    setTimes(0)
-  }
+      } catch (error) {
+        console.log(error)
+      }
+
+      setTimes(0)
+    },
+    [isReferenceThinkLoding]
+  )
 
   const handlerSetting = () => {
     logoutReferenceThink()

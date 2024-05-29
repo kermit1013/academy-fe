@@ -46,6 +46,7 @@ const useYDoc = create<State & Actions>()(
         const ydoc = new Doc()
 
         const roomName = generateRandomRoomName()
+        console.log(roomName)
         localStorage.setItem('roomName', roomName!)
         const provider = new WebsocketProvider(
           'wss://api.loudy.in/ws',
@@ -71,7 +72,7 @@ const useYDoc = create<State & Actions>()(
 
         const ydoc = new Doc()
         localStorage.setItem('roomName', roomName!)
-
+        console.log(roomName)
         const provider = new WebsocketProvider(
           'wss://api.loudy.in/ws',
           roomName,
