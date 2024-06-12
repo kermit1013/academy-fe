@@ -33,7 +33,7 @@ function useForceLayout({
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges } = useReactFlow()
-  const [simulationEnded, setSimulationEnded] = useState(false);
+  const [simulationEnded, setSimulationEnded] = useState(false)
 
   useEffect(() => {
     const nodes = getNodes()
@@ -84,13 +84,15 @@ function useForceLayout({
               className: node.className,
             }))
           )
-
         }
       })
       .on('end', () => {
-        console.log('Simulation ended ');
-        setSimulationEnded(true);
+        console.log('Simulation ended ')
+        setSimulationEnded(true)
       })
+    return () => {
+      simulation.stop()
+    }
   }, [
     times,
     elementCount,
