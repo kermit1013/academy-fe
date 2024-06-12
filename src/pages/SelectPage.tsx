@@ -315,10 +315,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }, [ydoc, provider])
 
   useEffect(() => {
-    setTimeout(() => {
-      setTimes(500)
+
       fitView({ duration: 800, maxZoom: 0.5 })
-    }, 8000)
+  
   }, [times])
 
   useForceLayout({ strength, distance, times })
@@ -677,12 +676,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const handlerCloseReferenceThink = () => {
     logoutReferenceThink()
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setTimes(500)
-    }, 5000)
-  }, [times])
 
   return (
     <ReactFlow

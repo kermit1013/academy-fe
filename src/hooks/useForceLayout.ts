@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   forceSimulation,
   forceLink,
@@ -33,41 +33,43 @@ function useForceLayout({
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges } = useReactFlow()
+  const [simulationEnded, setSimulationEnded] = useState(false);
 
   useEffect(() => {
-    if (times < 500) {
-      const nodes = getNodes()
-      const edges = getEdges()
-      if (!nodes.length || !nodesInitialized) {
-        return
-      }
-      const simulationNodes: SimNodeType[] = nodes.map((node) => ({
-        ...node,
-        x: node.position.x,
-        y: node.position.y,
-      }))
+    const nodes = getNodes()
+    const edges = getEdges()
+    if (!nodes.length || !nodesInitialized) {
+      return
+    }
+    const simulationNodes: SimNodeType[] = nodes.map((node) => ({
+      ...node,
+      x: node.position.x,
+      y: node.position.y,
+    }))
 
-      const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
-        (edge) => edge
+    const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
+      (edge) => edge
+    )
+    const center_x = window.innerWidth / 2
+    const center_y = window.innerHeight / 2
+
+    const simulation = forceSimulation()
+      .nodes(simulationNodes)
+      .force('charge', forceManyBody().strength(strength))
+      .force(
+        'link',
+        forceLink(simulationLinks)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .id((d: any) => d.id)
+          .strength(1)
+          .distance(distance)
       )
-      const center_x = window.innerWidth / 2
-      const center_y = window.innerHeight / 2
+      .force('x', forceX().x(center_x).strength(0.01))
+      .force('y', forceY().y(center_y).strength(0.01))
 
-      const simulation = forceSimulation()
-        .nodes(simulationNodes)
-        .force('charge', forceManyBody().strength(strength))
-        .force(
-          'link',
-          forceLink(simulationLinks)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .id((d: any) => d.id)
-            .strength(1)
-            .distance(distance)
-        )
-        .force('x', forceX().x(center_x).strength(0.01))
-        .force('y', forceY().y(center_y).strength(0.01))
-        .alpha(1)
-        .on('tick', () => {
+      .tick(300)
+      .on('tick', () => {
+        if (!simulationEnded) {
           setNodes(
             simulationNodes.map((node) => ({
               id: node.id,
@@ -82,12 +84,13 @@ function useForceLayout({
               className: node.className,
             }))
           )
-        })
 
-      return () => {
-        simulation.stop()
-      }
-    }
+        }
+      })
+      .on('end', () => {
+        console.log('Simulation ended ');
+        setSimulationEnded(true);
+      })
   }, [
     times,
     elementCount,
