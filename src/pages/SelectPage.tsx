@@ -694,11 +694,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       zoomOnDoubleClick={false}
       className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
-      defaultViewport={{
-        x: typeof window !== 'undefined' ? window.innerWidth / 2 : 0,
-        y: typeof window !== 'undefined' ? window.innerHeight / 2 : 0,
-        zoom: 0,
-      }}
     >
       <Panel position="top-left">
         <div className="flex flex-col items-center gap-3">
