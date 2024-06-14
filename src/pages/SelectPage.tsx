@@ -315,10 +315,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }, [ydoc, provider])
 
   useEffect(() => {
-
-      fitView({ duration: 800, maxZoom: 0.5 })
-  
-  }, [times])
+    //set setTimeout
+    setTimeout(() => {
+      fitView({maxZoom: 0.5, duration: 10 })
+    }, 10)
+  })
 
   useForceLayout({ strength, distance, times })
 
