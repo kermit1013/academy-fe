@@ -66,7 +66,6 @@ function useForceLayout({
       )
       .force('x', forceX().x(center_x).strength(0.01))
       .force('y', forceY().y(center_y).strength(0.01))
-
       .tick(300)
       .on('tick', () => {
         if (!simulationEnded) {
@@ -90,9 +89,10 @@ function useForceLayout({
         console.log('Simulation ended ')
 
         fitView({ nodes: simulationNodes })
-        setSimulationEnded(true)
+        !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
     return () => {
+      console.log('return simulation')
       simulation.stop()
     }
   }, [
