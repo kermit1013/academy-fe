@@ -116,7 +116,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     initProvider,
   } = useYDoc()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
-  const { fitView, getNodes, zoomIn, zoomOut } = useReactFlow()
+  const { getNodes, zoomIn, zoomOut } = useReactFlow()
   const { setReferenceUserId } = useReferenceThink()
   const getViewport = useViewport()
   // const { setProvider } = useYDoc()
@@ -296,6 +296,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       setMyNodeList(nodeList)
       setEdges(edgeList)
       setMyEdgeList(edgeList)
+
       localStorage.setItem('user_id', user_id)
       localStorage.setItem('user_name', result.data.username)
     }, 1000)
@@ -313,13 +314,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
     getPersonData()
   }, [ydoc, provider])
-
-  useEffect(() => {
-    //set setTimeout
-    setTimeout(() => {
-      fitView({maxZoom: 0.5, duration: 10 })
-    }, 10)
-  })
 
   useForceLayout({ strength, distance, times })
 
@@ -838,18 +832,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 }
 
 function ReactFlowWrapper() {
-  const levaProps = useControls({
-    strength: {
-      value: -300,
-      min: -2000,
-      max: 0,
-    },
-    distance: {
-      value: 300,
-      min: 0,
-      max: 1000,
-    },
-  })
+  const levaProps = {
+    strength: -300,
+    distance: 300,
+  }
 
   return (
     <ReactFlowProvider>

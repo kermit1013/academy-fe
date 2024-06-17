@@ -32,7 +32,7 @@ function useForceLayout({
 }: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
-  const { setNodes, getNodes, getEdges } = useReactFlow()
+  const { setNodes, getNodes, getEdges, fitView } = useReactFlow()
   const [simulationEnded, setSimulationEnded] = useState(false)
 
   useEffect(() => {
@@ -88,6 +88,8 @@ function useForceLayout({
       })
       .on('end', () => {
         console.log('Simulation ended ')
+
+        fitView({ nodes: simulationNodes })
         setSimulationEnded(true)
       })
     return () => {
