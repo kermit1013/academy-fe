@@ -8,6 +8,8 @@ import useLogin from './hooks/useLogin'
 import { message } from 'antd'
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
+import { GoogleLogin } from '@react-oauth/google';
+
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
 
@@ -35,6 +37,28 @@ const LoginColumns = () => {
       messageApi.warning('帳號或密碼錯誤，若尚無註冊請先註冊後在登入！')
     }
   }
+
+  const handlerGoogleLogin = GoogleLogin({
+    onSuccess: async (response) => {
+      try {
+        const result = await axios.post('https://api.loudy.in/api/users/auth-receiver', {
+          credential: response.credential,
+        });
+  
+        if (result.status === 200) {
+          localStorage.setItem('access_token', result.data.data.access);
+          localStorage.setItem('refresh_token', result.data.data.refresh);
+          messageApi.success('Google Sign-In successful!');
+          setTimeout(() => {
+            navigate('/search');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error during Google Sign-In:', error);
+        messageApi.warning('Google Sign-In failed. Please try again.');
+      }
+    },
+  });
 
   const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === 'Enter') {
@@ -90,6 +114,10 @@ const LoginColumns = () => {
       >
         使用Gmail登入
       </button>
+      <GoogleLogin
+        onSuccess={()=>handlerGoogleLogin}
+        useOneTap
+      />
       <div className="flex justify-end">
         <button
           className=" underline text-white text-xl hover:cursor-pointer"
