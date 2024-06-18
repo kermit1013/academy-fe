@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run ssh commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASS }}
+          port: 22
+          script: |
+            set -e
+            cd ~/academy-fe
+            git checkout debug
+            git pull
+            echo "yes" 
+            sudo docker-compose down --rmi all
+            sudo docker-compose up --build -d
