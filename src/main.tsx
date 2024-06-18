@@ -4,14 +4,29 @@ import App from './App'
 
 import './index.css'
 import SelectPage from './pages/SelectPage'
-import { GoogleOAuthProvider } from '@react-oauth/google';
-const clientId = '507786572152-529vtt7jtknh7d1l4512remb9estavpv.apps.googleusercontent.com';
+import { GoogleOAuthProvider } from '@react-oauth/google'
+const clientId =
+  '507786572152-529vtt7jtknh7d1l4512remb9estavpv.apps.googleusercontent.com'
+import AuthLayout from './layouts/AuthLayout'
+import PasswordRecoveryPage from './pages/PasswordRecoveryPage'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <HashRouter>
-    <Routes>
-      <Route path="/" element={<GoogleOAuthProvider clientId={clientId}><App /></GoogleOAuthProvider>} />
-      <Route path="/search" element={<SelectPage />} />
-    </Routes>
-  </HashRouter>
+  <GoogleOAuthProvider clientId={clientId}>
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<AuthLayout />}>
+          <Route
+            index
+            element={
+              <GoogleOAuthProvider clientId={clientId}>
+                <App />
+              </GoogleOAuthProvider>
+            }
+          />
+          <Route path="forgetPwd" element={<PasswordRecoveryPage />} />
+        </Route>
+        <Route path="/search" element={<SelectPage />} />
+      </Routes>
+    </HashRouter>
+  </GoogleOAuthProvider>
 )

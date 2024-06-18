@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
-import coral from '../public/coral.svg'
-import logo from '../public/logo.svg'
-import logo_mockup from '../public/logo_mock_up.svg'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import useLogin from './hooks/useLogin'
 import { message } from 'antd'
+import axios from 'axios'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import useLogin from './hooks/useLogin'
+
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -23,7 +22,7 @@ const LoginColumns = () => {
     try {
       const result = await axios.post('https://api.loudy.in/api/token/pair', {
         username: user_name,
-        password: passwd,
+        password: passwd
       })
       if (result.status == 200) {
         localStorage.setItem('access_token', result.data.data.access)
@@ -40,22 +39,25 @@ const LoginColumns = () => {
 
   const handlerGoogleLogin = async (credentialResponse: CredentialResponse) => {
     try {
-      console.log( credentialResponse.credential)
-      const result = await axios.post('https://api.loudy.in/api/users/auth-receiver', {
-        credential: credentialResponse.credential
-      });
+      console.log(credentialResponse.credential)
+      const result = await axios.post(
+        'https://api.loudy.in/api/users/auth-receiver',
+        {
+          credential: credentialResponse.credential
+        }
+      )
 
       if (result.status === 200) {
-        localStorage.setItem('access_token', result.data.data.access);
-        localStorage.setItem('refresh_token', result.data.data.refresh);
-        messageApi.success('Google Sign-In successful!');
+        localStorage.setItem('access_token', result.data.data.access)
+        localStorage.setItem('refresh_token', result.data.data.refresh)
+        messageApi.success('Google Sign-In successful!')
         setTimeout(() => {
-          navigate('/search');
-        }, 2000);
+          navigate('/search')
+        }, 2000)
       }
     } catch (error) {
-      console.error('Error during Google Sign-In:', error);
-      messageApi.warning('Google Sign-In failed. Please try again.');
+      console.error('Error during Google Sign-In:', error)
+      messageApi.warning('Google Sign-In failed. Please try again.')
     }
   }
 
@@ -66,12 +68,12 @@ const LoginColumns = () => {
   }
 
   return (
-    <div className=" w-[520px] h-[694px] border-2 border-white rounded-[50px] flex justify-start p-10 flex-col gap-6 bg-white/20 z-20 backdrop-blur-sm">
+    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-2 border-white bg-white/20 p-10 backdrop-blur-sm">
       {contextHolder}
       <div>
         <p className="pl-3 text-xl text-white">帳號</p>
         <input
-          className="rounded-[20px] bg-white/30 border-2 mt-3 h-[72px] border-white focus:outline-none w-full pl-4 text-3xl text-white"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl text-white focus:outline-none"
           type="text"
           value={user_name}
           onChange={(e) => {
@@ -82,7 +84,7 @@ const LoginColumns = () => {
       <div>
         <p className="pl-3 text-xl text-white">密碼</p>
         <input
-          className="rounded-[20px] bg-white/30 border-2 mt-3 h-[72px] border-white focus:outline-none w-full pl-4 text-3xl text-white"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl text-white focus:outline-none"
           type="password"
           value={passwd}
           onChange={(e) => {
@@ -92,36 +94,41 @@ const LoginColumns = () => {
         />
       </div>
       <div className="flex justify-end">
-        <button className=" underline text-white text-xl hover:cursor-pointer">
+        <button
+          className="text-xl text-white underline hover:cursor-pointer"
+          onClick={() => {
+            navigate('/forgetPwd')
+          }}
+        >
           忘記密碼?
         </button>
       </div>
       <button
-        className="w-full h-[72px] text-2xl p-4 text-[#385BA3] border-2  border-white bg-white/70 rounded-[20px]"
+        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/70 p-4 text-2xl text-[#385BA3]"
         onClick={() => handlerLogin()}
       >
         登入
       </button>
-      <div className="w-full h-6 flex justify-center items-center gap-2">
-        <p className="w-1/2 h-0 border border-white"></p>
+      <div className="flex h-6 w-full items-center justify-center gap-2">
+        <p className="h-0 w-1/2 border border-white"></p>
         <p className="text-2xl text-white">or</p>
-        <p className="w-1/2 h-0 border border-white"></p>
+        <p className="h-0 w-1/2 border border-white"></p>
       </div>
       <button
-        className="w-full h-[72px] text-2xl p-4 text-white border-2  border-white bg-white/30 rounded-[20px] backdrop-blur-sm"
+        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 p-4 text-2xl text-white backdrop-blur-sm"
         title="輸入信箱後註冊即可馬上發想！"
       >
         使用Gmail登入
       </button>
       <GoogleLogin
-        onSuccess={(credentialResponse)=>{
+        onSuccess={(credentialResponse) => {
           handlerGoogleLogin(credentialResponse)
         }}
         useOneTap
       />
       <div className="flex justify-end">
         <button
-          className=" underline text-white text-xl hover:cursor-pointer"
+          className="text-xl text-white underline hover:cursor-pointer"
           onClick={() => setIsRegister(true)}
         >
           還沒有帳號?註冊
@@ -141,7 +148,7 @@ const RegisterColumns = () => {
     setPasswd,
     user_name,
     setUserName,
-    setIsRegister,
+    setIsRegister
   } = useLogin()
 
   const [passwdType, setPasswdType] = useState('password')
@@ -165,7 +172,7 @@ const RegisterColumns = () => {
       email: email,
       school: '',
       grade: '',
-      password: passwd,
+      password: passwd
     })
 
     if (result.status === 200) {
@@ -179,12 +186,12 @@ const RegisterColumns = () => {
   }
 
   return (
-    <div className=" w-[520px] h-fit border-2 border-white rounded-[50px] flex justify-start px-10 pt-[50px] pb-[20px] flex-col gap-6 bg-white/20 z-20 backdrop-blur-sm">
+    <div className="z-20 flex h-fit w-[520px] flex-col justify-start gap-6 rounded-[50px] border-2 border-white bg-white/20 px-10 pb-[20px] pt-[50px] backdrop-blur-sm">
       {contextHolder}
       <div>
         <p className="pl-3 text-xl text-white">電子信箱</p>
         <input
-          className="rounded-[20px] bg-white/30 border-2 mt-3 h-[72px] border-white focus:outline-none w-full pl-4 text-3xl text-white"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl text-white focus:outline-none"
           type="text"
           value={email}
           onChange={(e) => {
@@ -195,7 +202,7 @@ const RegisterColumns = () => {
       <div>
         <p className="pl-3 text-xl text-white">用戶名稱</p>
         <input
-          className="rounded-[20px] bg-white/30 border-2 mt-3 h-[72px] border-white focus:outline-none w-full pl-4 text-3xl text-white"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl text-white focus:outline-none"
           type="text"
           value={user_name}
           onChange={(e) => {
@@ -205,9 +212,9 @@ const RegisterColumns = () => {
       </div>
       <div>
         <p className="pl-3 text-xl text-white">密碼</p>
-        <div className=" relative">
+        <div className="relative">
           <input
-            className="rounded-[20px] bg-white/30 border-2 mt-3 h-[72px] border-white focus:outline-none w-full pl-4 text-3xl text-white"
+            className="mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl text-white focus:outline-none"
             type={passwdType}
             value={passwd}
             onChange={(e) => {
@@ -215,11 +222,11 @@ const RegisterColumns = () => {
             }}
           />
           <button
-            className=" absolute right-3 top-6"
+            className="absolute right-3 top-6"
             onClick={() => handlerChangePasswdType()}
           >
             <img
-              className="w-12 h-full text-white"
+              className="h-full w-12 text-white"
               src={passwdType == 'text' ? password_hide : password_show}
               alt=""
             />
@@ -228,25 +235,25 @@ const RegisterColumns = () => {
       </div>
 
       <button
-        className="w-full h-[72px] text-2xl p-4 text-[#385BA3] border-2  border-white bg-white/70 rounded-[20px]"
+        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/70 p-4 text-2xl text-[#385BA3]"
         onClick={() => handlerRegister()}
       >
         註冊
       </button>
-      <div className="w-full h-6 flex justify-center items-center gap-2">
-        <p className="w-1/2 h-0 border border-white"></p>
+      <div className="flex h-6 w-full items-center justify-center gap-2">
+        <p className="h-0 w-1/2 border border-white"></p>
         <p className="text-2xl text-white">or</p>
-        <p className="w-1/2 h-0 border border-white"></p>
+        <p className="h-0 w-1/2 border border-white"></p>
       </div>
       <button
-        className="w-full h-[72px] text-2xl p-4 text-white border-2  border-white bg-white/30 rounded-[20px] backdrop-blur-sm"
+        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 p-4 text-2xl text-white backdrop-blur-sm"
         title="輸入信箱後註冊即可馬上發想！"
       >
         使用Gmail註冊
       </button>
       <div className="flex justify-center">
         <button
-          className=" underline text-white text-xl hover:cursor-pointer"
+          className="text-xl text-white underline hover:cursor-pointer"
           onClick={() => setIsRegister(false)}
         >
           已經有帳號?登入
@@ -259,30 +266,7 @@ const RegisterColumns = () => {
 const Login = () => {
   const { isRegister } = useLogin()
 
-  return (
-    <div className="w-screen h-screen bg-[url('/public/CoralBG.webp')] relative">
-      <div className="flex w-screen h-screen pt-[115px] p-[50px] lg:p-[134px] bg-repeat-y justify-center items-center bg-contain">
-        <div className="w-1/2 flex items-center flex-col gap-4 justify-center h-full ">
-          <div className=" w-[400px] h-20">
-            <div className=" relative w-full">
-              <img className=" absolute top-0 left-0" src={logo} alt="" />
-              <img
-                className=" absolute top-0 left-0"
-                src={logo_mockup}
-                alt=""
-              />
-            </div>
-          </div>
-          <p className="text-4xl text-white">大聲交流，讓想法落地</p>
-        </div>
-        <div className="flex items-center flex-col w-1/2 gap-10">
-          {isRegister ? <RegisterColumns /> : <LoginColumns />}
-        </div>
-      </div>
-
-      <img className=" absolute bottom-0" src={coral} alt="" />
-    </div>
-  )
+  return <>{isRegister ? <RegisterColumns /> : <LoginColumns />}</>
 }
 
 export default Login
