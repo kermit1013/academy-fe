@@ -8,7 +8,7 @@ import useLogin from './hooks/useLogin'
 import { message } from 'antd'
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
-import { GoogleLogin } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -38,27 +38,26 @@ const LoginColumns = () => {
     }
   }
 
-  const handlerGoogleLogin = GoogleLogin({
-    onSuccess: async (response) => {
-      try {
-        const result = await axios.post('https://api.loudy.in/api/users/auth-receiver', {
-          credential: response.credential,
-        });
-  
-        if (result.status === 200) {
-          localStorage.setItem('access_token', result.data.data.access);
-          localStorage.setItem('refresh_token', result.data.data.refresh);
-          messageApi.success('Google Sign-In successful!');
-          setTimeout(() => {
-            navigate('/search');
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Error during Google Sign-In:', error);
-        messageApi.warning('Google Sign-In failed. Please try again.');
+  const handlerGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    try {
+      console.log( credentialResponse.credential)
+      const result = await axios.post('https://api.loudy.in/api/users/auth-receiver', {
+        credential: credentialResponse.credential
+      });
+
+      if (result.status === 200) {
+        localStorage.setItem('access_token', result.data.data.access);
+        localStorage.setItem('refresh_token', result.data.data.refresh);
+        messageApi.success('Google Sign-In successful!');
+        setTimeout(() => {
+          navigate('/search');
+        }, 2000);
       }
-    },
-  });
+    } catch (error) {
+      console.error('Error during Google Sign-In:', error);
+      messageApi.warning('Google Sign-In failed. Please try again.');
+    }
+  }
 
   const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === 'Enter') {
@@ -115,7 +114,9 @@ const LoginColumns = () => {
         使用Gmail登入
       </button>
       <GoogleLogin
-        onSuccess={()=>handlerGoogleLogin}
+        onSuccess={(credentialResponse)=>{
+          handlerGoogleLogin(credentialResponse)
+        }}
         useOneTap
       />
       <div className="flex justify-end">
