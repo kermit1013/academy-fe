@@ -18,9 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route
             index
             element={
-              <GoogleOAuthProvider clientId={clientId}>
                 <App />
-              </GoogleOAuthProvider>
             }
           />
           <Route path="forgetPwd" element={<PasswordRecoveryPage />} />
