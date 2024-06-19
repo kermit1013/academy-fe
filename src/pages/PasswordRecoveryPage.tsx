@@ -197,16 +197,15 @@ const PasswordRecoveryPage = () => {
     }
 
     try {
-      // NOTE: 待 Kermit 調整後端 API 再將註解打開
-      // const result = await request.get('/users/reset-validate', {
-      //   params: {
-      //     email,
-      //     code: codes.join('')
-      //   }
-      // })
-      // if (result.status == 200) {
-      //   setStep(2)
-      // }
+      const result = await request.get('/users/reset-validate', {
+        params: {
+          email,
+          code: codes.join('')
+        }
+      })
+      if (result.status == 200) {
+        setStep(2)
+      }
       setStep(2)
     } catch (error: any) {
       messageApi.warning(error.response.data.detail)
@@ -220,15 +219,14 @@ const PasswordRecoveryPage = () => {
     if (passwd !== checkPasswd) return messageApi.warning('密碼不一致！')
 
     try {
-      // NOTE: 待 Kermit 調整後端 API 再將註解打開
-      // const result = await request.post('/users/reset-password', {
-      //   code: codes.join(''),
-      //   password: passwd
-      // })
-      // if (result.status == 200) {
-      //   messageApi.success('更新密碼成功！')
-      //   setStep(3)
-      // }
+      const result = await request.post('/users/reset-password', {
+        code: codes.join(''),
+        password: passwd
+      })
+      if (result.status == 200) {
+        messageApi.success('更新密碼成功！')
+        setStep(3)
+      }
       setStep(3)
     } catch (error: any) {
       messageApi.warning(error.response.data.detail)
