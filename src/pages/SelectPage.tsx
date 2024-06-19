@@ -541,7 +541,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (user_id === null) {
           url = 'https://api.loudy.in/api/users'
         } else {
-          url = `https://api.loudy.in/api/users/?user_id=28`
+          url = `https://api.loudy.in/api/users?user_id=28`
         }
       }
 

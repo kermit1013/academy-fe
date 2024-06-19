@@ -166,7 +166,7 @@ const RegisterColumns = () => {
       return
     }
 
-    const result = await axios.post('https://api.loudy.in/api/users/', {
+    const result = await axios.post('https://api.loudy.in/api/users', {
       username: user_name,
       gender: '',
       email: email,
