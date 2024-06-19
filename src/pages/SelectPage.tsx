@@ -38,6 +38,7 @@ import next_button from '../../public/next_button.svg'
 import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
 import useReferenceThink from '../hooks/useReferenceThink'
+import TallyPopup from '../components/TallyPopup'
 
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
@@ -121,51 +122,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   // const { setProvider } = useYDoc()
 
   useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://tally.so/widgets/embed.js'
-    script.onload = () => {
-      if (window.Tally) {
-        window.Tally.openPopup('n0x5Z6', {
-          doNotShowAfterSubmit: true,
-          onSubmit: async (payload: any) => {
-            const access_token = localStorage.getItem('access_token')
-            if (access_token == null) {
-              navigate('/')
-            }
-            const data = JSON.stringify(payload)
-            let encoded = encodeURI(data)
-            const result = await axios.post(
-              'https://api.loudy.in/api/graphs/thoughts',
-              {
-                data: encoded,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${access_token}`,
-                },
-              }
-            )
-            if (result.data === 200) {
-              window.Tally.closePopup('n0x5Z6')
-              window.location.reload()
-            }
-          },
-        })
-      }
-    }
-    document.body.appendChild(script)
-
     getPersonData()
     initProvider()
     setIsInit(true)
-
-    return () => {
-      if (window.Tally) {
-        window.Tally.closePopup('n0x5Z6')
-      }
-
-      document.body.removeChild(script)
-    }
   }, [])
 
   const { node_list, edge_list, setNode, setEdge } = useBubble()
@@ -688,6 +647,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
     >
+      <TallyPopup />
       <Panel position="top-left">
         <div className="flex flex-col items-center gap-3">
           <img src={main_logo} alt="" />
@@ -779,14 +739,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               +
             </button>
           </div>
-          <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
+          {/* <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
             <button
               className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
               onClick={handleSelectAll}
             >
               Select Mine
             </button>
-          </div>
+          </div> */}
         </data>
       </Panel>
       {isVisible ? <Modal /> : <></>}
@@ -825,7 +785,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       )}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />
-      <MiniMap pannable zoomable />
+      {/* <MiniMap pannable zoomable /> */}
     </ReactFlow>
   )
 }
