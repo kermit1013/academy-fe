@@ -5,8 +5,8 @@ import ReactFlow, {
   ReactFlowProvider,
   NodeOrigin,
   NodeMouseHandler,
-  useNodesState,
-  useEdgesState,
+  // useNodesState,
+  // useEdgesState,
   useReactFlow,
   MiniMap,
   useViewport,
@@ -104,8 +104,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [cursors, onMouseMove] = useCursorStateSynced()
-  const [myNodeList, setMyNodeList] = useNodesState([])
-  const [myEdgeList, setMyEdgeList] = useEdgesState([])
+  // const [myNodeList, setMyNodeList] = useNodesState([])
+  // const [myEdgeList, setMyEdgeList] = useEdgesState([])
   const {
     ydoc,
     provider,
@@ -116,7 +116,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     initProvider,
   } = useYDoc()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
-  const { getNodes, zoomIn, zoomOut } = useReactFlow()
+  const { zoomIn, zoomOut } = useReactFlow()
   const { setReferenceUserId } = useReferenceThink()
   const getViewport = useViewport()
   // const { setProvider } = useYDoc()
@@ -251,9 +251,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     })
     setTimeout(() => {
       setNodes(nodeList)
-      setMyNodeList(nodeList)
+      // setMyNodeList(nodeList)
       setEdges(edgeList)
-      setMyEdgeList(edgeList)
+      // setMyEdgeList(edgeList)
 
       localStorage.setItem('user_id', user_id)
       localStorage.setItem('user_name', result.data.username)
@@ -365,7 +365,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       target: childId,
       type: 'straight',
     }
-    setMyNodeList(nodes.concat(childNode))
+    // setMyNodeList(nodes.concat(childNode))
     setNodes(nodes.concat(childNode))
     setEdges(edges.concat(childEdge))
   }, [item_id, source, label])
@@ -388,8 +388,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
     setNodes([])
     setEdges([])
-    setMyNodeList([])
-    setMyEdgeList([])
+    // setMyNodeList([])
+    // setMyEdgeList([])
     getPersonData()
 
     setReferenceUserId('')
@@ -467,22 +467,22 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setEdge(edges)
   }, [ydoc, provider, isInit])
 
-  const handleSelectAll = () => {
-    const node_list = getNodes()
-    const myNodes = node_list.map((node) => {
-      return { ...node, selected: false }
-    })
-    console.log(myEdgeList)
-    const myNodeIdList = myNodeList.map((node) => node.id)
-    const selectedNodes = myNodes.map((node) => {
-      if (myNodeIdList.includes(node.id)) {
-        return { ...node, selected: true }
-      }
-      return node
-    })
+  // const handleSelectAll = () => {
+  //   const node_list = getNodes()
+  //   const myNodes = node_list.map((node) => {
+  //     return { ...node, selected: false }
+  //   })
+  //   console.log(myEdgeList)
+  //   const myNodeIdList = myNodeList.map((node) => node.id)
+  //   const selectedNodes = myNodes.map((node) => {
+  //     if (myNodeIdList.includes(node.id)) {
+  //       return { ...node, selected: true }
+  //     }
+  //     return node
+  //   })
 
-    setNodes(selectedNodes)
-  }
+  //   setNodes(selectedNodes)
+  // }
   const [hoverIndex, setHoverIndex] = useState(-1)
   const selectTypeInHoverIn = (index: number) => {
     setHoverIndex(index)
@@ -598,7 +598,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             }
           })
           await setNodes(nodeList)
-          await setMyNodeList(nodeList)
+          // await setMyNodeList(nodeList)
           const edgeList = result.data.edges.map((item: InputEdge) => {
             const source_index = nodeIDList.indexOf(item.source)
             const source = nodeRealIDList[source_index]
@@ -785,7 +785,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       )}
       <Cursors cursors={cursors} />
       <ConnectProcess status={isConnectProcess} />
-      {/* <MiniMap pannable zoomable /> */}
+      <MiniMap pannable zoomable />
     </ReactFlow>
   )
 }
