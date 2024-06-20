@@ -7,7 +7,7 @@ import useLogin from './hooks/useLogin'
 
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
+import GoogleLogin from './components/GoogleLogin'
 
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -34,30 +34,6 @@ const LoginColumns = () => {
       }
     } catch {
       messageApi.warning('帳號或密碼錯誤，若尚無註冊請先註冊後在登入！')
-    }
-  }
-
-  const handlerGoogleLogin = async (credentialResponse: CredentialResponse) => {
-    try {
-      console.log(credentialResponse.credential)
-      const result = await axios.post(
-        'https://api.loudy.in/api/users/auth-receiver',
-        {
-          credential: credentialResponse.credential
-        }
-      )
-
-      if (result.status === 200) {
-        localStorage.setItem('access_token', result.data.data.access)
-        localStorage.setItem('refresh_token', result.data.data.refresh)
-        messageApi.success('Google Sign-In successful!')
-        setTimeout(() => {
-          navigate('/search')
-        }, 2000)
-      }
-    } catch (error) {
-      console.error('Error during Google Sign-In:', error)
-      messageApi.warning('Google Sign-In failed. Please try again.')
     }
   }
 
@@ -114,18 +90,7 @@ const LoginColumns = () => {
         <p className="text-2xl text-white">or</p>
         <p className="h-0 w-1/2 border border-white"></p>
       </div>
-      <button
-        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 p-4 text-2xl text-white backdrop-blur-sm"
-        title="輸入信箱後註冊即可馬上發想！"
-      >
-        使用Gmail登入
-      </button>
-      <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          handlerGoogleLogin(credentialResponse)
-        }}
-        useOneTap
-      />
+      <GoogleLogin />
       <div className="flex justify-end">
         <button
           className="text-xl text-white underline hover:cursor-pointer"
