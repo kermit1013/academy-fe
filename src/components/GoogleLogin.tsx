@@ -12,7 +12,7 @@ const GoogleLogin = () => {
         onSuccess: async (tokenResponse) => {
             try {
                 const result = await axios.post(
-                    'http://localhost:8000/api/users/auth-receiver',
+                    'https://api.loudy.in/api/users/auth-receiver',
                     {
                         credential: tokenResponse.access_token,
                     }
