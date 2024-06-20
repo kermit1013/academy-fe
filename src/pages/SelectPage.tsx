@@ -39,7 +39,7 @@ import next_button from '../../public/next_button.svg'
 import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
 import useReferenceThink from '../hooks/useReferenceThink'
-
+import bg from '../../public/bg.svg'
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
@@ -53,7 +53,7 @@ const nodeTypes = {
 const nodeOrigin: NodeOrigin = [0.5, 0.5]
 
 const defaultEdgeOptions = {
-  style: { stroke: '#fff', strokeWidth: 2 },
+  style: { stroke: '#7B7C7B', strokeWidth: 2 },
 }
 
 interface InputNode {
@@ -72,7 +72,7 @@ interface s {
 }
 const ConnectProcess = ({ status }: s) => {
   return status ? (
-    <div className="w-screen h-screen bg-[url('/public/CoralBG.webp')] relative flex justify-center items-center z-50">
+    <div className="w-screen h-screen bg-[url('/public/login_bg.webp')] relative flex justify-center items-center z-50">
       <div className="w-[946px] h-[91px] rounded-full border-2 border-white text-white flex gap-4 justify-center items-center text-2xl font-bold">
         <svg
           width="55"
@@ -338,10 +338,28 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (_node.id === node.id) {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: true }
+          if (node.id.includes('level0')) {
+            newNode.className = styles.node1_level0_node_hover
+          } else if (node.id.includes('level1')) {
+            newNode.className = styles.node1_level1_node_hover
+          } else if (node.id.includes('level2')) {
+            newNode.className = styles.node1_level2_node_hover
+          } else {
+            newNode.className = styles.node1_level3_node_hover
+          }
           return newNode
         } else {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: false }
+          if (node.id.includes('level0')) {
+            newNode.className = styles.node1_level0_node
+          } else if (node.id.includes('level1')) {
+            newNode.className = styles.node1_level1_node
+          } else if (node.id.includes('level2')) {
+            newNode.className = styles.node1_level2_node
+          } else {
+            newNode.className = styles.node1_level3_node
+          }
           return newNode
         }
       })
@@ -542,7 +560,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (user_id === null) {
           url = 'https://api.loudy.in/api/users'
         } else {
-          url = `https://api.loudy.in/api/users/?user_id=28`
+          url = `https://api.loudy.in/api/users/?user_id=${user_id}`
         }
       }
 
@@ -686,7 +704,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       // onPaneClick={onPaneClick}
       nodeOrigin={nodeOrigin}
       zoomOnDoubleClick={false}
-      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
+      className="intersection-flow w-screen h-screen relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
     >
       <Panel position="top-left">
@@ -698,14 +716,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <div className="flex gap-3">
           <button
             title="發想互動"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(0)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={handlerContentVisible}
           >
             <img src={light_bulb} alt="" />
             {hoverIndex == 0 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 發想互動
               </p>
             ) : (
@@ -714,21 +732,21 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </button>
           <button
             title="畫廊漫步"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(1)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => setCanReferenced(true)}
           >
             <img src={change_think} alt="" />
             {hoverIndex == 1 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 畫廊漫步
               </p>
             ) : (
               <></>
             )}
           </button>
-          <button
+          {/* <button
             title={!isConnect ? '連線' : '停止連線'}
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(2)}
@@ -747,17 +765,17 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             ) : (
               <></>
             )}
-          </button>
+          </button> */}
           <button
             title="設定"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(3)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => handlerSetting}
           >
             <img src={setting} alt="" />
             {hoverIndex == 3 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 設定
               </p>
             ) : (
@@ -768,28 +786,22 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       </Panel>
 
       <Panel position="bottom-left">
-        <data className="flex justify-center items-end gap-2">
-          <div className="bg-white/30 flex gap-1 text-white w-fit rounded-lg items-center justify-center h-7">
+        <data className="flex justify-center items-end gap-2 border border-[#7B7C7B]/20 rounded-md">
+          <div className="bg-[#7B7C7B]/10 flex gap-1 text-[#7B7C7B] w-fit rounded-lg items-center justify-center h-7">
             <button className="p-2" onClick={() => zoomOut({ duration: 800 })}>
               -
             </button>
-            <p className="border-l border-r border-white px-2">
+            <p className="border-l border-r border-[#7B7C7B] px-2">
               {Math.floor(getViewport.zoom * 100)}%
             </p>
             <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
               +
             </button>
           </div>
-          <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
-            <button
-              className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
-              onClick={handleSelectAll}
-            >
-              Select Mine
-            </button>
-          </div>
         </data>
       </Panel>
+
+      <img src={bg} className="w-screen absolute bottom-0 -z-50" alt="" />
       {isVisible ? <Modal /> : <></>}
       {isContentVisible && !isConnect ? <ThinkContent /> : <></>}
       {canReferenced ? (
@@ -797,22 +809,22 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           <div className="flex w-full h-full justify-between items-center ">
             <button
               onClick={() => getReferencedUserData(true)}
-              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+              className=" z-10 w-10 h-10 rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10 flex items-center justify-center"
             >
               <img src={prev_button} alt="" />
             </button>
             <button
               onClick={() => getReferencedUserData(false)}
-              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+              className=" z-10 w-10 h-10 rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10 flex items-center justify-center"
             >
               <img src={next_button} alt="" />
             </button>
           </div>
-          <div className=" z-10 w-fit h-10 rounded bg-white/20 flex items-center justify-center px-2 py-1">
-            <p className="text-white text-[13px]">
+          <div className=" z-10 w-fit h-10 rounded bg-[#7B7C7B]/10 border border-[#7B7C7B]/20 flex items-center justify-center px-2 py-1">
+            <p className="text-[#7B7C7B] text-[13px] font-sans">
               按左右鍵可以逛逛他人的心智圖
             </p>
-            <p className="border-l border-white w-1 h-full mx-2"></p>
+            <p className="border-l border-[#7B7C7B] w-1 h-full ml-2"></p>
             <button
               className="hover:scale-110"
               onClick={handlerCloseReferenceThink}

@@ -310,7 +310,7 @@ const Bubble = ({ data }: props) => {
       ) : ReferenceUserId === '' ? (
         <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
           <button
-            className=" bg-white/40 w-6 h-6 rounded-full absolute -top-3 -left-5 flex items-center justify-center"
+            className=" bg-[#6CA579]/20 w-6 h-6 border border-[#6CA579] rounded-full absolute -top-3 -left-5 flex items-center justify-center"
             onClick={() => handlerRemoveBubble()}
           >
             <img src={delete_bubble} alt="" />
@@ -323,7 +323,7 @@ const Bubble = ({ data }: props) => {
         ReferenceUserId === '' ? (
           <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
             <button
-              className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1"
+              className=" bg-[#6CA579]/20 w-6 h-6 text-[16px] text-center text-[#6CA579] border border-[#6CA579] rounded-full absolute -top-3 -left-1"
               onClick={() => handlerNewBubble()}
             >
               +
@@ -350,7 +350,7 @@ const Bubble = ({ data }: props) => {
           ReferenceUserId === '' ? (
             <textarea
               maxLength={20}
-              className="  bg-transparent h-full w-full p-2 text-white text-sm text-center focus:outline-none "
+              className="  bg-transparent h-full w-full p-2 text-[#6ca579] font-sans text-sm text-center focus:outline-none "
               value={modifyData}
               autoFocus
               placeholder="請輸入您的想法"
@@ -358,13 +358,31 @@ const Bubble = ({ data }: props) => {
               onKeyDown={(e) => handlerKeyDown(e)}
             />
           ) : (
-            <div>{data.label}</div>
+            <div
+              className={`${
+                data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+              } font-sans`}
+            >
+              {data.label}
+            </div>
           )
         ) : (
-          <div>{data.label}</div>
+          <div
+            className={`${
+              data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+            } font-sans`}
+          >
+            {data.label}
+          </div>
         )
       ) : (
-        <div>{data.label}</div>
+        <div
+          className={`${
+            data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+          } font-sans`}
+        >
+          {data.label}
+        </div>
       )}
 
       <Handle type="target" position={Position.Top} />
