@@ -143,7 +143,7 @@ const Thinking = ({ action_type }: props) => {
             <div>{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer w-8 hover:rotate-90"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
@@ -161,7 +161,7 @@ const Thinking = ({ action_type }: props) => {
             <div>{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer w-8 hover:rotate-90"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
@@ -200,7 +200,7 @@ const Thinking = ({ action_type }: props) => {
             <div>{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer w-8 hover:rotate-90"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
