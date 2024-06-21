@@ -319,7 +319,7 @@ const ThinkContent = () => {
     setIsContentVisible(false)
   }
   return (
-    <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg flex flex-col rounded-2xl mb-12 z-20 absolute bottom-10 left-1/3">
+    <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg rounded-2xl mb-12 z-20 bottom-10 absolute left-1/2 transform -translate-x-1/2">
       <button
         onClick={() => handlerCloseContent()}
         className=" absolute -right-5 -top-5 h-6 w-6 text-sm rounded-full bg-white/30 border border-white hover:bg-white/40"
