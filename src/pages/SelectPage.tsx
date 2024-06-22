@@ -355,14 +355,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }
   const logoutReferenceThink = () => {
     setCanReferenced(false)
+    if (localStorage.getItem('reference_user_id')) {
+      setNodes([])
+      setEdges([])
+      // setMyNodeList([])
+      // setMyEdgeList([])
+      getPersonData()
+    }
     localStorage.removeItem('reference_user_id')
-
-    setNodes([])
-    setEdges([])
-    // setMyNodeList([])
-    // setMyEdgeList([])
-    getPersonData()
-
     setReferenceUserId('')
     setTimes(0)
   }
@@ -651,6 +651,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             onMouseEnter={() => selectTypeInHoverIn(1)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => setCanReferenced(true)}
+            disabled={isContentVisible}
           >
             <img src={change_think} alt="" />
             {hoverIndex == 1 ? (
