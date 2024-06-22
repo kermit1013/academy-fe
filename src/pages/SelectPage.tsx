@@ -76,15 +76,15 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [cursors, onMouseMove] = useCursorStateSynced()
   // const [myNodeList, setMyNodeList] = useNodesState([])
   // const [myEdgeList, setMyEdgeList] = useEdgesState([])
-  const {
-    ydoc,
-    provider,
-    isVisible,
-    isConnect,
-    isConnectProcess,
-    // setVisible,
-    initProvider,
-  } = useYDoc()
+  // const {
+  //   ydoc,
+  //   provider,
+  //   isVisible,
+  //   isConnect,
+  //   isConnectProcess,
+  //   // setVisible,
+  //   initProvider,
+  // } = useYDoc()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
   const { zoomIn, zoomOut } = useReactFlow()
   const { setReferenceUserId } = useReferenceThink()
@@ -93,7 +93,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   useEffect(() => {
     getPersonData()
-    initProvider()
+    // initProvider()
     setIsInit(true)
   }, [])
 
@@ -237,11 +237,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   //   setTimes(1)
   // }
 
-  useEffect(() => {
-    if (isInit) return
+  // useEffect(() => {
+  //   if (isInit) return
 
-    getPersonData()
-  }, [ydoc, provider])
+  //   getPersonData()
+  // }, [ydoc, provider])
 
   useForceLayout({ strength, distance, times })
 
@@ -430,12 +430,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setEdges(el_1.concat(el_2))
   }, [node_list, edge_list, isInit])
 
-  useEffect(() => {
-    if (!isInit) return
+  // useEffect(() => {
+  //   if (!isInit) return
 
-    setNode(nodes)
-    setEdge(edges)
-  }, [ydoc, provider, isInit])
+  //   setNode(nodes)
+  //   setEdge(edges)
+  // }, [ydoc, provider, isInit])
 
   // const handleSelectAll = () => {
   //   const node_list = getNodes()
@@ -660,7 +660,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               <></>
             )}
           </button>
-          <button
+          {/* <button
             title={!isConnect ? '連線' : '停止連線'}
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/10 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(2)}
@@ -679,7 +679,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             ) : (
               <></>
             )}
-          </button>
+          </button> */}
           <button
             title="設定"
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
@@ -722,8 +722,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </div> */}
         </data>
       </Panel>
-      {isVisible ? <Modal /> : <></>}
-      {isContentVisible && !isConnect ? <ThinkContent /> : <></>}
+      {/* {isVisible ? <Modal /> : <></>} */}
+      {/* {isContentVisible && !isConnect ? <ThinkContent /> : <></>} */}
+      {isContentVisible ? <ThinkContent /> : <></>}
       {canReferenced ? (
         <div className="flex w-full h-full p-4 flex-col justify-center items-center">
           <div className="flex w-full h-full justify-between items-center ">
@@ -757,7 +758,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <> </>
       )}
       <Cursors cursors={cursors} />
-      <ConnectProcess status={isConnectProcess} />
+      {/* <ConnectProcess status={isConnectProcess} /> */}
       {/* <MiniMap pannable zoomable /> */}
     </ReactFlow>
   )
