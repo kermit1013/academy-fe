@@ -22,14 +22,14 @@ import axios from 'axios'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import useCursorStateSynced from '../hooks/useCursorStateSynced'
-import useYDoc from '../hooks/useYDoc'
-import Modal from '../components/Modal'
+// import useYDoc from '../hooks/useYDoc'
+// import Modal from '../components/Modal'
 import Cursors from '../components/Cursors'
 import useBubble from '../hooks/useBubble'
 import { useNavigate } from 'react-router-dom'
 import main_logo from '../../public/main_page_logo.svg'
 import light_bulb from '../../public/light_bulb.svg'
-import chat_bubble from '../../public/chat_bubble.svg'
+// import chat_bubble from '../../public/chat_bubble.svg'
 import setting from '../../public/setting.svg'
 import change_think from '../../public/change_think.svg'
 import disconnect from '../../public/disconnect.svg'
@@ -39,7 +39,7 @@ import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
 import useReferenceThink from '../hooks/useReferenceThink'
 import TallyPopup from '../components/TallyPopup'
-import ConnectProcess from '../components/ConnectProcess'
+// import ConnectProcess from '../components/ConnectProcess'
 import { googleLogout } from '@react-oauth/google'
 
 // import useYDoc from '../hooks/useYDoc'
@@ -97,7 +97,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     setIsInit(true)
   }, [])
 
-  const { node_list, edge_list, setNode, setEdge } = useBubble()
+  // const { node_list, edge_list, setNode, setEdge } = useBubble()
+  const { node_list, edge_list } = useBubble()
   const [isReferenceThinkLoding, setIsReferenceThinkLoding] = useState(false)
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
