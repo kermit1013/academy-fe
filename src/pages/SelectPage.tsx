@@ -99,7 +99,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   // const { node_list, edge_list, setNode, setEdge } = useBubble()
   const { node_list, edge_list } = useBubble()
-  const [isReferenceThinkLoding, setIsReferenceThinkLoding] = useState(false)
+  const [isReferenceThinkLoading, setIsReferenceThinkLoading] = useState(false)
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
   const [isInit, setIsInit] = useState(false)
@@ -461,9 +461,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   const getReferencedUserData = useCallback(
     async (prev: boolean) => {
-      console.log(isReferenceThinkLoding)
-      if (isReferenceThinkLoding) return
-      setIsReferenceThinkLoding(true)
+      console.log(isReferenceThinkLoading)
+      if (isReferenceThinkLoading) return
+      setIsReferenceThinkLoading(true)
       const access_token = localStorage.getItem('access_token')
       let url = 'https://api.loudy.in/api/users'
       if (prev) {
@@ -583,7 +583,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             }
           })
           await setEdges(edgeList)
-          setIsReferenceThinkLoding(false)
+          setIsReferenceThinkLoading(false)
         }
       } catch (error) {
         console.log(error)
@@ -591,7 +591,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
       setTimes(0)
     },
-    [isReferenceThinkLoding]
+    [isReferenceThinkLoading]
   )
 
   const handlerSetting = () => {
