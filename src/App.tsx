@@ -55,12 +55,12 @@ const LoginColumns = () => {
   }
 
   return (
-    <div className=" w-[520px] h-[694px] border-[3px] border-[#7B7C7B]  rounded-[50px] flex justify-start p-10 flex-col gap-6 z-20 backdrop-blur-sm">
+    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] p-10 backdrop-blur-sm">
       {contextHolder}
       <div>
         <p className="text-xl text-[#7B7C7B]">帳號</p>
         <input
-          className="rounded-[20px] bg-[#7B7C7B]/10 border-[3px] mt-3 h-[72px] border-[#7B7C7B] focus:outline-none w-full pl-4 text-3xl text-[#7B7C7B]"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
           type="text"
           value={user_name}
           onChange={(e) => {
@@ -70,9 +70,9 @@ const LoginColumns = () => {
       </div>
       <div>
         <p className="text-xl text-[#7B7C7B]">密碼</p>
-        <div className=" relative">
+        <div className="relative">
           <input
-            className="rounded-[20px] bg-[#7B7C7B]/10 border-[3px] mt-3 h-[72px] border-[#7B7C7B] focus:outline-none w-full pl-4 text-3xl text-[#7B7C7B]"
+            className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
             type={passwdType}
             value={passwd}
             onChange={(e) => {
@@ -80,11 +80,11 @@ const LoginColumns = () => {
             }}
           />
           <button
-            className=" absolute right-3 top-6"
+            className="absolute right-3 top-6"
             onClick={() => handlerChangePasswdType()}
           >
             <img
-              className="w-12 h-full text-[#7B7C7B]"
+              className="h-full w-12 text-[#7B7C7B]"
               src={passwdType == 'text' ? password_show : password_hide}
               alt=""
             />
@@ -92,25 +92,28 @@ const LoginColumns = () => {
         </div>
       </div>
       <div className="flex justify-end">
-        <button className=" underline text-[#7B7C7B] text-xl hover:cursor-pointer">
+        <button className="text-xl text-[#7B7C7B] underline hover:cursor-pointer">
           忘記密碼?
         </button>
       </div>
       <button
-        className="w-full h-[72px] text-2xl p-4 text-white  bg-[#735E5E] rounded-[20px]"
+        className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
         onClick={() => handlerLogin()}
       >
         登入
       </button>
-      <div className="w-full h-6 flex justify-center items-center gap-2">
-        <p className="w-1/2 h-0 border border-[#7B7C7B]"></p>
+      <div className="flex h-6 w-full items-center justify-center gap-2">
+        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
         <p className="text-2xl text-[#7B7C7B]">或</p>
-        <p className="w-1/2 h-0 border border-[#7B7C7B]"></p>
+        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
       </div>
-      <GoogleLogin />
+      <GoogleLogin>
+        {' '}
+        <p>使用Gmail登入</p>
+      </GoogleLogin>
       <div className="flex justify-center">
         <button
-          className=" underline text-[#7B7C7B] text-xl font-thin text-center hover:cursor-pointer"
+          className="text-center text-xl font-thin text-[#7B7C7B] underline hover:cursor-pointer"
           onClick={() => setIsRegister(true)}
         >
           還沒有帳號?註冊
@@ -168,13 +171,13 @@ const RegisterColumns = () => {
   }
 
   return (
-    <div className=" w-[520px] h-fit border-[3px] border-[#7B7C7B] rounded-[50px] flex justify-start px-10 pt-[50px] pb-[20px] flex-col gap-6  backdrop-blur-sm z-20 ">
+    <div className="z-20 flex h-fit w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] px-10 pb-[20px] pt-[50px] backdrop-blur-sm">
       {contextHolder}
 
       <div>
         <p className="text-xl text-[#7B7C7B]">電子信箱</p>
         <input
-          className="rounded-[20px] bg-[#7B7C7B]/10 border-[3px] mt-3 h-[72px] border-[#7B7C7B] focus:outline-none w-full pl-4 text-3xl text-[#7B7C7B]"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
           type="text"
           value={email}
           onChange={(e) => {
@@ -183,9 +186,9 @@ const RegisterColumns = () => {
         />
       </div>
       <div>
-        <p className="text-xl text-[#7B7C7B] flex items-start ">用戶名稱</p>
+        <p className="flex items-start text-xl text-[#7B7C7B]">用戶名稱</p>
         <input
-          className="rounded-[20px] bg-[#7B7C7B]/10 border-[3px] mt-3 h-[72px] border-[#7B7C7B] focus:outline-none w-full pl-4 text-3xl text-[#7B7C7B]"
+          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
           type="text"
           value={user_name}
           onChange={(e) => {
@@ -195,9 +198,9 @@ const RegisterColumns = () => {
       </div>
       <div>
         <p className="text-xl text-[#7B7C7B]">密碼</p>
-        <div className=" relative">
+        <div className="relative">
           <input
-            className="rounded-[20px] bg-[#7B7C7B]/10 border-[3px] mt-3 h-[72px] border-[#7B7C7B] focus:outline-none w-full pl-4 text-3xl text-[#7B7C7B]"
+            className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
             type={passwdType}
             value={passwd}
             onChange={(e) => {
@@ -209,7 +212,7 @@ const RegisterColumns = () => {
             onClick={() => handlerChangePasswdType()}
           >
             <img
-              className="w-12 h-full text-[#7B7C7B]"
+              className="h-full w-12 text-[#7B7C7B]"
               src={passwdType == 'text' ? password_show : password_hide}
               alt=""
             />
@@ -218,25 +221,23 @@ const RegisterColumns = () => {
       </div>
 
       <button
-        className="w-full h-[72px] text-2xl p-4   text-white bg-[#735E5E] rounded-[20px]"
+        className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
         onClick={() => handlerRegister()}
       >
         註冊
       </button>
-      <div className="w-full h-6 flex justify-center items-center gap-2">
-        <p className="w-1/2 h-0 border border-[#7B7C7B]"></p>
+      <div className="flex h-6 w-full items-center justify-center gap-2">
+        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
         <p className="text-2xl text-[#7B7C7B]">或</p>
-        <p className="w-1/2 h-0 border border-[#7B7C7B]"></p>
+        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
       </div>
-      <button
-        className="w-full h-[72px] text-2xl p-4 text-[#7B7C7B] border-[3px]  border-[#7B7C7B] bg-white/30 rounded-[20px] backdrop-blur-sm"
-        title="輸入信箱後註冊即可馬上發想！"
-      >
-        使用Gmail註冊
-      </button>
+      <GoogleLogin>
+        {' '}
+        <p>使用Gmail註冊</p>
+      </GoogleLogin>
       <div className="flex justify-center">
         <button
-          className=" underline text-[#7B7C7B] text-xl font-thin hover:cursor-pointer"
+          className="text-xl font-thin text-[#7B7C7B] underline hover:cursor-pointer"
           onClick={() => setIsRegister(false)}
         >
           已經有帳號?登入
@@ -249,20 +250,7 @@ const RegisterColumns = () => {
 const Login = () => {
   const { isRegister } = useLogin()
 
-  return (
-    <div className="w-screen h-screen relative">
-      <img src={bg} className="w-screen absolute bottom-0 -z-50" alt="" />
-      <div className="flex w-screen h-screen pt-[115px] p-[50px] lg:p-[134px] bg-repeat-y justify-center items-center bg-contain">
-        <div className="w-1/2 flex items-center flex-col gap-4 justify-center h-full ">
-          <img src={groundi_logo} alt="" />
-          <img src={groundi_text} alt="" />
-        </div>
-        <div className="flex items-center flex-col w-1/2 gap-10">
-          {isRegister ? <RegisterColumns /> : <LoginColumns />}
-        </div>
-      </div>
-    </div>
-  )
+  return <>{isRegister ? <RegisterColumns /> : <LoginColumns />}</>
 }
 
 export default Login
