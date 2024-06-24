@@ -144,7 +144,7 @@ const Thinking = ({ action_type }: props) => {
             <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:rotate-90"
+            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
@@ -163,7 +163,7 @@ const Thinking = ({ action_type }: props) => {
             <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:rotate-90"
+            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
@@ -202,7 +202,7 @@ const Thinking = ({ action_type }: props) => {
             <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:rotate-90"
+            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
