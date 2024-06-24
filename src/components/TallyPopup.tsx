@@ -7,9 +7,12 @@ declare global {
       Tally: any
     }
   }
-
-const TallyPopup: React.FC = () => {
-  const navigate = useNavigate();
+  interface TallyPopupProps {
+    getPersonData: () => Promise<void>;
+  }
+  
+  const TallyPopup: React.FC<TallyPopupProps> = ({ getPersonData }) => {
+    const navigate = useNavigate();
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -36,9 +39,8 @@ const TallyPopup: React.FC = () => {
                 },
               }
             );
-            if (result.data === 200) {
-              window.Tally.closePopup('n0x5Z6');
-              window.location.reload();
+            if (result.status === 200) {
+              await getPersonData();
             }
           },
         });

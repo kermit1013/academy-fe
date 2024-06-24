@@ -621,7 +621,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
     >
-      <TallyPopup />
+       <TallyPopup getPersonData={getPersonData} />
       <Panel position="top-left">
         <div className="flex flex-col items-center gap-3">
           <img src={main_logo} alt="" />
