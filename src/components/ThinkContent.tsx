@@ -10,7 +10,8 @@ import styles from '../styles.module.css'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import useThinkContent from '../hooks/useThinkContent'
-
+import close_btn from '../../public/close_btn.svg'
+import plus_icon from '../../public/plus_icon.svg'
 type props = {
   action_type: number
 }
@@ -130,17 +131,17 @@ const Thinking = ({ action_type }: props) => {
   const ActionType1 = () => {
     return (
       <>
-        <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
+        <div className="border-2  border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
           {select_bubble == null ? (
-            <div className="text-gray-400">請選擇一顆泡泡</div>
+            <div className="text-gray-400 font-sans">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
-        <div className="font-sans font-normal text-3xl">x</div>
-        <div className="flex gap-1">
-          <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
-            <div>{action_bubble}</div>
+        <img src={plus_icon} alt="" />
+        <div className="flex gap-[6px]">
+          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
+            <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
             className="hover:cursor-pointer w-8 hover:rotate-90"
@@ -153,12 +154,13 @@ const Thinking = ({ action_type }: props) => {
       </>
     )
   }
+
   const ActionType2 = () => {
     return (
       <>
         <div className="flex gap-1">
-          <div className="border border-white w-[100px] h-[100px] rounded-[20px] text-base p-4 text-center items-center flex justify-center">
-            <div>{action_bubble}</div>
+          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-[12px] text-base p-4 text-center items-center flex justify-center">
+            <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
             className="hover:cursor-pointer w-8 hover:rotate-90"
@@ -168,9 +170,9 @@ const Thinking = ({ action_type }: props) => {
           />
         </div>
         <div className="font-sans font-normal text-3xl">+</div>
-        <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
+        <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
           {select_bubble == null ? (
-            <div className="text-gray-400">請選擇一顆泡泡</div>
+            <div className="text-gray-400  font-sans">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
@@ -183,21 +185,21 @@ const Thinking = ({ action_type }: props) => {
   const ActionType3 = () => {
     return (
       <>
-        <div className="border border-white w-[60px] h-[47px] rounded-full text-base p-3 text-center items-center flex justify-center">
+        <div className="border-2 border-[#7B7C7B] w-[60px] h-[47px] rounded-[12px] text-base text-center items-center flex justify-center">
           <div>{setting_bubble}</div>
         </div>
         <div className="font-sans font-normal text-3xl">+</div>
-        <div className="border border-white w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
+        <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
           {select_bubble == null ? (
-            <div className="text-gray-400">請選擇一顆泡泡</div>
+            <div className="text-gray-400  font-sans">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
         <div className="font-sans font-normal text-3xl">+</div>
         <div className="flex gap-1">
-          <div className="border border-white w-[100px] h-[100px] rounded-[20px] text-base p-4 text-center items-center flex justify-center">
-            <div>{action_bubble}</div>
+          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-[12px] text-base p-4 text-center items-center flex justify-center">
+            <div className=" font-sans">{action_bubble}</div>
           </div>
           <img
             className="hover:cursor-pointer w-8 hover:rotate-90"
@@ -244,7 +246,7 @@ const Thinking = ({ action_type }: props) => {
   }, [action_type])
 
   return (
-    <div className="w-full h-full  flex justify-center items-center text-white text-base font-semibold gap-6 pl-16 ">
+    <div className="w-full h-full  font-normal  flex justify-center items-center text-[#7B7C7B] text-base gap-6 pl-16 ">
       {contextHolder}
       {action_type == 1 ? (
         <ActionType1 />
@@ -259,8 +261,8 @@ const Thinking = ({ action_type }: props) => {
         <input
           type="text"
           value={modifyText}
-          placeholder="輸入..."
-          className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-white  text-center  text-base rounded-lg focus:outline-none"
+          placeholder=" 輸入..."
+          className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-[#7B7C7B]  text-start font-sans text-base rounded-lg focus:outline-none"
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
@@ -319,49 +321,43 @@ const ThinkContent = () => {
     setIsContentVisible(false)
   }
   return (
-    <div className="w-[800px] h-[240px] p-4 border border-white backdrop-blur-lg rounded-2xl mb-12 z-20 bottom-10 absolute left-1/2 transform -translate-x-1/2">
+    <div className="w-[800px] h-[240px] p-4 border-2 border-[#7B7C7B] backdrop-blur-lg flex flex-col rounded-2xl mb-12 z-20 absolute bottom-10 left-[calc(50%-400px)]">
       <button
         onClick={() => handlerCloseContent()}
-        className=" absolute -right-5 -top-5 h-6 w-6 text-sm rounded-full bg-white/30 border border-white hover:bg-white/40"
+        className=" absolute -right-[14px] -top-[14px] h-6 w-6 text-sm flex justify-center items-center rounded-full bg-[#7B7C7B]/20 border border-[#7B7C7B] hover:bg-[#7B7C7B]/40"
       >
-        x
+        <img src={close_btn} alt="" />
       </button>
       <div className="w-full h-7 flex justify-between">
         <div className="flex gap-2 text-white text-sm">
           <button
             className={`${
-              action_type == 1
-                ? 'backdrop-blur-xl  bg-white/20 border border-white'
-                : ''
-            } py-1 px-[10px] h-7 rounded-full  hover:border  hover:border-white`}
+              action_type == 1 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+            } py-1 px-[10px] h-7 rounded-full font-sans `}
             onClick={() => setActionType(1)}
           >
             瘋狂乘法
           </button>
           <button
             className={`${
-              action_type == 2
-                ? 'backdrop-blur-xl  bg-white/20 border border-white'
-                : ''
-            } py-1 px-[10px] h-7 rounded-full  hover:border  hover:border-white`}
+              action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+            } py-1 px-[10px] h-7 rounded-full font-sans `}
             onClick={() => setActionType(2)}
           >
             人物風暴
           </button>
           <button
             className={`${
-              action_type == 3
-                ? 'backdrop-blur-xl bg-white/20 border border-white'
-                : ''
-            } py-1 px-[10px] h-7 rounded-full  hover:border  hover:border-white`}
+              action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+            } py-1 px-[10px] h-7 rounded-full font-sans `}
             onClick={() => setActionType(3)}
           >
             情境迷宮
           </button>
         </div>
-        <div className="flex items-center justify-center gap-2">
-          <div className="text-sm text-[#f5c3a5]">1分鐘內寫出5個點子</div>
-          <div className="flex gap-1 text-white border border-[#f5c3a5] p-1 rounded-lg w-20 justify-center">
+        <div className="flex items-center justify-center gap-2 font-sans">
+          <div className="text-sm text-[#EF6E52]">1分鐘內寫出5個點子</div>
+          <div className="flex gap-1 text-[#EF6E52] border bg-[#EF6E52]/20 border-[#EF6E52]/20 p-1 rounded-lg w-20 justify-center">
             <img src={icon_clock} alt="" />
             <div>0:{times}</div>
           </div>

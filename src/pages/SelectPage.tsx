@@ -42,6 +42,7 @@ import TallyPopup from '../components/TallyPopup'
 // import ConnectProcess from '../components/ConnectProcess'
 import { googleLogout } from '@react-oauth/google'
 
+import bg from '../../public/bg.svg'
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
@@ -55,7 +56,7 @@ const nodeTypes = {
 const nodeOrigin: NodeOrigin = [0.5, 0.5]
 
 const defaultEdgeOptions = {
-  style: { stroke: '#fff', strokeWidth: 2 },
+  style: { stroke: '#7B7C7B', strokeWidth: 2 },
 }
 
 interface InputNode {
@@ -68,6 +69,38 @@ interface InputNode {
 interface InputEdge {
   source: number
   target: number
+}
+interface s {
+  status: boolean
+}
+// const ConnectProcess = ({ status }: s) => {
+//   return status ? (
+//     <div className="w-screen h-screen bg-[url('/public/login_bg.webp')] relative flex justify-center items-center z-50">
+//       <div className="w-[946px] h-[91px] rounded-full border-2 border-white text-white flex gap-4 justify-center items-center text-2xl font-bold">
+//         <svg
+//           width="55"
+//           height="55"
+//           viewBox="0 0 55 55"
+//           fill="none"
+//           xmlns="http://www.w3.org/2000/svg"
+//         >
+//           <path
+//             d="M9.16671 43.544H4.58337C4.58337 35.95 10.7395 29.794 18.3334 29.794C25.9273 29.794 32.0834 35.95 32.0834 43.544H27.5C27.5 38.4813 23.396 34.3773 18.3334 34.3773C13.2708 34.3773 9.16671 38.4813 9.16671 43.544ZM42.0842 35.2092L38.8438 31.9688C41.8525 28.9603 43.5429 24.8798 43.5429 20.625C43.5429 16.3702 41.8525 12.2897 38.8438 9.28125L42.0842 6.04083C50.1374 14.0952 50.1374 27.1526 42.0842 35.2069V35.2092ZM35.6011 28.7283L32.3607 25.4833C35.0415 22.7992 35.0415 18.4508 32.3607 15.7667L35.6011 12.5194C40.0757 16.9941 40.0757 24.249 35.6011 28.7238V28.7283ZM18.3334 27.5C13.2708 27.5 9.16671 23.3959 9.16671 18.3333C9.16671 13.2707 13.2708 9.16667 18.3334 9.16667C23.396 9.16667 27.5 13.2707 27.5 18.3333C27.5 20.7645 26.5343 23.0961 24.8152 24.8151C23.0961 26.5342 20.7645 27.5 18.3334 27.5ZM18.3334 13.75C15.8295 13.7525 13.791 15.764 13.7552 18.2677C13.7193 20.7713 15.6993 22.8404 18.202 22.9146C20.7048 22.9889 22.804 21.0409 22.9167 18.5396V19.4563V18.3333C22.9167 15.802 20.8647 13.75 18.3334 13.75Z"
+//             fill="white"
+//           />
+//         </svg>
+
+//         <p>連線中...</p>
+//       </div>
+//     </div>
+//   ) : (
+//     <></>
+//   )
+// }
+declare global {
+  interface Window {
+    Tally: any
+  }
 }
 
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
@@ -267,10 +300,28 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (_node.id === node.id) {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: true }
+          if (node.id.includes('level0')) {
+            newNode.className = styles.node1_level0_node_hover
+          } else if (node.id.includes('level1')) {
+            newNode.className = styles.node1_level1_node_hover
+          } else if (node.id.includes('level2')) {
+            newNode.className = styles.node1_level2_node_hover
+          } else {
+            newNode.className = styles.node1_level3_node_hover
+          }
           return newNode
         } else {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: false }
+          if (node.id.includes('level0')) {
+            newNode.className = styles.node1_level0_node
+          } else if (node.id.includes('level1')) {
+            newNode.className = styles.node1_level1_node
+          } else if (node.id.includes('level2')) {
+            newNode.className = styles.node1_level2_node
+          } else {
+            newNode.className = styles.node1_level3_node
+          }
           return newNode
         }
       })
@@ -618,7 +669,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       // onPaneClick={onPaneClick}
       nodeOrigin={nodeOrigin}
       zoomOnDoubleClick={false}
-      className="intersection-flow w-screen h-screen bg-[url('/public/CoralBG.webp')] relative font-serif"
+      className="intersection-flow w-screen h-screen relative font-serif"
       defaultEdgeOptions={defaultEdgeOptions}
     >
        <TallyPopup getPersonData={getPersonData} />
@@ -631,14 +682,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <div className="flex gap-3">
           <button
             title="發想互動"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(0)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={handlerContentVisible}
           >
             <img src={light_bulb} alt="" />
             {hoverIndex == 0 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 發想互動
               </p>
             ) : (
@@ -647,7 +698,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </button>
           <button
             title="畫廊漫步"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(1)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => setCanReferenced(true)}
@@ -655,7 +706,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           >
             <img src={change_think} alt="" />
             {hoverIndex == 1 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 畫廊漫步
               </p>
             ) : (
@@ -684,14 +735,14 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </button> */}
           <button
             title="設定"
-            className="w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
+            className="w-10 h-10 rounded hover:bg-[#7B7C7B]/10 bg-[#7B7C7B]/10 border border-[#7B7C7B] flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(3)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => handlerSetting()}
           >
             <img src={setting} alt="" />
             {hoverIndex == 3 ? (
-              <p className=" absolute top-12 w-[76px] h-7 rounded text-white bg-white/20">
+              <p className="  absolute top-12 w-[68px] border border-[#7B7C7B]/10 h-7  flex items-center justify-center  font-sans text-[13px] rounded text-[#7B7C7B] bg-white/20">
                 設定
               </p>
             ) : (
@@ -702,12 +753,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       </Panel>
 
       <Panel position="bottom-left">
-        <data className="flex justify-center items-end gap-2">
-          <div className="bg-white/30 flex gap-1 text-white w-fit rounded-lg items-center justify-center h-7">
+        <data className="flex justify-center items-end gap-2 border border-[#7B7C7B]/20 rounded-md">
+          <div className="bg-[#7B7C7B]/10 flex gap-1 text-[#7B7C7B] w-fit rounded-lg items-center justify-center h-7">
             <button className="p-2" onClick={() => zoomOut({ duration: 800 })}>
               -
             </button>
-            <p className="border-l border-r border-white px-2">
+            <p className="border-l border-r border-[#7B7C7B] px-2">
               {Math.floor(getViewport.zoom * 100)}%
             </p>
             <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
@@ -724,6 +775,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </div> */}
         </data>
       </Panel>
+      <img src={bg} className="w-screen absolute bottom-0 -z-50" alt="" />
       {/* {isVisible ? <Modal /> : <></>} */}
       {/* {isContentVisible && !isConnect ? <ThinkContent /> : <></>} */}
       {isContentVisible ? <ThinkContent /> : <></>}
@@ -732,22 +784,22 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           <div className="flex w-full h-full justify-between items-center ">
             <button
               onClick={() => getReferencedUserData(true)}
-              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+              className=" z-10 w-10 h-10 rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10 flex items-center justify-center"
             >
               <img src={prev_button} alt="" />
             </button>
             <button
               onClick={() => getReferencedUserData(false)}
-              className=" z-10 w-10 h-10 rounded hover:bg-white/30 bg-white/20 focus:bg-white/30 focus:border-2 focus:border-white flex items-center justify-center"
+              className=" z-10 w-10 h-10 rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10 flex items-center justify-center"
             >
               <img src={next_button} alt="" />
             </button>
           </div>
-          <div className=" z-10 w-fit h-10 rounded bg-white/20 flex items-center justify-center px-2 py-1">
-            <p className="text-white text-[13px]">
+          <div className=" z-10 w-fit h-10 rounded bg-[#7B7C7B]/10 border border-[#7B7C7B]/20 flex items-center justify-center px-2 py-1">
+            <p className="text-[#7B7C7B] text-[13px] font-sans">
               按左右鍵可以逛逛他人的心智圖
             </p>
-            <p className="border-l border-white w-1 h-full mx-2"></p>
+            <p className="border-l border-[#7B7C7B] w-1 h-full ml-2"></p>
             <button
               className="hover:scale-110"
               onClick={handlerCloseReferenceThink}
