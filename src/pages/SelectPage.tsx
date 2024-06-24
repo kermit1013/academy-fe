@@ -70,9 +70,9 @@ interface InputEdge {
   source: number
   target: number
 }
-interface s {
-  status: boolean
-}
+// interface s {
+//   status: boolean
+// }
 // const ConnectProcess = ({ status }: s) => {
 //   return status ? (
 //     <div className="w-screen h-screen bg-[url('/public/login_bg.webp')] relative flex justify-center items-center z-50">

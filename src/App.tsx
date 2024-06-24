@@ -1,15 +1,12 @@
 import { message } from 'antd'
 import axios from 'axios'
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import useLogin from './hooks/useLogin'
 
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
-import groundi_text from '../public/groundi_text.svg'
-import groundi_logo from '../public/groundi_logo.svg'
-import bg from '../public/bg.svg'
 import GoogleLogin from './components/GoogleLogin'
 
 const LoginColumns = () => {
@@ -48,11 +45,11 @@ const LoginColumns = () => {
     }
   }
 
-  const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter') {
-      handlerLogin()
-    }
-  }
+  // const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.code === 'Enter') {
+  //     handlerLogin()
+  //   }
+  // }
 
   return (
     <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] p-10 backdrop-blur-sm">
