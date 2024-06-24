@@ -89,7 +89,7 @@ function useForceLayout({
       })
       .on('end', () => {
         console.log('Simulation ended ')
-
+        tickCount = 0;
         fitView({ nodes: simulationNodes })
         !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
