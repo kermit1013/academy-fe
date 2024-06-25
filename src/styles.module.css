@@ -3,7 +3,7 @@
   width: 160px !important;
   border-radius: 50%;
   color: #7b7c7b;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   font-size: 24px !important;
   display: flex;
   align-items: center;
@@ -19,7 +19,7 @@
   height: 160px !important;
   width: 160px !important;
   border-radius: 50%;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
   font-size: 24px !important;
   display: flex;
@@ -54,7 +54,7 @@
   height: 120px !important;
   width: 120px !important;
   border-radius: 50%;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
   font-size: 24px !important;
   display: flex;
@@ -71,7 +71,7 @@
   height: 120px !important;
   width: 120px !important;
   border-radius: 50%;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
   font-size: 24px !important;
   display: flex;
@@ -106,9 +106,9 @@
   height: 100px !important;
   width: 100px !important;
   border-radius: 50%;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
-  font-size: 24px !important;
+  font-size: 20px !important;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -124,9 +124,9 @@
   height: 100px !important;
   width: 100px !important;
   border-radius: 50%;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
-  font-size: 16px !important;
+  font-size: 20px !important;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -145,7 +145,7 @@
   border: 6px solid #6ca579;
   background-color: rgba(108, 165, 121, 0.3) !important;
   color: #6ca579;
-  font-size: 24px !important;
+  font-size: 20px !important;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -161,7 +161,7 @@
   height: 58px !important;
   width: 192px !important;
   border-radius: 12px;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
   font-size: 20px !important;
   display: flex;
@@ -178,7 +178,7 @@
   height: 58px !important;
   width: 192px !important;
   border-radius: 12px;
-  border: 2px solid #7b7c7b;
+  outline: 2px solid #7b7c7b;
   color: #7b7c7b;
   font-size: 20px !important;
   display: flex;

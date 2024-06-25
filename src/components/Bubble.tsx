@@ -99,8 +99,8 @@ const Bubble = ({ data }: props) => {
         `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
+            Authorization: `Bearer ${access_token}`
+          }
         }
       )
       if (result.status === 204) {
@@ -123,12 +123,12 @@ const Bubble = ({ data }: props) => {
       {
         source: parseInt(origin_id),
         label: '',
-        category: '',
+        category: ''
       },
       {
         headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
+          Authorization: `Bearer ${access_token}`
+        }
       }
     )
     if (result.status === 200) {
@@ -142,15 +142,15 @@ const Bubble = ({ data }: props) => {
         data.category === 'ABOUT'
           ? `level1_${result.data.id}_user${user_id}`
           : data.category === null
-          ? `level3_${result.data.id}_user${user_id}`
-          : `level2_${result.data.id}_user${user_id}`
+            ? `level3_${result.data.id}_user${user_id}`
+            : `level2_${result.data.id}_user${user_id}`
 
       const childNode = {
         id: childId,
         type: 'bubble',
         position: {
           x: this_bubble.position.x * 1.5,
-          y: this_bubble.position.y * 1.5,
+          y: this_bubble.position.y * 1.5
         },
         data: {
           id: childId,
@@ -159,8 +159,8 @@ const Bubble = ({ data }: props) => {
           category: null,
           position: {
             x: this_bubble.position.x * 1.5,
-            y: this_bubble.position.y * 1.5,
-          },
+            y: this_bubble.position.y * 1.5
+          }
         },
         className:
           data.category === 'ABOUT'
@@ -168,18 +168,18 @@ const Bubble = ({ data }: props) => {
               ? styles.node1_level1_node
               : styles.node2_level1_node
             : data.category === null
-            ? data.id != user_id
-              ? styles.node1_level3_node
-              : styles.node2_level3_node
-            : data.id != user_id
-            ? styles.node1_level2_node
-            : styles.node2_level2_node,
+              ? data.id != user_id
+                ? styles.node1_level3_node
+                : styles.node2_level3_node
+              : data.id != user_id
+                ? styles.node1_level2_node
+                : styles.node2_level2_node
       }
       const childEdge = {
         id: `${data.id}->${childId}`,
         source: data.id,
         target: childId,
-        type: 'straight',
+        type: 'straight'
       }
 
       const nodesList = getNodes().map((node) => {
@@ -210,12 +210,12 @@ const Bubble = ({ data }: props) => {
     const result = await axios.put(
       `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
       {
-        label: modifyData,
+        label: modifyData
       },
       {
         headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
+          Authorization: `Bearer ${access_token}`
+        }
       }
     )
 
@@ -249,68 +249,32 @@ const Bubble = ({ data }: props) => {
     }
   }
 
+  const handlerModifyData = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (
+      (data.id.includes('level2') && e.target.value.length <= 15) ||
+      (data.id.includes('level3') && e.target.value.length <= 18)
+    ) {
+      setModifyData(e.target.value)
+    } else {
+      messageApi.warning('已超過可輸入長度!')
+    }
+  }
+
   return (
     <div
-      className="w-full h-full text-center flex items-center justify-center overflow-hidden relative"
+      className="relative flex h-full w-full items-center justify-center text-center"
       onClick={() => selectBubble()}
       onDoubleClick={() => handlerEdit()}
       onBlur={() => handlerFinishEdit()}
       key={data.id}
     >
       {contextHolder}
-      {/* {data.category ? (
-        <></>
-      ) : (
-        <div>
-          <NodeToolbar
-            offset={
-              data.id.includes('level0')
-                ? -30
-                : data.id.includes('level0')
-                ? -20
-                : -25
-            }
-            align="end"
-            isVisible={data.isVisible}
-            position={Position.Top}
-          >
-            <button
-              onClick={handleDeleteNode}
-              className="z-50 h-8 w-8 rounded-full border-2 border-black scale-75 bg-white hover:bg-gray-300"
-            >
-              x
-            </button>
-          </NodeToolbar>
-        </div>
-      )}
-      <NodeToolbar isVisible={data.isVisible} position={Position.Bottom}>
-        {data.id.includes('level3') ? (
-          <></>
-        ) : (
-          <div className="w-40 flex gap-2">
-            <input
-              autoFocus
-              className="rounded-lg w-36 border border-black pl-2"
-              type="text"
-              value={modifyData}
-              onChange={(e) => modifyText(e)}
-              onKeyDown={(e) => onKeyDown(e)}
-            />
-            <button
-              className="hover:bg-white/70 border border-black rounded-lg bg-white/50 px-4 py-1"
-              onClick={submitData}
-            >
-              Enter
-            </button>
-          </div>
-        )}
-      </NodeToolbar> */}
       {data.category ? (
         <></>
       ) : ReferenceUserId === '' ? (
         <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
           <button
-            className=" bg-[#6CA579]/20 w-6 h-6 border border-[#6CA579] rounded-full absolute -top-3 -left-5 flex items-center justify-center"
+            className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
             onClick={() => handlerRemoveBubble()}
           >
             <img src={delete_bubble} alt="" />
@@ -323,7 +287,7 @@ const Bubble = ({ data }: props) => {
         ReferenceUserId === '' ? (
           <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
             <button
-              className=" bg-[#6CA579]/20 w-6 h-6 text-[16px] text-center text-[#6CA579] border border-[#6CA579] rounded-full absolute -top-3 -left-1"
+              className="absolute -left-1 -top-3 h-6 w-6 rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
               onClick={() => handlerNewBubble()}
             >
               +
@@ -337,7 +301,7 @@ const Bubble = ({ data }: props) => {
       )}
       {ReferenceUserId !== '' ? (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-          <button className=" bg-white/40 w-6 h-6 text-[16px] text-white rounded-full absolute -top-3 -left-1 flex justify-center items-center">
+          <button className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-white/40 text-[16px]">
             <img src={connect_discord} alt="" />
           </button>
         </NodeToolbar>
@@ -349,40 +313,47 @@ const Bubble = ({ data }: props) => {
         data.category == null ? (
           ReferenceUserId === '' ? (
             <textarea
-              maxLength={20}
-              className="  bg-transparent h-full w-full p-2 text-[#6ca579] font-sans text-sm text-center focus:outline-none "
+              cols={
+                data.id.includes('level2')
+                  ? 4
+                  : data.id.includes('level3')
+                    ? 9
+                    : 10
+              }
+              rows={3}
+              className="h-full w-full resize-none rounded-full bg-transparent p-2 text-center font-sans text-sm text-[#6ca579] focus:outline-none"
               value={modifyData}
               autoFocus
               placeholder="請輸入您的想法"
-              onChange={(e) => setModifyData(e.target.value)}
+              onChange={(e) => handlerModifyData(e)}
               onKeyDown={(e) => handlerKeyDown(e)}
             />
           ) : (
-            <div
+            <p
               className={`${
                 data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
               } font-sans`}
             >
               {data.label}
-            </div>
+            </p>
           )
         ) : (
-          <div
+          <p
             className={`${
               data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } font-sans`}
           >
             {data.label}
-          </div>
+          </p>
         )
       ) : (
-        <div
+        <p
           className={`${
             data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
           } font-sans`}
         >
           {data.label}
-        </div>
+        </p>
       )}
 
       <Handle type="target" position={Position.Top} />

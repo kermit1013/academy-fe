@@ -16,15 +16,15 @@ body,
 }
 
 .intersection-flow .react-flow__node:hover {
-  border-color: #6ca579 !important;
+  outline-color: #6ca579 !important;
   background-color: rgba(108, 165, 121, 0.3) !important;
   cursor: pointer;
-  border-width: 8px;
+  outline-width: 8px;
 }
 
 .react-flow__nodesselection-rect {
-  border-color: #6ca579 !important;
-  border-width: 5px !important;
+  outline-color: #6ca579 !important;
+  outline-width: 5px !important;
   border-style: solid !important;
 }
 
@@ -32,23 +32,23 @@ body,
   height: 40px;
   width: 40px;
   border-radius: 20px !important;
-  border-color: #6ca579 !important;
-  border-width: 3px;
+  outline-color: #6ca579 !important;
+  outline-width: 3px;
   margin-right: -15px;
   margin-left: -15px;
   background-color: rgba(108, 165, 121, 0.3) !important;
 }
 
 .selected {
-  border-color: #6ca579 !important;
+  outline-color: #6ca579 !important;
 
   background-color: rgba(108, 165, 121, 0.3) !important;
-  border-width: 5px !important;
+  outline-width: 5px !important;
   z-index: 9999 !important;
 }
 
 .react-flow__selection {
   background-color: rgba(108, 165, 121, 0.3) !important;
-  border-color: #6ca579 !important;
-  border-width: 5px !important;
+  outline-color: #6ca579 !important;
+  outline-width: 5px !important;
 }

@@ -7,9 +7,6 @@ import useLogin from './hooks/useLogin'
 
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
-import groundi_text from '../public/groundi_text.svg'
-import groundi_logo from '../public/groundi_logo.svg'
-import bg from '../public/bg.svg'
 import GoogleLogin from './components/GoogleLogin'
 
 const LoginColumns = () => {
