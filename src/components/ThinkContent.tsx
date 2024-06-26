@@ -356,7 +356,7 @@ const ThinkContent = () => {
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
-          <div className="text-sm text-[#EF6E52]">1分鐘內寫出5個點子</div>
+          <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
           <div className="flex gap-1 text-[#EF6E52] border bg-[#EF6E52]/20 border-[#EF6E52]/20 p-1 rounded-lg w-20 justify-center">
             <img src={icon_clock} alt="" />
             <div>0:{times}</div>

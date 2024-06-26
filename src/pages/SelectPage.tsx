@@ -657,7 +657,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       <Panel position="top-center">
         <div className="flex gap-3">
           <button
-            title="發想互動"
+            title="靈感發想"
             className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
             onMouseEnter={() => selectTypeInHoverIn(0)}
             onMouseLeave={() => setHoverIndex(-1)}
@@ -666,7 +666,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             <img src={light_bulb} alt="" />
             {hoverIndex == 0 ? (
               <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                發想互動
+                靈感發想
               </p>
             ) : (
               <></>
