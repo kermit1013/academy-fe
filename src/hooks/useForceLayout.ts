@@ -26,7 +26,7 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
     (node) => node.width && node.height
   ) && state.nodeInternals.size
   let tickCount = 0;
-  const maxTicks = 150;
+  const maxTicks = 20;
 function useForceLayout({
   strength = -300,
   distance = 300,
@@ -65,6 +65,7 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
+      .tick(2)
       .on('tick', () => {
         if (!simulationEnded) {
           fitView({ nodes: simulationNodes })
