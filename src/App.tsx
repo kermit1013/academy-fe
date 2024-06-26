@@ -148,6 +148,7 @@ const RegisterColumns = () => {
       return
     }
 
+    try {
     const result = await axios.post('https://api.loudy.in/api/users', {
       username: user_name,
       gender: '',
@@ -156,14 +157,14 @@ const RegisterColumns = () => {
       grade: '',
       password: passwd
     })
-
-    if (result.status === 200) {
       messageApi.success('註冊成功!')
       setTimeout(() => {
         setIsRegister(false)
       }, 2000)
-    } else {
-      messageApi.error(result.data)
+    } catch (error : any) {
+      if (error.response.status === 409) {
+        await messageApi.error('此用戶名或信箱已被使用')
+      }
     }
   }
 
