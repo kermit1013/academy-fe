@@ -13,7 +13,8 @@ import { useReactFlow, ReactFlowState, useStore, Node } from 'reactflow'
 type UseForceLayoutOptions = {
   strength: number
   distance: number
-  times: number
+  times: number,
+  setIsLoading: any
 }
 
 type SimNodeType = SimulationNodeDatum & Node
@@ -31,7 +32,7 @@ function useForceLayout({
   distance = 300,
   times = 0,
   setIsLoading = true,
-}: any) {
+}: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges, fitView } = useReactFlow()
