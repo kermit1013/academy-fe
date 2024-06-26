@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import axios from 'axios'
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import useLogin from './hooks/useLogin'
@@ -45,11 +45,11 @@ const LoginColumns = () => {
     }
   }
 
-  const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter') {
-      handlerLogin()
-    }
-  }
+  // const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.code === 'Enter') {
+  //     handlerLogin()
+  //   }
+  // }
 
   return (
     <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] p-10 backdrop-blur-sm">
