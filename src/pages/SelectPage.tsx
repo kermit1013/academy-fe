@@ -498,7 +498,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (user_id === null) {
           url = 'https://api.loudy.in/api/users'
         } else {
-          url = `https://api.loudy.in/api/users?user_id=28`
+          url = `https://api.loudy.in/api/users`
         }
       }
 
@@ -658,7 +658,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <div className="flex gap-3">
           <button
             title="靈感發想"
-            className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
+            className={`relative flex h-10 w-10 items-center justify-center rounded border ${
+              isContentVisible
+                ? 'border-[#6CA579] bg-[#6CA579]/20'
+                : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
+            }`}
             onMouseEnter={() => selectTypeInHoverIn(0)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={handlerContentVisible}
@@ -674,7 +678,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </button>
           <button
             title="畫廊漫步"
-            className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
+            className={`relative flex h-10 w-10 items-center justify-center rounded border ${
+              canReferenced
+                ? 'border-[#6CA579] bg-[#6CA579]/20'
+                : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
+            }`}
             onMouseEnter={() => selectTypeInHoverIn(1)}
             onMouseLeave={() => setHoverIndex(-1)}
             onClick={() => setCanReferenced(true)}
