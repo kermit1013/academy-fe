@@ -3,8 +3,8 @@ import {
   forceSimulation,
   forceLink,
   forceManyBody,
-  forceX,
-  forceY,
+  // forceX,
+  // forceY,
   SimulationNodeDatum,
   SimulationLinkDatum,
 } from 'd3-force'
@@ -24,7 +24,8 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
   Array.from(state.nodeInternals.values()).every(
     (node) => node.width && node.height
   ) && state.nodeInternals.size
-
+  let tickCount = 0;
+  const maxTicks = 150;
 function useForceLayout({
   strength = -300,
   distance = 300,
@@ -50,9 +51,6 @@ function useForceLayout({
     const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
       (edge) => edge
     )
-    const center_x = window.innerWidth / 2
-    const center_y = window.innerHeight / 2
-
     const simulation = forceSimulation()
       .nodes(simulationNodes)
       .force('charge', forceManyBody().strength(strength))
@@ -64,11 +62,9 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
-      .force('x', forceX().x(center_x).strength(0.01))
-      .force('y', forceY().y(center_y).strength(0.01))
-      .tick(300)
       .on('tick', () => {
         if (!simulationEnded) {
+          fitView({ nodes: simulationNodes })
           setNodes(
             simulationNodes.map((node) => ({
               id: node.id,
@@ -83,11 +79,17 @@ function useForceLayout({
               className: node.className,
             }))
           )
+
+          tickCount += 1;     
+          if (tickCount >= maxTicks) {
+            !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
+            tickCount = 0;
+          }
         }
       })
       .on('end', () => {
         console.log('Simulation ended ')
-
+        tickCount = 0;
         fitView({ nodes: simulationNodes })
         !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
