@@ -30,13 +30,15 @@ function useForceLayout({
   strength = -300,
   distance = 300,
   times = 0,
-}: UseForceLayoutOptions) {
+  setIsLoading = true,
+}: any) {
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges, fitView } = useReactFlow()
   const [simulationEnded, setSimulationEnded] = useState(false)
 
   useEffect(() => {
+    setIsLoading(true)
     const nodes = getNodes()
     const edges = getEdges()
     if (!nodes.length || !nodesInitialized) {
@@ -89,12 +91,14 @@ function useForceLayout({
       })
       .on('end', () => {
         console.log('Simulation ended ')
+        setIsLoading(false);
         tickCount = 0;
         fitView({ nodes: simulationNodes })
         !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
     return () => {
       console.log('return simulation')
+      setIsLoading(false);
       simulation.stop()
     }
   }, [
