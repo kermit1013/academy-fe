@@ -6,7 +6,7 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('access_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -20,7 +20,11 @@ request.interceptors.response.use(
   (error: AxiosError) => {
     if (error?.response?.status === 401) {
       console.error('Unauthorized request:', error)
-      localStorage.removeItem('token')
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('refresh_token')
+      localStorage.removeItem('user_id')
+      localStorage.removeItem('user_name')
+      localStorage.removeItem('roomName')
       window.location.href = '/login'
     }
     return Promise.reject(error)

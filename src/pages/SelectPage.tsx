@@ -43,6 +43,7 @@ import TallyPopup from '../components/TallyPopup'
 import { googleLogout } from '@react-oauth/google'
 
 import bg from '../../public/bg.svg'
+import SettingModal from '../components/modal/SettingModal'
 // import useYDoc from '../hooks/useYDoc'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
@@ -78,7 +79,7 @@ declare global {
 }
 
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true)
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [cursors, onMouseMove] = useCursorStateSynced()
@@ -111,6 +112,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [times, setTimes] = useState(1)
   const { item_id, source, label } = useSelectHintItem()
   const [isInit, setIsInit] = useState(false)
+
+  const [isOpenSettingModal, setIsOpenSettingModal] = useState(false)
 
   const navigate = useNavigate()
 
@@ -623,94 +626,109 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   )
 
   const handlerSetting = () => {
-    console.log('handlerSetting')
-    logoutReferenceThink()
-    googleLogout()
-    navigate('/')
+    setIsOpenSettingModal(true)
   }
+
   const handlerCloseReferenceThink = () => {
     logoutReferenceThink()
   }
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onPointerMove={onMouseMove}
-      onNodeClick={onNodeClick}
-      proOptions={proOptions}
-      selectNodesOnDrag={false}
-      // onPaneClick={onPaneClick}
-      nodeOrigin={nodeOrigin}
-      zoomOnDoubleClick={false}
-      className="intersection-flow relative h-screen w-screen font-serif"
-      defaultEdgeOptions={defaultEdgeOptions}
-    >
-      {isLoading && (<>
-        <div className="fixed inset-0 bg-black bg-opacity-20 z-40"></div>
-          <div className="transform -translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 z-50" >
-          <svg className="animate-spin h-24 w-24 text-[#6ca579]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-15" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-85" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-          </svg>
-          </div>
-      </>)}
+    <>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onPointerMove={onMouseMove}
+        onNodeClick={onNodeClick}
+        proOptions={proOptions}
+        selectNodesOnDrag={false}
+        // onPaneClick={onPaneClick}
+        nodeOrigin={nodeOrigin}
+        zoomOnDoubleClick={false}
+        className="intersection-flow relative h-screen w-screen font-serif"
+        defaultEdgeOptions={defaultEdgeOptions}
+      >
+        {isLoading && (
+          <>
+            <div className="fixed inset-0 z-40 bg-black bg-opacity-20"></div>
+            <div className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform">
+              <svg
+                className="h-24 w-24 animate-spin text-[#6ca579]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-15"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-85"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          </>
+        )}
 
-      <TallyPopup getPersonData={getPersonData} />
-      <Panel position="top-left">
-        <div className="flex flex-col items-center gap-3">
-          <img src={main_logo} alt="" />
-        </div>
-      </Panel>
-      <Panel position="top-center">
-        <div className="flex gap-3">
-          <button
-            title="靈感發想"
-            className={`relative flex h-10 w-10 items-center justify-center rounded border ${
-              isContentVisible
-                ? 'border-[#6CA579] bg-[#6CA579]/20'
-                : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
-            }`}
-            onMouseEnter={() => selectTypeInHoverIn(0)}
-            onMouseLeave={() => setHoverIndex(-1)}
-            onClick={handlerContentVisible}
-          >
-            <img src={light_bulb} alt="" />
-            {hoverIndex == 0 ? (
-              <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                靈感發想
-              </p>
-            ) : (
-              <></>
-            )}
-          </button>
-          <button
-            title="畫廊漫步"
-            className={`relative flex h-10 w-10 items-center justify-center rounded border ${
-              canReferenced
-                ? 'border-[#6CA579] bg-[#6CA579]/20'
-                : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
-            }`}
-            onMouseEnter={() => selectTypeInHoverIn(1)}
-            onMouseLeave={() => setHoverIndex(-1)}
-            onClick={() => setCanReferenced(true)}
-            disabled={isContentVisible}
-          >
-            <img src={change_think} alt="" />
-            {hoverIndex == 1 ? (
-              <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                畫廊漫步
-              </p>
-            ) : (
-              <></>
-            )}
-          </button>
-          {/* <button
+        <TallyPopup getPersonData={getPersonData} />
+        <Panel position="top-left">
+          <div className="flex flex-col items-center gap-3">
+            <img src={main_logo} alt="" />
+          </div>
+        </Panel>
+        <Panel position="top-center">
+          <div className="flex gap-3">
+            <button
+              title="靈感發想"
+              className={`relative flex h-10 w-10 items-center justify-center rounded border ${
+                isContentVisible
+                  ? 'border-[#6CA579] bg-[#6CA579]/20'
+                  : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
+              }`}
+              onMouseEnter={() => selectTypeInHoverIn(0)}
+              onMouseLeave={() => setHoverIndex(-1)}
+              onClick={handlerContentVisible}
+            >
+              <img src={light_bulb} alt="" />
+              {hoverIndex == 0 ? (
+                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
+                  靈感發想
+                </p>
+              ) : (
+                <></>
+              )}
+            </button>
+            <button
+              title="畫廊漫步"
+              className={`relative flex h-10 w-10 items-center justify-center rounded border ${
+                canReferenced
+                  ? 'border-[#6CA579] bg-[#6CA579]/20'
+                  : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
+              }`}
+              onMouseEnter={() => selectTypeInHoverIn(1)}
+              onMouseLeave={() => setHoverIndex(-1)}
+              onClick={() => setCanReferenced(true)}
+              disabled={isContentVisible}
+            >
+              <img src={change_think} alt="" />
+              {hoverIndex == 1 ? (
+                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
+                  畫廊漫步
+                </p>
+              ) : (
+                <></>
+              )}
+            </button>
+            {/* <button
             title={!isConnect ? '連線' : '停止連線'}
             className="w-10 h-10 rounded hover:bg-white/30 bg-white/10 focus:bg-white/30 focus:border-2 focus:border-white  flex items-center justify-center relative"
             onMouseEnter={() => selectTypeInHoverIn(2)}
@@ -730,39 +748,42 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               <></>
             )}
           </button> */}
-          <button
-            title="設定"
-            className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
-            onMouseEnter={() => selectTypeInHoverIn(3)}
-            onMouseLeave={() => setHoverIndex(-1)}
-            onClick={() => handlerSetting()}
-          >
-            <img src={setting} alt="" />
-            {hoverIndex == 3 ? (
-              <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                設定
-              </p>
-            ) : (
-              <></>
-            )}
-          </button>
-        </div>
-      </Panel>
-
-      <Panel position="bottom-left">
-        <data className="flex items-end justify-center gap-2 rounded-md border border-[#7B7C7B]/20">
-          <div className="flex h-7 w-fit items-center justify-center gap-1 rounded-lg bg-[#7B7C7B]/10 text-[#7B7C7B]">
-            <button className="p-2" onClick={() => zoomOut({ duration: 800 })}>
-              -
-            </button>
-            <p className="border-l border-r border-[#7B7C7B] px-2">
-              {Math.floor(getViewport.zoom * 100)}%
-            </p>
-            <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
-              +
+            <button
+              title="設定"
+              className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
+              onMouseEnter={() => selectTypeInHoverIn(3)}
+              onMouseLeave={() => setHoverIndex(-1)}
+              onClick={() => handlerSetting()}
+            >
+              <img src={setting} alt="" />
+              {hoverIndex == 3 ? (
+                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
+                  設定
+                </p>
+              ) : (
+                <></>
+              )}
             </button>
           </div>
-          {/* <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
+        </Panel>
+
+        <Panel position="bottom-left">
+          <data className="flex items-end justify-center gap-2 rounded-md border border-[#7B7C7B]/20">
+            <div className="flex h-7 w-fit items-center justify-center gap-1 rounded-lg bg-[#7B7C7B]/10 text-[#7B7C7B]">
+              <button
+                className="p-2"
+                onClick={() => zoomOut({ duration: 800 })}
+              >
+                -
+              </button>
+              <p className="border-l border-r border-[#7B7C7B] px-2">
+                {Math.floor(getViewport.zoom * 100)}%
+              </p>
+              <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
+                +
+              </button>
+            </div>
+            {/* <div className=" flex gap-2 text-white items-end h-12 overflow-hidden">
             <button
               className=" h-12 border-2 border-white bg-white/30 rounded-md px-2 py-1 flex-shrink-0"
               onClick={handleSelectAll}
@@ -770,48 +791,54 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               Select Mine
             </button>
           </div> */}
-        </data>
-      </Panel>
-      <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
-      {/* {isVisible ? <Modal /> : <></>} */}
-      {/* {isContentVisible && !isConnect ? <ThinkContent /> : <></>} */}
-      {isContentVisible ? <ThinkContent /> : <></>}
-      {canReferenced ? (
-        <div className="flex h-full w-full flex-col items-center justify-center p-4">
-          <div className="flex h-full w-full items-center justify-between">
-            <button
-              onClick={() => getReferencedUserData(true)}
-              className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
-            >
-              <img src={prev_button} alt="" />
-            </button>
-            <button
-              onClick={() => getReferencedUserData(false)}
-              className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
-            >
-              <img src={next_button} alt="" />
-            </button>
+          </data>
+        </Panel>
+        <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
+        {/* {isVisible ? <Modal /> : <></>} */}
+        {/* {isContentVisible && !isConnect ? <ThinkContent /> : <></>} */}
+        {isContentVisible ? <ThinkContent /> : <></>}
+        {canReferenced ? (
+          <div className="flex h-full w-full flex-col items-center justify-center p-4">
+            <div className="flex h-full w-full items-center justify-between">
+              <button
+                onClick={() => getReferencedUserData(true)}
+                className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
+              >
+                <img src={prev_button} alt="" />
+              </button>
+              <button
+                onClick={() => getReferencedUserData(false)}
+                className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
+              >
+                <img src={next_button} alt="" />
+              </button>
+            </div>
+            <div className="z-10 flex h-10 w-fit items-center justify-center rounded border border-[#7B7C7B]/20 bg-[#7B7C7B]/10 px-2 py-1">
+              <p className="font-sans text-[13px] text-[#7B7C7B]">
+                按左右鍵可以逛逛他人的心智圖
+              </p>
+              <p className="ml-2 h-full w-1 border-l border-[#7B7C7B]"></p>
+              <button
+                className="hover:scale-110"
+                onClick={handlerCloseReferenceThink}
+              >
+                <img src={disconnect} alt="" />
+              </button>
+            </div>
           </div>
-          <div className="z-10 flex h-10 w-fit items-center justify-center rounded border border-[#7B7C7B]/20 bg-[#7B7C7B]/10 px-2 py-1">
-            <p className="font-sans text-[13px] text-[#7B7C7B]">
-              按左右鍵可以逛逛他人的心智圖
-            </p>
-            <p className="ml-2 h-full w-1 border-l border-[#7B7C7B]"></p>
-            <button
-              className="hover:scale-110"
-              onClick={handlerCloseReferenceThink}
-            >
-              <img src={disconnect} alt="" />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <> </>
-      )}
-      <Cursors cursors={cursors} />
-      {/* <ConnectProcess status={isConnectProcess} /> */}
-      {/* <MiniMap pannable zoomable /> */}
-    </ReactFlow>
+        ) : (
+          <> </>
+        )}
+        <Cursors cursors={cursors} />
+        {/* <ConnectProcess status={isConnectProcess} /> */}
+        {/* <MiniMap pannable zoomable /> */}
+      </ReactFlow>
+
+      <SettingModal
+        isOpen={isOpenSettingModal}
+        onClose={() => setIsOpenSettingModal(false)}
+      />
+    </>
   )
 }
 

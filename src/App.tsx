@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import axios from 'axios'
-import  { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import useLogin from './hooks/useLogin'
@@ -89,7 +89,12 @@ const LoginColumns = () => {
         </div>
       </div>
       <div className="flex justify-end">
-        <button className="text-xl text-[#7B7C7B] underline hover:cursor-pointer">
+        <button
+          className="text-xl text-[#7B7C7B] underline hover:cursor-pointer"
+          onClick={() => {
+            navigate('/forgetPwd')
+          }}
+        >
           忘記密碼?
         </button>
       </div>
@@ -150,18 +155,18 @@ const RegisterColumns = () => {
 
     try {
       await axios.post('https://api.loudy.in/api/users', {
-      username: user_name,
-      gender: '',
-      email: email,
-      school: '',
-      grade: '',
-      password: passwd
-    })
+        username: user_name,
+        gender: '',
+        email: email,
+        school: '',
+        grade: '',
+        password: passwd
+      })
       messageApi.success('註冊成功!')
       setTimeout(() => {
         setIsRegister(false)
       }, 2000)
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response.status === 409) {
         await messageApi.error('此用戶名或信箱已被使用')
       }
