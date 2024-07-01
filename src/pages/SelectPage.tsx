@@ -40,7 +40,6 @@ import useThinkContent from '../hooks/useThinkContent'
 import useReferenceThink from '../hooks/useReferenceThink'
 import TallyPopup from '../components/TallyPopup'
 // import ConnectProcess from '../components/ConnectProcess'
-import { googleLogout } from '@react-oauth/google'
 
 import bg from '../../public/bg.svg'
 import SettingModal from '../components/modal/SettingModal'
