@@ -24,8 +24,7 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
   Array.from(state.nodeInternals.values()).every(
     (node) => node.width && node.height
   ) && state.nodeInternals.size
-let tickCount = 0
-const maxTicks = 20
+
 function useForceLayout({
   strength = -300,
   distance = 300,
@@ -34,14 +33,11 @@ function useForceLayout({
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges, fitView } = useReactFlow()
-  const [simulationEnded, setSimulationEnded] = useState(false)
-
   useEffect(() => {
     setIsLoading(true)
-
     const nodes = getNodes()
     const edges = getEdges()
-    if (!nodes.length || !nodesInitialized) {
+    if (!nodes.length) {
       return
     }
     const simulationNodes: SimNodeType[] = nodes.map((node) => ({
@@ -64,49 +60,30 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
-      .tick(30)
+      .alphaDecay(0.0228)
+      .alphaMin(0.3)
       .on('tick', () => {
-        if (!simulationEnded) {
-          fitView({ nodes: simulationNodes })
-          setNodes(
-            simulationNodes.map((node) => ({
-              id: node.id,
-              type: 'bubble',
-              data: node.data,
-              position: { x: node.x ?? 0, y: node.y ?? 0 },
-              className: node.className
-            }))
-          )
-
-          tickCount += 1
-          if (tickCount >= maxTicks) {
-            !simulationEnded
-              ? setSimulationEnded(true)
-              : setSimulationEnded(false)
-            tickCount = 0
-          }
-        }
+        fitView({ nodes: simulationNodes })
+        setNodes(
+          simulationNodes.map((node) => ({
+            id: node.id,
+            type: 'bubble',
+            data: node.data,
+            position: { x: node.x ?? 0, y: node.y ?? 0 },
+            className: node.className
+          }))
+        )
+        console.log(simulation.alpha())
       })
       .on('end', () => {
         console.log('Simulation ended ')
         setIsLoading(false)
-        tickCount = 0
-        fitView({ nodes: simulationNodes })
-        !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
-    return () => {
-      console.log('return simulation')
-      setIsLoading(false)
-      simulation.stop()
-    }
   }, [
     elementCount,
     getNodes,
     getEdges,
     setNodes,
-    strength,
-    distance,
-    nodesInitialized
   ])
 }
 
