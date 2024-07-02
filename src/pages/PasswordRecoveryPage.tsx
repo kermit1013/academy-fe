@@ -9,7 +9,7 @@ import password_show from '/password_show.svg'
 import enter from '/prev_button.svg'
 
 const filedStyle =
-  'mt-3 h-[72px] w-full rounded-[20px] border-2 border-white bg-white/30 pl-4 text-3xl focus:outline-none'
+  'mt-3 h-[72px] w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/30 pl-4 text-3xl focus:outline-none'
 
 const PasswordRecoveryPage = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -242,7 +242,7 @@ const PasswordRecoveryPage = () => {
   }
 
   return (
-    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-2 border-white bg-white/20 p-10 text-[#7B7C7B] backdrop-blur-sm">
+    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-2 border-[#7B7C7B] bg-white/20 p-10 text-[#7B7C7B] backdrop-blur-sm">
       {contextHolder}
 
       <button
@@ -260,14 +260,16 @@ const PasswordRecoveryPage = () => {
       </button>
 
       <div>
-        <h2 className="text-[2rem] font-bold">{stepList[step].title}</h2>
+        <h2 className="text-[2rem] font-bold text-white">
+          {stepList[step].title}
+        </h2>
         <p className="text-xl">{stepList[step].desc}</p>
       </div>
 
       {stepList[step].renderFields()}
 
       <button
-        className="h-[72px] w-full rounded-[20px] border-2 border-white bg-white/70 p-4 text-2xl text-[#385BA3]"
+        className="h-[72px] w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/70 p-4 text-2xl text-[#7B7C7B]"
         onClick={() => stepList[step].onClick()}
       >
         {stepList[step].buttonText}

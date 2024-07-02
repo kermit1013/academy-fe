@@ -6,14 +6,13 @@ import {
   // forceX,
   // forceY,
   SimulationNodeDatum,
-  SimulationLinkDatum,
+  SimulationLinkDatum
 } from 'd3-force'
 import { useReactFlow, ReactFlowState, useStore, Node } from 'reactflow'
 
 type UseForceLayoutOptions = {
   strength: number
   distance: number
-  times: number,
   setIsLoading: any
 }
 
@@ -25,13 +24,12 @@ const nodesInitializedSelector = (state: ReactFlowState) =>
   Array.from(state.nodeInternals.values()).every(
     (node) => node.width && node.height
   ) && state.nodeInternals.size
-  let tickCount = 0;
-  const maxTicks = 20;
+let tickCount = 0
+const maxTicks = 20
 function useForceLayout({
   strength = -300,
   distance = 300,
-  times = 0,
-  setIsLoading = true,
+  setIsLoading = true
 }: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
   const nodesInitialized = useStore(nodesInitializedSelector)
@@ -40,6 +38,7 @@ function useForceLayout({
 
   useEffect(() => {
     setIsLoading(true)
+
     const nodes = getNodes()
     const edges = getEdges()
     if (!nodes.length || !nodesInitialized) {
@@ -48,7 +47,7 @@ function useForceLayout({
     const simulationNodes: SimNodeType[] = nodes.map((node) => ({
       ...node,
       x: node.position.x,
-      y: node.position.y,
+      y: node.position.y
     }))
 
     const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
@@ -65,7 +64,7 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
-      .tick(2)
+      .tick(30)
       .on('tick', () => {
         if (!simulationEnded) {
           fitView({ nodes: simulationNodes })
@@ -73,45 +72,41 @@ function useForceLayout({
             simulationNodes.map((node) => ({
               id: node.id,
               type: 'bubble',
-              data: {
-                id: node.id,
-                label: node.data.label,
-                position: { x: node.x ?? 0, y: node.y ?? 0 },
-                category: node.data.category,
-              },
+              data: node.data,
               position: { x: node.x ?? 0, y: node.y ?? 0 },
-              className: node.className,
+              className: node.className
             }))
           )
 
-          tickCount += 1;     
+          tickCount += 1
           if (tickCount >= maxTicks) {
-            !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
-            tickCount = 0;
+            !simulationEnded
+              ? setSimulationEnded(true)
+              : setSimulationEnded(false)
+            tickCount = 0
           }
         }
       })
       .on('end', () => {
         console.log('Simulation ended ')
-        setIsLoading(false);
-        tickCount = 0;
+        setIsLoading(false)
+        tickCount = 0
         fitView({ nodes: simulationNodes })
         !simulationEnded ? setSimulationEnded(true) : setSimulationEnded(false)
       })
     return () => {
       console.log('return simulation')
-      setIsLoading(false);
+      setIsLoading(false)
       simulation.stop()
     }
   }, [
-    times,
     elementCount,
     getNodes,
     getEdges,
     setNodes,
     strength,
     distance,
-    nodesInitialized,
+    nodesInitialized
   ])
 }
 

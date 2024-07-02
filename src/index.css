@@ -16,39 +16,38 @@ body,
 }
 
 .intersection-flow .react-flow__node:hover {
-  outline-color: #6ca579 !important;
+  outline: 3px solid #6ca579 !important;
   background-color: rgba(108, 165, 121, 0.3) !important;
   cursor: pointer;
-  outline-width: 8px;
 }
 
-.react-flow__nodesselection-rect {
-  outline-color: #6ca579 !important;
-  outline-width: 5px !important;
-  border-style: solid !important;
+.react-flow__nodes_selection-rect {
+  outline: 3px solid #6ca579 !important;
 }
 
 .intersection-flow .react-flow__handle {
   height: 40px;
   width: 40px;
   border-radius: 20px !important;
-  outline-color: #6ca579 !important;
-  outline-width: 3px;
+  outline: 3px solid #6ca579 !important;
   margin-right: -15px;
   margin-left: -15px;
   background-color: rgba(108, 165, 121, 0.3) !important;
 }
 
 .selected {
-  outline-color: #6ca579 !important;
+  /* outline: 3px solid #6ca579 !important; */
 
   background-color: rgba(108, 165, 121, 0.3) !important;
-  outline-width: 5px !important;
   z-index: 9999 !important;
 }
 
 .react-flow__selection {
   background-color: rgba(108, 165, 121, 0.3) !important;
-  outline-color: #6ca579 !important;
-  outline-width: 5px !important;
+  outline: 3px solid red !important;
+}
+
+.react-flow__node.selectable:focus {
+  background-color: rgba(108, 165, 121, 0.3) !important;
+  outline: 3px solid #6ca579 !important;
 }
