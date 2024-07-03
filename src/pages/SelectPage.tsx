@@ -204,20 +204,18 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   )
 
   const handlerContentVisible = () => {
-    logoutReferenceThink()
     setIsContentVisible(true)
+  }
+  const handlerCanReference = () => {
+    setCanReference(true)
+    localStorage.setItem('reference_user_id', localStorage.getItem('user_id') || '')
   }
   const logoutReferenceThink = () => {
     setCanReference(false)
-    if (localStorage.getItem('reference_user_id')) {
-      setNodes([])
-      setEdges([])
-      // setMyNodeList([])
-      // setMyEdgeList([])
+    if (localStorage.getItem('user_id') != localStorage.getItem('reference_user_id')) {
       getPersonData()
     }
     localStorage.removeItem('reference_user_id')
-    setReferenceUserId('')
   }
 
   const [hoverIndex, setHoverIndex] = useState(-1)
@@ -279,6 +277,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
       setNodes(nodeList)
       setEdges(edgeList)
+      localStorage.setItem('reference_user_id', result.data.user_id)
     } catch (error) {
       navigate('/')
     }
@@ -329,6 +328,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               onMouseEnter={() => selectTypeInHoverIn(0)}
               onMouseLeave={() => setHoverIndex(-1)}
               onClick={handlerContentVisible}
+              disabled={can_reference}
             >
               <img src={light_bulb} alt="" />
               {hoverIndex == 0 ? (
@@ -348,7 +348,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               }`}
               onMouseEnter={() => selectTypeInHoverIn(1)}
               onMouseLeave={() => setHoverIndex(-1)}
-              onClick={() => setCanReference(true)}
+              onClick={() => handlerCanReference()}
               disabled={isContentVisible}
             >
               <img src={change_think} alt="" />
