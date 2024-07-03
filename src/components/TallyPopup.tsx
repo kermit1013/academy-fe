@@ -20,7 +20,6 @@ declare global {
     script.onload = () => {
       if (window.Tally) {
         window.Tally.openPopup('n0x5Z6', {
-          doNotShowAfterSubmit: true,
           overlay: true,
           onSubmit: async (payload: any) => {
             const access_token = localStorage.getItem('access_token');
