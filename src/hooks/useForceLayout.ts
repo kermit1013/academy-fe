@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
   forceSimulation,
   forceLink,
@@ -20,10 +20,10 @@ type SimNodeType = SimulationNodeDatum & Node
 
 const elementCountSelector = (state: ReactFlowState) =>
   state.nodeInternals.size + state.edges.length
-const nodesInitializedSelector = (state: ReactFlowState) =>
-  Array.from(state.nodeInternals.values()).every(
-    (node) => node.width && node.height
-  ) && state.nodeInternals.size
+// const nodesInitializedSelector = (state: ReactFlowState) =>
+//   Array.from(state.nodeInternals.values()).every(
+//     (node) => node.width && node.height
+//   ) && state.nodeInternals.size
 
 function useForceLayout({
   strength = -300,
@@ -31,7 +31,7 @@ function useForceLayout({
   setIsLoading = true
 }: UseForceLayoutOptions) {
   const elementCount = useStore(elementCountSelector)
-  const nodesInitialized = useStore(nodesInitializedSelector)
+  // const nodesInitialized = useStore(nodesInitializedSelector)
   const { setNodes, getNodes, getEdges, fitView } = useReactFlow()
   useEffect(() => {
     setIsLoading(true)
