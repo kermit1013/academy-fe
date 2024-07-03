@@ -85,7 +85,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
   const { zoomIn, zoomOut } = useReactFlow()
-  const { setReferenceUserId, setCanReference, can_reference } =
+  const { setCanReference, can_reference } =
     useReferenceThink()
   const getViewport = useViewport()
   const [hasSubmitTally, setHasSubmitTally] = useState(true)
