@@ -94,7 +94,7 @@ const Bubble = ({ data }: props) => {
       return
     }
     if (confirm('是否要刪除?')) {
-      const origin_id = data.id.split('_')[1]
+      const origin_id = data.id
       const access_token = localStorage.getItem('access_token')
       const result = await axios.delete(
         `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
