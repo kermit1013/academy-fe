@@ -59,7 +59,7 @@ const PasswordRecoveryPage = () => {
       {
         title: '查看你的電子郵件',
         desc: '我們發送了一個重設連結到至您的電子郵件，請輸入電子郵件中提到的 5 位數代碼。',
-        buttonText: '驗証代碼',
+        buttonText: '驗證代碼',
         onClick: () => handleCheckCodes(),
         renderFields: () => {
           return (
@@ -68,7 +68,7 @@ const PasswordRecoveryPage = () => {
                 return (
                   <input
                     key={index}
-                    className="border-3 h-[4.5rem] w-[4.5rem] rounded-[20px] border-[#7B7C7B] text-center text-3xl font-bold focus:outline-none"
+                    className="h-[4.5rem] w-[4.5rem] rounded-[20px] border-[3px] border-[#7B7C7B] text-center text-3xl font-bold focus:outline-none"
                     type="text"
                     maxLength={1}
                     value={data}
@@ -160,7 +160,7 @@ const PasswordRecoveryPage = () => {
           navigate('/')
         },
         renderFields: () => {
-          return <div>{step}</div>
+          return <></>
         }
       }
     ]
@@ -195,7 +195,6 @@ const PasswordRecoveryPage = () => {
         return
       }
     }
-
     try {
       const result = await request.get('/users/reset-validate', {
         params: {
@@ -217,7 +216,6 @@ const PasswordRecoveryPage = () => {
     if (!passwd) return messageApi.warning('請輸入密碼！')
     if (!checkPasswd) return messageApi.warning('請輸入確認密碼！')
     if (passwd !== checkPasswd) return messageApi.warning('密碼不一致！')
-
     try {
       const result = await request.post('/users/reset-password', {
         code: codes.join(''),
@@ -242,7 +240,7 @@ const PasswordRecoveryPage = () => {
   }
 
   return (
-    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-2 border-[#7B7C7B] bg-white/20 p-10 text-[#7B7C7B] backdrop-blur-sm">
+    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] bg-white/20 p-10 text-[#7B7C7B] backdrop-blur-sm">
       {contextHolder}
 
       <button
@@ -260,7 +258,7 @@ const PasswordRecoveryPage = () => {
       </button>
 
       <div>
-        <h2 className="text-[2rem] font-bold text-white">
+        <h2 className="text-[2rem] font-bold text-[#7B7C7B]">
           {stepList[step].title}
         </h2>
         <p className="text-xl">{stepList[step].desc}</p>
@@ -268,12 +266,23 @@ const PasswordRecoveryPage = () => {
 
       {stepList[step].renderFields()}
 
-      <button
-        className="h-[72px] w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/70 p-4 text-2xl text-[#7B7C7B]"
-        onClick={() => stepList[step].onClick()}
-      >
-        {stepList[step].buttonText}
-      </button>
+      {(email == '' && step == 0) ||
+      (codes.join('').length != 5 && step == 1) ||
+      ((passwd == '' || checkPasswd == '') && step == 2) ? (
+        <button
+          className="h-[72px] w-full rounded-[20px] bg-[#7B7C7B]/20 p-4 text-2xl text-[#7B7C7B]/50"
+          onClick={() => stepList[step].onClick()}
+        >
+          {stepList[step].buttonText}
+        </button>
+      ) : (
+        <button
+          className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
+          onClick={() => stepList[step].onClick()}
+        >
+          {stepList[step].buttonText}
+        </button>
+      )}
 
       {stepList[step].title === '查看你的電子郵件' && (
         <p className="text-center text-xl">
