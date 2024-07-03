@@ -5,7 +5,7 @@ import { message } from 'antd'
 import { PropsWithChildren } from 'react'
 
 const GoogleLogin = ({ children }: PropsWithChildren) => {
-  const [messageApi] = message.useMessage()
+  const [messageApi, contextHolder] = message.useMessage()
   const navigate = useNavigate()
 
   const googleLogin = useGoogleLogin({
@@ -33,12 +33,15 @@ const GoogleLogin = ({ children }: PropsWithChildren) => {
     }
   })
   return (
-    <button
-      className="h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-white/30 p-4 text-2xl text-[#7B7C7B] backdrop-blur-sm"
-      onClick={() => googleLogin()}
-    >
-      {children}
-    </button>
+    <>
+      {contextHolder}
+      <button
+        className="h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-white/30 p-4 text-2xl text-[#7B7C7B] backdrop-blur-sm"
+        onClick={() => googleLogin()}
+      >
+        {children}
+      </button>
+    </>
   )
 }
 

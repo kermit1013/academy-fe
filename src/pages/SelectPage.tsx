@@ -31,10 +31,14 @@ import ThinkContent from '../components/ThinkContent'
 import useThinkContent from '../hooks/useThinkContent'
 import useReferenceThink from '../hooks/useReferenceThink'
 import TallyPopup from '../components/TallyPopup'
+import TallyStartProject from '../components/TallyStartProject'
 
 import bg from '../../public/bg.svg'
 import SettingModal from '../components/modal/SettingModal'
 import Loading from '../components/Loading'
+import useStartProject from '../hooks/useStartProject'
+import useAheadDiscord from '../hooks/useAheadDiscord'
+import DiscordModal from '../components/modal/DiscordModal'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -75,8 +79,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [isLoading, setIsLoading] = useState(true)
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-  const [cursors, onMouseMove] = useCursorStateSynced()
 
+  const [cursors, onMouseMove] = useCursorStateSynced()
+  const { is_start_project } = useStartProject()
+  const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
   const { zoomIn, zoomOut } = useReactFlow()
   const { setReferenceUserId, setCanReference, can_reference } =
@@ -305,6 +311,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       >
         {isLoading && <Loading />}
         {!hasSubmitTally && <TallyPopup getPersonData={getPersonData} />}
+        {is_start_project && <TallyStartProject />}
         <Panel position="top-left">
           <div className="flex flex-col items-center gap-3">
             <img src={main_logo} alt="" />
@@ -427,7 +434,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <Cursors cursors={cursors} />
         <MiniMap />
       </ReactFlow>
-
+      <DiscordModal
+        isOpen={is_ahead_discord}
+        onClose={() => setAheadDiscordStatus(false)}
+      />
       <SettingModal
         isOpen={isOpenSettingModal}
         onClose={() => setIsOpenSettingModal(false)}

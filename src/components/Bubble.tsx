@@ -9,8 +9,9 @@ import useBubble from '../hooks/useBubble'
 import useReferenceThink from '../hooks/useReferenceThink'
 import start_project from '../../public/start_project.svg'
 import delete_bubble from '../../public/delete_bubble.svg'
-import chat_bubble from '../../public/chat_bubble.svg'
-
+import icon_discord from '../../public/discord_green.svg'
+import useStartProject from '../hooks/useStartProject'
+import useAheadDiscord from '../hooks/useAheadDiscord'
 interface props {
   data: {
     id: string
@@ -25,17 +26,18 @@ interface props {
 const Bubble = ({ data }: props) => {
   const { getNodes, getEdges } = useReactFlow()
   const { setSelectBubble } = useBubble()
+  const { setStartProjectStatus } = useStartProject()
+  const { setAheadDiscordStatus } = useAheadDiscord()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
   const { edit_bubble_id, setEditBubbleId } = useBubble()
-
   const { reference_user_id, can_reference } = useReferenceThink()
 
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
-    if (node.data.id.includes('level2')) {
+    if (node.data.level === 2) {
       setSelectBubble(node)
     }
   }
@@ -266,7 +268,7 @@ const Bubble = ({ data }: props) => {
       </> */}
       {contextHolder}
 
-      {!can_reference && data.level !== 3 && reference_user_id === '' ? (
+      {!can_reference && data.level !== 3 && reference_user_id === '' && (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 h-6 w-6 rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
@@ -276,54 +278,52 @@ const Bubble = ({ data }: props) => {
             +
           </button>
         </NodeToolbar>
-      ) : (
-        <></>
       )}
       {!can_reference &&
-      (data.level === 2 || (data.level === 3 && data.is_launched === false)) &&
-      reference_user_id === '' ? (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
-          <button
-            className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
-            onClick={() => handlerRemoveBubble()}
-            title="刪除泡泡"
-          >
-            <img src={delete_bubble} alt="" />
-          </button>
-        </NodeToolbar>
-      ) : (
-        <></>
-      )}
-      {can_reference &&
-      data.level === 3 &&
-      data.is_launched === true &&
-      reference_user_id !== '' ? (
+        ((data.level === 1 && data.category === null) ||
+          data.level === 2 ||
+          (data.level === 3 && data.is_launched === false)) &&
+        reference_user_id === '' && (
+          <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
+            <button
+              className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
+              onClick={() => handlerRemoveBubble()}
+              title="刪除泡泡"
+            >
+              <img src={delete_bubble} alt="" />
+            </button>
+          </NodeToolbar>
+        )}
+      {data.level === 3 && data.is_launched === true && (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
             title="加入Discord"
+            onClick={() => {
+              setAheadDiscordStatus(true)
+            }}
           >
-            <img src={chat_bubble} alt="" />
+            <img src={icon_discord} alt="" />
           </button>
         </NodeToolbar>
-      ) : (
-        <></>
       )}
       {!can_reference &&
-      data.level === 3 &&
-      data.is_launched === false &&
-      reference_user_id === '' ? (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-          <button
-            className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
-            title="開始計劃"
-          >
-            <img src={start_project} alt="" />
-          </button>
-        </NodeToolbar>
-      ) : (
-        <></>
-      )}
+        data.level === 3 &&
+        data.is_launched === false &&
+        reference_user_id === '' &&
+        data.label != '' && (
+          <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+            <button
+              className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
+              title="開始計劃"
+              onClick={() => {
+                setStartProjectStatus(true)
+              }}
+            >
+              <img src={start_project} alt="" />
+            </button>
+          </NodeToolbar>
+        )}
       {!can_reference &&
       ((data.level === 1 && data.category === null) ||
         data.level === 2 ||

@@ -37,12 +37,12 @@ const Thinking = ({ action_type }: props) => {
       {
         source: parseInt(origin_id),
         label: modifyText,
-        category: '',
+        category: ''
       },
       {
         headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
+          Authorization: `Bearer ${access_token}`
+        }
       }
     )
     if (result.status === 200) {
@@ -56,15 +56,15 @@ const Thinking = ({ action_type }: props) => {
         data.category === 'ABOUT'
           ? `level1_${result.data.id}_user${user_id}`
           : data.category === null
-          ? `level3_${result.data.id}_user${user_id}`
-          : `level2_${result.data.id}_user${user_id}`
+            ? `level3_${result.data.id}_user${user_id}`
+            : `level2_${result.data.id}_user${user_id}`
 
       const childNode = {
         id: childId,
         type: 'bubble',
         position: {
           x: this_bubble.position.x * 1.5,
-          y: this_bubble.position.y * 1.5,
+          y: this_bubble.position.y * 1.5
         },
         data: {
           id: childId,
@@ -73,8 +73,8 @@ const Thinking = ({ action_type }: props) => {
           category: null,
           position: {
             x: this_bubble.position.x * 1.5,
-            y: this_bubble.position.y * 1.5,
-          },
+            y: this_bubble.position.y * 1.5
+          }
         },
         className:
           data.category === 'ABOUT'
@@ -82,18 +82,18 @@ const Thinking = ({ action_type }: props) => {
               ? styles.node1_level1_node
               : styles.node2_level1_node
             : data.category === null
-            ? data.id != user_id
-              ? styles.node1_level3_node
-              : styles.node2_level3_node
-            : data.id != user_id
-            ? styles.node1_level2_node
-            : styles.node2_level2_node,
+              ? data.id != user_id
+                ? styles.node1_level3_node
+                : styles.node2_level3_node
+              : data.id != user_id
+                ? styles.node1_level2_node
+                : styles.node2_level2_node
       }
       const childEdge = {
         id: `${data.id}->${childId}`,
         source: data.id,
         target: childId,
-        type: 'straight',
+        type: 'straight'
       }
 
       const nodesList = getNodes().map((node) => {
@@ -131,26 +131,26 @@ const Thinking = ({ action_type }: props) => {
   const ActionType1 = () => {
     return (
       <>
-        <div className="border-2  border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-4 text-center items-center flex justify-center">
+        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
           {select_bubble == null ? (
-            <div className="text-gray-400 font-sans">請選擇一顆泡泡</div>
+            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
         <img src={plus_icon} alt="" />
         <div className="flex gap-[6px]">
-          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
-            <div className=" font-sans">{action_bubble}</div>
+          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
+            <div className="font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
+            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
           />
         </div>
-        <div className="font-sans font-normal text-3xl">=</div>
+        <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
   }
@@ -159,25 +159,25 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex gap-1">
-          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-[12px] text-base p-4 text-center items-center flex justify-center">
-            <div className=" font-sans">{action_bubble}</div>
+          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base">
+            <div className="font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
+            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
           />
         </div>
-        <div className="font-sans font-normal text-3xl">+</div>
-        <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
+        <div className="font-sans text-3xl font-normal">+</div>
+        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
           {select_bubble == null ? (
-            <div className="text-gray-400  font-sans">請選擇一顆泡泡</div>
+            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
-        <div className="font-sans font-normal text-3xl">=</div>
+        <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
   }
@@ -185,30 +185,30 @@ const Thinking = ({ action_type }: props) => {
   const ActionType3 = () => {
     return (
       <>
-        <div className="border-2 border-[#7B7C7B] w-[60px] h-[47px] rounded-[12px] text-base text-center items-center flex justify-center">
+        <div className="flex h-[47px] w-[60px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] text-center text-base">
           <div>{setting_bubble}</div>
         </div>
-        <div className="font-sans font-normal text-3xl">+</div>
-        <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-full text-base p-3 text-center items-center flex justify-center">
+        <div className="font-sans text-3xl font-normal">+</div>
+        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
           {select_bubble == null ? (
-            <div className="text-gray-400  font-sans">請選擇一顆泡泡</div>
+            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
-        <div className="font-sans font-normal text-3xl">+</div>
+        <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex gap-1">
-          <div className="border-2 border-[#7B7C7B] w-[100px] h-[100px] rounded-[12px] text-base p-4 text-center items-center flex justify-center">
-            <div className=" font-sans">{action_bubble}</div>
+          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base">
+            <div className="font-sans">{action_bubble}</div>
           </div>
           <img
-            className="hover:cursor-pointer w-8 hover:scale-150 transition-transform ease-in-out duration-200"
+            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
             onClick={() => handler_refresh_api()}
             src={icon_change}
             alt=""
           />
         </div>
-        <div className="font-sans font-normal text-3xl">=</div>
+        <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
   }
@@ -223,8 +223,8 @@ const Thinking = ({ action_type }: props) => {
         'https://api.loudy.in/api/interactions/celebrities',
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
+            Authorization: `Bearer ${access_token}`
+          }
         }
       )
       setActionBubble(result.data.name)
@@ -233,8 +233,8 @@ const Thinking = ({ action_type }: props) => {
         'https://api.loudy.in/api/interactions/scenarios',
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
+            Authorization: `Bearer ${access_token}`
+          }
         }
       )
       setActionBubble(result.data.name)
@@ -246,7 +246,7 @@ const Thinking = ({ action_type }: props) => {
   }, [action_type])
 
   return (
-    <div className="w-full h-full  font-normal  flex justify-center items-center text-[#7B7C7B] text-base gap-6 pl-16 ">
+    <div className="flex h-full w-full items-center justify-center gap-6 pl-16 text-base font-normal text-[#7B7C7B]">
       {contextHolder}
       {action_type == 1 ? (
         <ActionType1 />
@@ -262,7 +262,7 @@ const Thinking = ({ action_type }: props) => {
           type="text"
           value={modifyText}
           placeholder=" 輸入..."
-          className="w-[192px] h-[58px] pl-3 bg-white/20 border-2 border-[#7B7C7B]  text-start font-sans text-base rounded-lg focus:outline-none"
+          className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
@@ -274,7 +274,7 @@ const Thinking = ({ action_type }: props) => {
 
 const ThinkDone = () => {
   return (
-    <div className="w-full h-full  flex justify-center items-center text-white text-2xl font-semibold ">
+    <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-white">
       <div>再接再厲！越常發想，你的創造力會越強！</div>
     </div>
   )
@@ -321,19 +321,19 @@ const ThinkContent = () => {
     setIsContentVisible(false)
   }
   return (
-    <div className="w-[800px] h-[240px] p-4 border-2 border-[#7B7C7B] backdrop-blur-lg flex flex-col rounded-2xl mb-12 z-20 absolute bottom-10 left-[calc(50%-400px)]">
+    <div className="absolute bottom-10 left-[calc(50%-400px)] z-20 mb-12 flex h-[240px] w-[800px] flex-col rounded-2xl border-2 border-[#7B7C7B] p-4 backdrop-blur-lg">
       <button
         onClick={() => handlerCloseContent()}
-        className=" absolute -right-[14px] -top-[14px] h-6 w-6 text-sm flex justify-center items-center rounded-full bg-[#7B7C7B]/20 border border-[#7B7C7B] hover:bg-[#7B7C7B]/40"
+        className="absolute -right-[14px] -top-[14px] flex h-6 w-6 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40"
       >
         <img src={close_btn} alt="" />
       </button>
-      <div className="w-full h-7 flex justify-between">
-        <div className="flex gap-2 text-white text-sm">
+      <div className="flex h-7 w-full justify-between">
+        <div className="flex gap-2 text-sm text-white">
           <button
             className={`${
               action_type == 1 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } py-1 px-[10px] h-7 rounded-full font-sans `}
+            } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(1)}
           >
             瘋狂乘法
@@ -341,7 +341,7 @@ const ThinkContent = () => {
           <button
             className={`${
               action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } py-1 px-[10px] h-7 rounded-full font-sans `}
+            } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(2)}
           >
             人物風暴
@@ -349,7 +349,7 @@ const ThinkContent = () => {
           <button
             className={`${
               action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } py-1 px-[10px] h-7 rounded-full font-sans `}
+            } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(3)}
           >
             情境迷宮
@@ -357,13 +357,13 @@ const ThinkContent = () => {
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
           <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
-          <div className="flex gap-1 text-[#EF6E52] border bg-[#EF6E52]/20 border-[#EF6E52]/20 p-1 rounded-lg w-20 justify-center">
+          <div className="flex w-20 justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
             <div>0:{times}</div>
           </div>
         </div>
       </div>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         {times ? <Thinking action_type={action_type} /> : <ThinkDone />}
       </div>
     </div>
