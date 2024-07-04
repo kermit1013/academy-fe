@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import ReactFlow, {
   Panel,
   ProOptions,
@@ -72,7 +72,7 @@ declare global {
 
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [isLoading, setIsLoading] = useState(true)
-  const [user_id_list, setUserIdList] = useState<number[]>([])
+  const [userIdList, setUserIdList] = useState<number[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [cursors, onMouseMove] = useCursorStateSynced()
@@ -89,86 +89,110 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     getPersonData(0)
   }, [])
 
+  const userIdListRef = useRef<number[]>([]);
+
+  // Update the ref whenever userIdList changes
+  useEffect(() => {
+    console.log(userIdListRef)
+    userIdListRef.current = userIdList;
+  }, [userIdList]);
+
   const navigate = useNavigate()
 
   const getPersonData = useCallback(async (action_type: number) => {
     console.log(actionType)
     const access_token = localStorage.getItem('access_token')
-    if (access_token === null) {
+    if (!access_token) {
       navigate('/')
       return
     }
-    let user_id = 0
-    if (action_type == -1) {
-      user_id = user_id_list.pop() as number
+
+    let user_id: number | undefined;
+
+    if (action_type === -1) {
+      if (userIdListRef.current.length > 0) {
+        user_id = userIdListRef.current[userIdListRef.current.length - 2];
+        console.log(user_id);
+      } else {
+        console.log("userIdList is empty");
+        return;
+      }
     }
-    const url =
-      action_type == -1
-        ? `https://api.loudy.in/api/users/me?user_id=${user_id}`
-        : action_type == 1
-          ? 'https://api.loudy.in/api/users/me?user_id=0'
-          : 'https://api.loudy.in/api/users/me'
+    const baseUrl = 'https://api.loudy.in/api/users/me'
+    const url = action_type === -1 ? `${baseUrl}?user_id=${user_id}` :
+      action_type === 1 ? `${baseUrl}?user_id=0` :
+        baseUrl
+
     try {
       const result = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
+        headers: { Authorization: `Bearer ${access_token}` }
       })
-      if (action_type === 1) {
-        setUserIdList((prev) => [...prev, result.data.id])
-      } else if (action_type === 0) {
+
+      updateUserIdList(action_type, result.data.id)
+      if (action_type === 0) {
         setHasSubmitTally(result.data.has_submitted_tally)
       }
 
-      const nodeList = result.data.nodes.map((item: InputNode) => {
-        const node_class =
-          item.data.level == 0
-            ? styles.node1_center
-            : item.data.level == 1
-              ? styles.node1_level1_node
-              : item.data.level == 2
-                ? styles.node1_level2_node
-                : item.data.level == 3 && item.data.is_launched
-                  ? styles.node1_level3_node_is_launched
-                  : styles.node1_level3_node
-        return {
-          id: `${item.id}`,
-          type: 'bubble',
-          position: { x: 0, y: 0 },
-          data: {
-            id: `${item.id}`,
-            label:
-              item.data.level == 0
-                ? `${result.data.username}`
-                : `${item.data.label}`,
-            category: item.data.category,
-            level: item.data.level,
-            is_launched: item.data.is_launched
-          },
-          className: node_class
-        }
-      })
+      const nodeList = mapNodesToReactFlow(result.data.nodes, result.data.username)
+      const edgeList = mapEdgesToReactFlow(result.data.edges)
 
-      const edgeList = result.data.edges.map((item: InputEdge) => {
-        return {
-          id: `${item.source}->${item.target}`,
-          source: `${item.source}`,
-          target: `${item.target}`,
-          type: 'straight'
-        }
-      })
-
-      setUserId(result.data.id)
-      setNodes(nodeList)
-      setEdges(edgeList)
-      localStorage.setItem('user_id', result.data.id)
-      if(action_type != 0) {
-        localStorage.setItem('gallery_user_id', result.data.id)
-      } 
+      updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
     } catch (error) {
+      console.error("Error fetching data:", error)
       navigate('/')
     }
-  }, [])
+  }, [navigate, setUserIdList, setHasSubmitTally, setUserId, setNodes, setEdges])
+
+  const updateUserIdList = (action_type: number, id: number) => {
+    if (action_type === 1) {
+      setUserIdList(prev => [...prev, id])
+    } else if (action_type === -1) {
+      setUserIdList(prev => prev.slice(0, -1))
+    }
+  }
+
+  const mapNodesToReactFlow = (nodes: InputNode[], username: string) => {
+    return nodes.map(item => ({
+      id: `${item.id}`,
+      type: 'bubble',
+      position: { x: 0, y: 0 },
+      data: {
+        id: `${item.id}`,
+        label: item.data.level === 0 ? username : item.data.label,
+        category: item.data.category,
+        level: item.data.level,
+        is_launched: item.data.is_launched
+      },
+      className: getNodeClassName(item.data)
+    }))
+  }
+
+  const getNodeClassName = (data: { level: number, is_launched: boolean }) => {
+    if (data.level === 0) return styles.node1_center
+    if (data.level === 1) return styles.node1_level1_node
+    if (data.level === 2) return styles.node1_level2_node
+    if (data.level === 3 && data.is_launched) return styles.node1_level3_node_is_launched
+    return styles.node1_level3_node
+  }
+
+  const mapEdgesToReactFlow = (edges: InputEdge[]) => {
+    return edges.map(item => ({
+      id: `${item.source}->${item.target}`,
+      source: `${item.source}`,
+      target: `${item.target}`,
+      type: 'straight'
+    }))
+  }
+
+  const updateStateAndStorage = (id: number, nodeList: any[], edgeList: any[], action_type: number) => {
+    setUserId(id)
+    setNodes(nodeList)
+    setEdges(edgeList)
+    localStorage.setItem('user_id', id.toString())
+    if (action_type !== 0) {
+      localStorage.setItem('gallery_user_id', id.toString())
+    }
+  }
 
   useForceLayout({ strength, distance, setIsLoading, userId })
 
