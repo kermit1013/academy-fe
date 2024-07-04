@@ -22,5 +22,16 @@ jobs:
             git checkout debug
             git pull
             echo "yes" 
-            sudo docker-compose down --rmi all
-            sudo docker-compose up --build -d
+            # Build the images first
+            if sudo docker-compose build; then
+              # If build succeeds, stop old containers but keep the images
+              sudo docker-compose down
+              # Start new containers
+              if sudo docker-compose up -d; then
+                echo "New version deployed successfully."
+                # Clean up old images
+                sudo docker image prune -af
+              fi
+            else
+              echo "Docker Compose build failed. Keeping current version running."
+            fi
