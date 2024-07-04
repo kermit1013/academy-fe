@@ -215,7 +215,7 @@ const Thinking = ({ action_type }: props) => {
 
   const handler_refresh_api = async () => {
     if (action_type === 1) {
-      const node = getNodes().filter((node) => node.data.id.includes('level2'))
+      const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data.label)
     } else if (action_type === 2) {

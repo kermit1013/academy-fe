@@ -73,7 +73,6 @@ function useForceLayout({
             className: node.className
           }))
         )
-        console.log(simulation.alpha())
       })
       .on('end', () => {
         console.log('Simulation ended ')
