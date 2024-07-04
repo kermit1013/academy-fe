@@ -4,7 +4,7 @@ import next_button from '/public/next_button.svg'
 import useTopMenu from '../../hooks/useTopMenu'
 
 interface GalleryContentProps {
-  getPersonData: () => Promise<void>
+  getPersonData: (type: number) => Promise<void>
   setActionType: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -16,7 +16,15 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
 
   const handlerMoveBtn = (action_type: number) => {
     setActionType(action_type)
-    getPersonData()
+    getPersonData(action_type)
+  }
+
+  const handlerLeaveGallery = () => {
+    if (localStorage.getItem('gallery_user_id')) {
+      getPersonData(0)
+    } 
+    setIsOpenGalleryContent(false)
+    localStorage.removeItem('gallery_user_id')
   }
 
   return (
@@ -42,7 +50,7 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
         <p className="ml-2 h-full w-1 border-l border-[#7B7C7B]"></p>
         <button
           className="hover:scale-110"
-          onClick={() => setIsOpenGalleryContent(false)}
+          onClick={() => handlerLeaveGallery()}
         >
           <img src={disconnect} alt="" />
         </button>

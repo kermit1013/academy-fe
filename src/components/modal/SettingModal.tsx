@@ -68,6 +68,7 @@ const SettingModal = () => {
     localStorage.removeItem('user_id')
     localStorage.removeItem('user_name')
     localStorage.removeItem('roomName')
+    localStorage.removeItem('gallery_user_id')
   }
 
   // 取得個人資訊

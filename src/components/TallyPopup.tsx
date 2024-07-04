@@ -9,7 +9,7 @@ declare global {
   }
 }
 interface TallyPopupProps {
-  getPersonData: () => Promise<void>
+  getPersonData: (type: number) => Promise<void>
   setActionType: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -47,7 +47,7 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
             if (result.status === 200) {
               messageApi.info('心智圖已更新 🎉')
               setActionType(0)
-              await getPersonData()
+              await getPersonData(1)
             }
           }
         })

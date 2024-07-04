@@ -78,19 +78,21 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [cursors, onMouseMove] = useCursorStateSynced()
   const { is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
+  const [userId, setUserId] = useState(0)
 
   const [hasSubmitTally, setHasSubmitTally] = useState(true)
-  const [action_type, setActionType] = useState(0)
+  const [actionType, setActionType] = useState(0)
   const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal } =
     useTopMenu()
 
   useEffect(() => {
-    getPersonData()
+    getPersonData(0)
   }, [])
 
   const navigate = useNavigate()
 
-  const getPersonData = useCallback(async () => {
+  const getPersonData = useCallback(async (action_type: number) => {
+    console.log(actionType)
     const access_token = localStorage.getItem('access_token')
     if (access_token === null) {
       navigate('/')
@@ -156,19 +158,19 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         }
       })
 
-      setTimeout(() => {
-        setNodes(nodeList)
-        setEdges(edgeList)
-
-        localStorage.setItem('user_id', result.data.id)
-        localStorage.setItem('user_name', result.data.username)
-      }, 1000)
+      setUserId(result.data.id)
+      setNodes(nodeList)
+      setEdges(edgeList)
+      localStorage.setItem('user_id', result.data.id)
+      if(action_type != 0) {
+        localStorage.setItem('gallery_user_id', result.data.id)
+      } 
     } catch (error) {
       navigate('/')
     }
   }, [])
 
-  useForceLayout({ strength, distance, setIsLoading })
+  useForceLayout({ strength, distance, setIsLoading, userId })
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
@@ -228,7 +230,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         {isLoading && <Loading />}
         {!hasSubmitTally && (
           <TallyPopup
-            getPersonData={() => getPersonData()}
+            getPersonData={() => getPersonData(0)}
             setActionType={setActionType}
           />
         )}
@@ -249,7 +251,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         {isOpenBrainStormContent && <BrainStormContent />}
         {isOpenGalleryContent && (
           <GalleryContent
-            getPersonData={() => getPersonData()}
+            getPersonData={getPersonData}
             setActionType={setActionType}
           />
         )}
