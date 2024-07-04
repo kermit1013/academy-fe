@@ -8,7 +8,7 @@ import change_think from '../../public/change_think.svg'
 import useTopMenu from '../hooks/useTopMenu'
 
 const TopMenu = () => {
-  const [messageApi] = message.useMessage()
+  const [messageApi, contextHolder] = message.useMessage()
   const [hoverIndex, setHoverIndex] = useState(-1)
   const {
     isOpenBrainStormContent,
@@ -38,6 +38,7 @@ const TopMenu = () => {
 
   return (
     <div className="flex gap-3">
+      {contextHolder}
       <button
         title="靈感發想"
         className={`relative flex h-10 w-10 items-center justify-center rounded border ${
