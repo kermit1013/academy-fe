@@ -271,26 +271,38 @@ const Thinking = ({ action_type }: props) => {
     </div>
   )
 }
-
-const ThinkDone = () => {
+type think_done_props = {
+  bubbleCount: number
+  finishBubbleCount: number
+}
+const ThinkDone = ({ bubbleCount, finishBubbleCount }: think_done_props) => {
   return (
     <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-[#7B7C7B]">
-      <div>再接再厲！越常發想，你的創造力會越強！</div>
+      <div>
+        {' '}
+        {finishBubbleCount - bubbleCount != 3
+          ? '再接再厲！越常發想，你的創造力會越強！'
+          : '太厲害了！你有超出常人的創造力！'}
+      </div>
     </div>
   )
 }
 
 const BrainStormContent = () => {
   const [action_type, setActionType] = useState(1)
-  const [times, setTimes] = useState(3)
+  const [times, setTimes] = useState(60)
   const { setSelectBubble, select_bubble } = useBubble()
   const { setIsOpenBrainStormContent } = useTopMenu()
+  const { getNodes } = useReactFlow()
+  const [bubbleCount, setBubbleCount] = useState(0)
+  const [finishBubbleCount, setFinishBubbleCount] = useState(0)
   useEffect(() => {
     setSelectBubble(null)
   }, [])
 
   useEffect(() => {
     if (select_bubble != null) {
+      setBubbleCount(getNodes().length)
       const t = setInterval(() => {
         setTimes((prev) => prev - 1)
       }, 1000)
@@ -302,8 +314,9 @@ const BrainStormContent = () => {
 
   useEffect(() => {
     if (times === 0) {
+      setFinishBubbleCount(getNodes().length)
       setTimeout(() => {
-        setTimes(3)
+        setTimes(60)
         setSelectBubble(null)
       }, 3000)
     }
@@ -311,7 +324,7 @@ const BrainStormContent = () => {
 
   useEffect(() => {
     setSelectBubble(null)
-    setTimes(3)
+    setTimes(60)
   }, [action_type])
   const handlerCloseContent = () => {
     console.log('close')
@@ -356,12 +369,22 @@ const BrainStormContent = () => {
           <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
           <div className="flex w-20 justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
-            <div>0:{times}</div>
+            <div>
+              {' '}
+              {times === 60 ? '1:00' : `0:${times.toString().padStart(2, '0')}`}
+            </div>
           </div>
         </div>
       </div>
       <div className="h-full w-full">
-        {times ? <Thinking action_type={action_type} /> : <ThinkDone />}
+        {times ? (
+          <Thinking action_type={action_type} />
+        ) : (
+          <ThinkDone
+            bubbleCount={bubbleCount}
+            finishBubbleCount={finishBubbleCount}
+          />
+        )}
       </div>
     </div>
   )
