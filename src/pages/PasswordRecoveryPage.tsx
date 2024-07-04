@@ -7,7 +7,7 @@ import request from '../libs/request'
 import password_hide from '/password_hide.svg'
 import password_show from '/password_show.svg'
 import enter from '/prev_button.svg'
-
+import { validateEmail } from '../funcs/utils'
 const filedStyle =
   'mt-3 h-[72px] w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/30 pl-4 text-3xl focus:outline-none'
 
@@ -168,6 +168,10 @@ const PasswordRecoveryPage = () => {
 
   // Step 0 => 發送驗證碼
   const handleSendCodes = async () => {
+    if (validateEmail(email)) {
+      return messageApi.warning('電子郵件地址格式不正確')
+    }
+
     if (!email) return messageApi.warning('請輸入電子郵件！')
 
     try {
@@ -178,7 +182,7 @@ const PasswordRecoveryPage = () => {
         }
       })
       if (result.status == 200) {
-        messageApi.success('已發送驗證碼到信箱')
+        messageApi.success('已發送驗證代碼至電子郵件')
         setStep(1)
       }
     } catch (error: any) {
@@ -207,7 +211,7 @@ const PasswordRecoveryPage = () => {
       }
       setStep(2)
     } catch (error: any) {
-      messageApi.warning(error.response.data.detail)
+      messageApi.warning('驗證代碼錯誤')
     }
   }
 
@@ -215,7 +219,7 @@ const PasswordRecoveryPage = () => {
   const handleUpdatePasswd = async () => {
     if (!passwd) return messageApi.warning('請輸入密碼！')
     if (!checkPasswd) return messageApi.warning('請輸入確認密碼！')
-    if (passwd !== checkPasswd) return messageApi.warning('密碼不一致！')
+    if (passwd !== checkPasswd) return messageApi.warning('密碼不一致')
     try {
       const result = await request.post('/users/reset-password', {
         code: codes.join(''),

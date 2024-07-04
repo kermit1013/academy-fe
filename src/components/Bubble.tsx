@@ -92,10 +92,10 @@ const Bubble = ({ data }: props) => {
       }
     })
     if (hasChild) {
-      messageApi.warning('還有下層的bubble不可刪除')
+      messageApi.warning('下層尚有泡泡，無法刪除')
       return
     }
-    if (confirm('是否要刪除?')) {
+    if (confirm('確定要刪除嗎?')) {
       const origin_id = data.id
       const access_token = localStorage.getItem('access_token')
       const result = await axios.delete(
@@ -243,7 +243,7 @@ const Bubble = ({ data }: props) => {
     ) {
       setModifyData(e.target.value)
     } else {
-      messageApi.warning('已超過可輸入長度!')
+      messageApi.warning('超過字數限制!')
     }
   }
 

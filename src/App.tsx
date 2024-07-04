@@ -25,7 +25,7 @@ const LoginColumns = () => {
   const navigate = useNavigate()
   const handlerLogin = async () => {
     if (user_name === '' || passwd === '') {
-      messageApi.warning('請先輸入帳號或密碼！')
+      messageApi.warning('請輸入帳號、密碼')
     }
     try {
       const result = await axios.post('https://api.loudy.in/api/token/pair', {
@@ -35,13 +35,13 @@ const LoginColumns = () => {
       if (result.status == 200) {
         localStorage.setItem('access_token', result.data.data.access)
         localStorage.setItem('refresh_token', result.data.data.refresh)
-        messageApi.success(`歡迎${user_name}回來~~~`)
+        messageApi.success(`歡迎${user_name}`)
         setTimeout(() => {
           navigate('/search')
         }, 2000)
       }
     } catch {
-      messageApi.warning('帳號或密碼錯誤，若尚無註冊請先註冊後在登入！')
+      messageApi.warning('登入失敗，帳號或密碼錯誤')
     }
   }
 
@@ -162,13 +162,13 @@ const RegisterColumns = () => {
         grade: '',
         password: passwd
       })
-      messageApi.success('註冊成功!')
+      messageApi.success('註冊成功')
       setTimeout(() => {
         setIsRegister(false)
       }, 2000)
     } catch (error: any) {
       if (error.response.status === 409) {
-        await messageApi.error('此用戶名或信箱已被使用')
+        await messageApi.error('此用戶名稱已被使用')
       }
     }
   }

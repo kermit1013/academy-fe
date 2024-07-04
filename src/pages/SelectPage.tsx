@@ -39,6 +39,7 @@ import Loading from '../components/Loading'
 import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
+import message from 'antd/es/message'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -79,14 +80,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [isLoading, setIsLoading] = useState(true)
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-
+  const [messageApi, contextHolder] = message.useMessage()
   const [cursors, onMouseMove] = useCursorStateSynced()
   const { is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const { setIsContentVisible, isContentVisible } = useThinkContent()
   const { zoomIn, zoomOut } = useReactFlow()
-  const { setCanReference, can_reference } =
-    useReferenceThink()
+  const { setCanReference, can_reference } = useReferenceThink()
   const getViewport = useViewport()
   const [hasSubmitTally, setHasSubmitTally] = useState(true)
 
@@ -204,15 +204,23 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   )
 
   const handlerContentVisible = () => {
+    if (can_reference) return messageApi.warning('請先離開畫廊漫步')
+    logoutReferenceThink()
     setIsContentVisible(true)
   }
   const handlerCanReference = () => {
     setCanReference(true)
-    localStorage.setItem('reference_user_id', localStorage.getItem('user_id') || '')
+    localStorage.setItem(
+      'reference_user_id',
+      localStorage.getItem('user_id') || ''
+    )
   }
   const logoutReferenceThink = () => {
     setCanReference(false)
-    if (localStorage.getItem('user_id') != localStorage.getItem('reference_user_id')) {
+    if (
+      localStorage.getItem('user_id') !=
+      localStorage.getItem('reference_user_id')
+    ) {
       getPersonData()
     }
     localStorage.removeItem('reference_user_id')
@@ -291,6 +299,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     logoutReferenceThink()
   }
 
+  const handlerChange2Gallery = () => {
+    if (isContentVisible) return messageApi.warning('請先離開靈感發想')
+
+    setCanReference(true)
+  }
+
   return (
     <>
       <ReactFlow
@@ -348,7 +362,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
               }`}
               onMouseEnter={() => selectTypeInHoverIn(1)}
               onMouseLeave={() => setHoverIndex(-1)}
-              onClick={() => handlerCanReference()}
+              onClick={() => handlerChange2Gallery()}
               disabled={isContentVisible}
             >
               <img src={change_think} alt="" />
@@ -434,6 +448,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         <Cursors cursors={cursors} />
         <MiniMap />
       </ReactFlow>
+      {contextHolder}
       <DiscordModal
         isOpen={is_ahead_discord}
         onClose={() => setAheadDiscordStatus(false)}
