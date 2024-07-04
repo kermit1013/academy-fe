@@ -49,7 +49,7 @@ function useForceLayout({
     const simulationLinks: SimulationLinkDatum<SimNodeType>[] = edges.map(
       (edge) => edge
     )
-    const simulation = forceSimulation()
+    forceSimulation()
       .nodes(simulationNodes)
       .force('charge', forceManyBody().strength(strength))
       .force(
