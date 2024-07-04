@@ -5,9 +5,7 @@ import ReactFlow, {
   ReactFlowProvider,
   NodeOrigin,
   NodeMouseHandler,
-  useReactFlow,
   MiniMap,
-  useViewport
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import useForceLayout from '../hooks/useForceLayout'
@@ -33,7 +31,6 @@ import Loading from '../components/Loading'
 import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
-import message from 'antd/es/message'
 import TopMenu from '../components/TopMenu'
 import GalleryContent from '../components/content/GalleryContent'
 import CustomZoom from '../components/CustomZoom'
@@ -78,7 +75,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [user_id_list, setUserIdList] = useState<number[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-  const [contextHolder] = message.useMessage()
   const [cursors, onMouseMove] = useCursorStateSynced()
   const { is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()

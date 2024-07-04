@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { message } from 'antd'
-import useThinkContent from '../hooks/useThinkContent'
-import useReferenceThink from '../hooks/useReferenceThink'
 import light_bulb from '../../public/light_bulb.svg'
 import setting from '../../public/setting.svg'
 import change_think from '../../public/change_think.svg'
