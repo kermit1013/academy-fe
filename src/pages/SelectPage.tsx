@@ -21,15 +21,9 @@ import useCursorStateSynced from '../hooks/useCursorStateSynced'
 import Cursors from '../components/Cursors'
 import { useNavigate } from 'react-router-dom'
 import main_logo from '../../public/main_page_logo.svg'
-import light_bulb from '../../public/light_bulb.svg'
-import setting from '../../public/setting.svg'
-import change_think from '../../public/change_think.svg'
-import disconnect from '../../public/disconnect.svg'
-import prev_button from '../../public/prev_button.svg'
-import next_button from '../../public/next_button.svg'
-import ThinkContent from '../components/ThinkContent'
-import useThinkContent from '../hooks/useThinkContent'
-import useReferenceThink from '../hooks/useReferenceThink'
+
+import BrainStormContent from '../components/content/BrainStormContent'
+import useTopMenu from '../hooks/useTopMenu'
 import TallyPopup from '../components/TallyPopup'
 import TallyStartProject from '../components/TallyStartProject'
 
@@ -40,6 +34,9 @@ import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
 import message from 'antd/es/message'
+import TopMenu from '../components/TopMenu'
+import GalleryContent from '../components/content/GalleryContent'
+import CustomZoom from '../components/CustomZoom'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -78,23 +75,22 @@ declare global {
 
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [isLoading, setIsLoading] = useState(true)
+  const [user_id_list, setUserIdList] = useState<number[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-  const [messageApi, contextHolder] = message.useMessage()
+  const [contextHolder] = message.useMessage()
   const [cursors, onMouseMove] = useCursorStateSynced()
   const { is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
-  const { setIsContentVisible, isContentVisible } = useThinkContent()
-  const { zoomIn, zoomOut } = useReactFlow()
-  const { setCanReference, can_reference } = useReferenceThink()
-  const getViewport = useViewport()
+
   const [hasSubmitTally, setHasSubmitTally] = useState(true)
+  const [action_type, setActionType] = useState(0)
+  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal } =
+    useTopMenu()
 
   useEffect(() => {
     getPersonData()
   }, [])
-
-  const [isOpenSettingModal, setIsOpenSettingModal] = useState(false)
 
   const navigate = useNavigate()
 
@@ -104,14 +100,27 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       navigate('/')
       return
     }
+    let user_id = 0
+    if (action_type == -1) {
+      user_id = user_id_list.pop() as number
+    }
+    const url =
+      action_type == -1
+        ? `https://api.loudy.in/api/users/me?user_id=${user_id}`
+        : action_type == 1
+          ? 'https://api.loudy.in/api/users/me?user_id=0'
+          : 'https://api.loudy.in/api/users/me'
     try {
-      const result = await axios.get('https://api.loudy.in/api/users/me', {
+      const result = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${access_token}`
         }
       })
-      const user_id = result.data.id
-      setHasSubmitTally(result.data.has_submitted_tally)
+      if (action_type === 1) {
+        setUserIdList((prev) => [...prev, result.data.id])
+      } else if (action_type === 0) {
+        setHasSubmitTally(result.data.has_submitted_tally)
+      }
 
       const nodeList = result.data.nodes.map((item: InputNode) => {
         const node_class =
@@ -155,7 +164,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         setNodes(nodeList)
         setEdges(edgeList)
 
-        localStorage.setItem('user_id', user_id)
+        localStorage.setItem('user_id', result.data.id)
         localStorage.setItem('user_name', result.data.username)
       }, 1000)
     } catch (error) {
@@ -203,108 +212,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     [nodes, edges]
   )
 
-  const handlerContentVisible = () => {
-    if (can_reference) return messageApi.warning('請先離開畫廊漫步')
-    logoutReferenceThink()
-    setIsContentVisible(true)
-  }
-  const handlerCanReference = () => {
-    setCanReference(true)
-    localStorage.setItem(
-      'reference_user_id',
-      localStorage.getItem('user_id') || ''
-    )
-  }
-  const logoutReferenceThink = () => {
-    setCanReference(false)
-    if (
-      localStorage.getItem('user_id') !=
-      localStorage.getItem('reference_user_id')
-    ) {
-      getPersonData()
-    }
-    localStorage.removeItem('reference_user_id')
-  }
-
-  const [hoverIndex, setHoverIndex] = useState(-1)
-  const selectTypeInHoverIn = (index: number) => {
-    setHoverIndex(index)
-  }
-
-  const getReferencedUserData = async (prev: boolean) => {
-    let url = !prev
-      ? 'https://api.loudy.in/api/users/me?user_id=0'
-      : 'https://api.loudy.in/api/users/me?user_id=0'
-    const access_token = localStorage.getItem('access_token')
-    if (access_token === null) {
-      navigate('/')
-      return
-    }
-    try {
-      const result = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      })
-
-      const nodeList = result.data.nodes.map((item: InputNode) => {
-        const node_class =
-          item.data.level == 0
-            ? styles.node1_center
-            : item.data.level == 1
-              ? styles.node1_level1_node
-              : item.data.level == 2
-                ? styles.node1_level2_node
-                : item.data.level == 3 && item.data.is_launched
-                  ? styles.node1_level3_node_is_launched
-                  : styles.node1_level3_node
-        return {
-          id: `${item.id}`,
-          type: 'bubble',
-          position: { x: 0, y: 0 },
-          data: {
-            id: `${item.id}`,
-            label:
-              item.data.level == 0 ? result.data.username : item.data.label,
-            category: item.data.category,
-            level: item.data.level,
-            is_launched: item.data.is_launched
-          },
-          className: node_class
-        }
-      })
-
-      const edgeList = result.data.edges.map((item: InputEdge) => {
-        return {
-          id: `${item.source}->${item.target}`,
-          source: `${item.source}`,
-          target: `${item.target}`,
-          type: 'straight'
-        }
-      })
-
-      setNodes(nodeList)
-      setEdges(edgeList)
-      localStorage.setItem('reference_user_id', result.data.user_id)
-    } catch (error) {
-      navigate('/')
-    }
-  }
-
-  const handlerSetting = () => {
-    setIsOpenSettingModal(true)
-  }
-
-  const handlerCloseReferenceThink = () => {
-    logoutReferenceThink()
-  }
-
-  const handlerChange2Gallery = () => {
-    if (isContentVisible) return messageApi.warning('請先離開靈感發想')
-
-    setCanReference(true)
-  }
-
   return (
     <>
       <ReactFlow
@@ -323,7 +230,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         defaultEdgeOptions={defaultEdgeOptions}
       >
         {isLoading && <Loading />}
-        {!hasSubmitTally && <TallyPopup getPersonData={getPersonData} />}
+        {!hasSubmitTally && (
+          <TallyPopup
+            getPersonData={() => getPersonData()}
+            setActionType={setActionType}
+          />
+        )}
         {is_start_project && <TallyStartProject />}
         <Panel position="top-left">
           <div className="flex flex-col items-center gap-3">
@@ -331,132 +243,28 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </div>
         </Panel>
         <Panel position="top-center">
-          <div className="flex gap-3">
-            <button
-              title="靈感發想"
-              className={`relative flex h-10 w-10 items-center justify-center rounded border ${
-                isContentVisible
-                  ? 'border-[#6CA579] bg-[#6CA579]/20'
-                  : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
-              }`}
-              onMouseEnter={() => selectTypeInHoverIn(0)}
-              onMouseLeave={() => setHoverIndex(-1)}
-              onClick={handlerContentVisible}
-              disabled={can_reference}
-            >
-              <img src={light_bulb} alt="" />
-              {hoverIndex == 0 ? (
-                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                  靈感發想
-                </p>
-              ) : (
-                <></>
-              )}
-            </button>
-            <button
-              title="畫廊漫步"
-              className={`relative flex h-10 w-10 items-center justify-center rounded border ${
-                can_reference
-                  ? 'border-[#6CA579] bg-[#6CA579]/20'
-                  : 'border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10'
-              }`}
-              onMouseEnter={() => selectTypeInHoverIn(1)}
-              onMouseLeave={() => setHoverIndex(-1)}
-              onClick={() => handlerChange2Gallery()}
-              disabled={isContentVisible}
-            >
-              <img src={change_think} alt="" />
-              {hoverIndex == 1 ? (
-                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                  畫廊漫步
-                </p>
-              ) : (
-                <></>
-              )}
-            </button>
-            <button
-              title="設定"
-              className="relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10"
-              onMouseEnter={() => selectTypeInHoverIn(3)}
-              onMouseLeave={() => setHoverIndex(-1)}
-              onClick={() => handlerSetting()}
-            >
-              <img src={setting} alt="" />
-              {hoverIndex == 3 ? (
-                <p className="absolute top-12 flex h-7 w-[68px] items-center justify-center rounded border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B]">
-                  設定
-                </p>
-              ) : (
-                <></>
-              )}
-            </button>
-          </div>
+          <TopMenu />
         </Panel>
 
         <Panel position="bottom-left">
-          <data className="flex items-end justify-center gap-2 rounded-md border border-[#7B7C7B]/20">
-            <div className="flex h-7 w-fit items-center justify-center gap-1 rounded-lg bg-[#7B7C7B]/10 text-[#7B7C7B]">
-              <button
-                className="p-2"
-                onClick={() => zoomOut({ duration: 800 })}
-              >
-                -
-              </button>
-              <p className="border-l border-r border-[#7B7C7B] px-2">
-                {Math.floor(getViewport.zoom * 100)}%
-              </p>
-              <button className="p-2" onClick={() => zoomIn({ duration: 800 })}>
-                +
-              </button>
-            </div>
-          </data>
+          <CustomZoom />
         </Panel>
         <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
-        {isContentVisible ? <ThinkContent /> : <></>}
-        {can_reference ? (
-          <div className="flex h-full w-full flex-col items-center justify-center p-4">
-            <div className="flex h-full w-full items-center justify-between">
-              <button
-                onClick={() => getReferencedUserData(true)}
-                className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
-              >
-                <img src={prev_button} alt="" />
-              </button>
-              <button
-                onClick={() => getReferencedUserData(false)}
-                className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
-              >
-                <img src={next_button} alt="" />
-              </button>
-            </div>
-            <div className="z-10 flex h-10 w-fit items-center justify-center rounded border border-[#7B7C7B]/20 bg-[#7B7C7B]/10 px-2 py-1">
-              <p className="font-sans text-[13px] text-[#7B7C7B]">
-                按左右鍵可以逛逛他人的心智圖
-              </p>
-              <p className="ml-2 h-full w-1 border-l border-[#7B7C7B]"></p>
-              <button
-                className="hover:scale-110"
-                onClick={handlerCloseReferenceThink}
-              >
-                <img src={disconnect} alt="" />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <> </>
+        {isOpenBrainStormContent && <BrainStormContent />}
+        {isOpenGalleryContent && (
+          <GalleryContent
+            getPersonData={() => getPersonData()}
+            setActionType={setActionType}
+          />
         )}
         <Cursors cursors={cursors} />
         <MiniMap />
       </ReactFlow>
-      {contextHolder}
       <DiscordModal
         isOpen={is_ahead_discord}
         onClose={() => setAheadDiscordStatus(false)}
       />
-      <SettingModal
-        isOpen={isOpenSettingModal}
-        onClose={() => setIsOpenSettingModal(false)}
-      />
+      {isOpenSettingModal && <SettingModal />}
     </>
   )
 }

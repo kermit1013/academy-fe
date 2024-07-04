@@ -21,11 +21,6 @@ import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
 
-interface SettingModalProps {
-  isOpen: boolean
-  onClose: () => void
-}
-
 interface IUserInfo {
   id: number
   username: string
@@ -36,7 +31,7 @@ interface IUserInfo {
   is_public: boolean
 }
 
-const SettingModal = ({ isOpen, onClose }: SettingModalProps) => {
+const SettingModal = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -119,19 +114,19 @@ const SettingModal = ({ isOpen, onClose }: SettingModalProps) => {
   }, [userData])
 
   useEffect(() => {
-    if (isOpen) {
-      ref.current?.showModal()
-      fetchGetUserInfo()
-    } else {
-      reset()
-      ref.current?.close()
-    }
-  }, [isOpen])
+    ref.current?.showModal()
+    fetchGetUserInfo()
+  }, [])
+
+  const handlerOnClose = () => {
+    reset()
+    ref.current?.close()
+  }
 
   return createPortal(
     <dialog
       ref={ref}
-      onCancel={onClose}
+      onCancel={() => handlerOnClose()}
       className="w-72 rounded-lg py-4 backdrop:bg-black/60"
     >
       {contextHolder}
@@ -143,7 +138,7 @@ const SettingModal = ({ isOpen, onClose }: SettingModalProps) => {
             className="h-5 w-5 cursor-pointer"
             src={close_btn}
             alt="close"
-            onClick={() => onClose()}
+            onClick={() => handlerOnClose()}
           />
         </h3>
         <span className="text-[#52525B]">{userData.email}</span>

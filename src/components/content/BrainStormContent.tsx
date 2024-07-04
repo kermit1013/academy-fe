@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
-import icon_clock from '../../public/clock.svg'
-import icon_change from '../../public/change.svg'
-import icon_enter from '../../public/enter.svg'
-import axios from 'axios'
-import useBubble from '../hooks/useBubble'
 import { useReactFlow } from 'reactflow'
 import { message } from 'antd'
-import styles from '../styles.module.css'
-import useNodesStateSynced from '../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
-import useThinkContent from '../hooks/useThinkContent'
-import close_btn from '../../public/close_btn.svg'
-import plus_icon from '../../public/plus_icon.svg'
+import axios from 'axios'
+import styles from '../../styles.module.css'
+import useBubble from '../../hooks/useBubble'
+import useTopMenu from '../../hooks/useTopMenu'
+import useNodesStateSynced from '../../hooks/useNodesStateSynced'
+import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import icon_clock from '/public/clock.svg'
+import icon_change from '/public/change.svg'
+import icon_enter from '/public/enter.svg'
+import close_btn from '/public/close_btn.svg'
+import icon_plus from '/public/icons/icon_plus.svg'
 type props = {
   action_type: number
 }
@@ -138,7 +138,7 @@ const Thinking = ({ action_type }: props) => {
             <div>{select_bubble?.data.label}</div>
           )}
         </div>
-        <img src={plus_icon} alt="" />
+        <img src={icon_plus} alt="" />
         <div className="flex gap-[6px]">
           <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
             <div className="font-sans">{action_bubble}</div>
@@ -274,18 +274,17 @@ const Thinking = ({ action_type }: props) => {
 
 const ThinkDone = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-white">
+    <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-[#7B7C7B]">
       <div>再接再厲！越常發想，你的創造力會越強！</div>
     </div>
   )
 }
 
-const ThinkContent = () => {
+const BrainStormContent = () => {
   const [action_type, setActionType] = useState(1)
-  const [times, setTimes] = useState(60)
-  const { setIsContentVisible, timer, setTimer } = useThinkContent()
+  const [times, setTimes] = useState(3)
   const { setSelectBubble, select_bubble } = useBubble()
-
+  const { setIsOpenBrainStormContent } = useTopMenu()
   useEffect(() => {
     setSelectBubble(null)
   }, [])
@@ -295,7 +294,6 @@ const ThinkContent = () => {
       const t = setInterval(() => {
         setTimes((prev) => prev - 1)
       }, 1000)
-      setTimer(t)
       return () => {
         clearInterval(t)
       }
@@ -304,9 +302,8 @@ const ThinkContent = () => {
 
   useEffect(() => {
     if (times === 0) {
-      clearInterval(timer!)
       setTimeout(() => {
-        setTimes(60)
+        setTimes(3)
         setSelectBubble(null)
       }, 3000)
     }
@@ -314,11 +311,11 @@ const ThinkContent = () => {
 
   useEffect(() => {
     setSelectBubble(null)
-    setTimes(60)
+    setTimes(3)
   }, [action_type])
   const handlerCloseContent = () => {
     console.log('close')
-    setIsContentVisible(false)
+    setIsOpenBrainStormContent(false)
   }
   return (
     <div className="absolute bottom-10 left-[calc(50%-400px)] z-20 mb-12 flex h-[240px] w-[800px] flex-col rounded-2xl border-2 border-[#7B7C7B] p-4 backdrop-blur-lg">
@@ -370,4 +367,4 @@ const ThinkContent = () => {
   )
 }
 
-export default ThinkContent
+export default BrainStormContent
