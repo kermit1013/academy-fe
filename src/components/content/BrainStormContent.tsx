@@ -31,11 +31,11 @@ const Thinking = ({ action_type }: props) => {
   const handlerNewBubble = useCallback(async () => {
     const data = select_bubble?.data
     const access_token = localStorage.getItem('access_token')
-    const origin_id = data.id.split('_')[1]
+
     const result = await axios.post(
       'https://api.loudy.in/api/graphs/nodes',
       {
-        source: parseInt(origin_id),
+        source: data.id,
         label: modifyText,
         category: ''
       },
