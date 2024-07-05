@@ -335,7 +335,7 @@ const Bubble = ({ data }: props) => {
           className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent p-2 text-center font-sans text-sm text-[#6ca579] focus:outline-none"
           value={modifyData}
           autoFocus
-          placeholder="請輸入您的想法"
+          placeholder= {data.level === 3 ? "聯想到什麼專案主題？":"請輸入您的想法" }
           onChange={(e) => handlerModifyData(e)}
           onKeyDown={(e) => handlerKeyDown(e)}
         />

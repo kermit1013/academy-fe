@@ -255,7 +255,7 @@ const SettingModal = () => {
 
         <div className="flex cursor-pointer items-center gap-2">
           <img src={icon_discord} alt="Discord" className="h-5 w-5" />
-          <a href="https://discord.gg/rA845Bwa" target="_blank">
+          <a href="https://discord.com/invite/A3esveNmBu" target="_blank">
             Discord
           </a>
         </div>

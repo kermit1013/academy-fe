@@ -9,7 +9,7 @@ import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 import icon_clock from '/public/clock.svg'
 import icon_change from '/public/change.svg'
-import icon_enter from '/public/enter.svg'
+import icon_enter from '/public/icons/icon_enter.svg'
 import close_btn from '/public/close_btn.svg'
 import icon_plus from '/public/icons/icon_plus.svg'
 type props = {
@@ -266,7 +266,7 @@ const Thinking = ({ action_type }: props) => {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
-        <img onClick={() => handlerNewBubble()} src={icon_enter} alt="" />
+        <img className='w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer' onClick={() => handlerNewBubble()} src={icon_enter} alt="" />
       </div>
     </div>
   )

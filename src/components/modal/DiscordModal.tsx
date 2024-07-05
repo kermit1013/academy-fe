@@ -48,7 +48,7 @@ const DiscordModal = ({ isOpen, onClose }: DiscordModalProps) => {
           </button>
 
           <a
-            href="https://discord.gg/rA845Bwa"
+            href="https://discord.com/invite/A3esveNmBu"
             target="_blank"
             className="flex h-7 w-[169px] items-center justify-center gap-1 rounded-md bg-[#5865F2] px-2 py-1"
           >
