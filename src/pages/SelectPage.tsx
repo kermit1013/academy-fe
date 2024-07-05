@@ -12,7 +12,7 @@ import useForceLayout from '../hooks/useForceLayout'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import styles from '../styles.module.css'
-
+import { message } from 'antd'
 import Bubble from '../components/Bubble'
 import axios from 'axios'
 import useCursorStateSynced from '../hooks/useCursorStateSynced'
@@ -81,7 +81,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const { is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const [userId, setUserId] = useState(0)
-
+  const [messageApi, contextHolder] = message.useMessage()
   const [hasSubmitTally, setHasSubmitTally] = useState(true)
   const [actionType, setActionType] = useState(0)
   const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal } =
@@ -112,10 +112,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     let user_id: number | undefined;
 
     if (action_type === -1) {
-      if (userIdListRef.current.length > 0) {
+      if (userIdListRef.current.length > 1) {
         user_id = userIdListRef.current[userIdListRef.current.length - 2];
         console.log(user_id);
       } else {
+        messageApi.warning('已經沒有上一位用戶了哦！')
         console.log("userIdList is empty");
         return;
       }
@@ -238,6 +239,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   return (
     <>
+      {contextHolder}
       <ReactFlow
         nodes={nodes}
         edges={edges}
