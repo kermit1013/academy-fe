@@ -18,7 +18,9 @@ import axios from 'axios'
 import useCursorStateSynced from '../hooks/useCursorStateSynced'
 import Cursors from '../components/Cursors'
 import { useNavigate } from 'react-router-dom'
-import main_logo from '../../public/main_page_logo.svg'
+import main_logo from '../../public/groundi_logo.svg'
+
+import text_logo from '../../public/groundi_text.svg'
 
 import BrainStormContent from '../components/content/BrainStormContent'
 import useTopMenu from '../hooks/useTopMenu'
@@ -260,8 +262,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         )}
         {is_start_project && <TallyStartProject />}
         <Panel position="top-left">
-          <div className="flex flex-col items-center gap-3">
-            <img src={main_logo} alt="" />
+          <div className="flex items-center gap-1">
+            <img className='w-4' src={main_logo} alt="" />
+            <img className='w-16' src={text_logo} alt="" />
           </div>
         </Panel>
         <Panel position="top-center">
