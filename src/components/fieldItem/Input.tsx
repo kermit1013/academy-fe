@@ -20,7 +20,7 @@ interface InputProps extends HTMLAttributes<HTMLInputElement> {
 const Input = ({
   id,
   type = 'text',
-  value,
+  value = '',
   plaeceholder = '',
   onChange = () => {},
   onBlur = () => {}
