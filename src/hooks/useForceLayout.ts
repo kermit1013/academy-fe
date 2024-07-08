@@ -63,7 +63,7 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
-      .force('collide', forceCollide().radius(node => 40)) 
+      .force('collide', forceCollide().radius(60)) 
       .tick(288)
       .on('tick', () => {
         fitView({ nodes: simulationNodes })
