@@ -8,6 +8,9 @@ import request from '../../libs/request'
 import Input from '../fieldItem/Input'
 import Select from '../fieldItem/Select'
 
+import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import useNodesStateSynced from '../../hooks/useNodesStateSynced'
+import useTopMenu from '../../hooks/useTopMenu'
 import close_btn from '/close_btn.svg'
 import icon_building from '/icons/icon_building.svg'
 import icon_discord from '/icons/icon_discord.svg'
@@ -16,8 +19,6 @@ import icon_gender from '/icons/icon_gender.svg'
 import icon_instagram from '/icons/icon_instagram.svg'
 import icon_logout from '/icons/icon_logout.svg'
 import icon_user from '/icons/icon_user.svg'
-import useNodesStateSynced from '../../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
 
@@ -32,6 +33,7 @@ interface IUserInfo {
 }
 
 const SettingModal = () => {
+  const { setIsOpenSettingModal } = useTopMenu()
   const [messageApi, contextHolder] = message.useMessage()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -122,6 +124,7 @@ const SettingModal = () => {
   const handlerOnClose = () => {
     reset()
     ref.current?.close()
+    setIsOpenSettingModal(false)
   }
 
   return createPortal(
