@@ -6,7 +6,8 @@ import {
   // forceX,
   // forceY,
   SimulationNodeDatum,
-  SimulationLinkDatum
+  SimulationLinkDatum,
+  forceCollide
 } from 'd3-force'
 import { useReactFlow, ReactFlowState, useStore, Node } from 'reactflow'
 
@@ -62,8 +63,8 @@ function useForceLayout({
           .strength(1)
           .distance(distance)
       )
-      .alphaDecay(0.0228)
-      .alphaMin(0.3)
+      .force('collide', forceCollide().radius(node => 40)) 
+      .tick(288)
       .on('tick', () => {
         fitView({ nodes: simulationNodes })
         setNodes(
