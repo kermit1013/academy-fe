@@ -30,7 +30,8 @@ const TallyStartProject: React.FC = () => {
             const data = JSON.stringify(payload)
             let encoded = encodeURI(data)
             const result = await axios.post(
-              'https://api.loudy.in/api/graphs/thoughts',
+              // 'http://localhost:8000/api/graphs/nodes/1043/received-project',
+              'https://api.loudy.in/api/graphs/nodes/${node_id}/received-project',
               {
                 data: encoded
               },
