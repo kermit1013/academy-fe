@@ -18,9 +18,6 @@ import axios from 'axios'
 import useCursorStateSynced from '../hooks/useCursorStateSynced'
 import Cursors from '../components/Cursors'
 import { useNavigate } from 'react-router-dom'
-import main_logo from '../../public/groundi_logo.svg'
-
-import text_logo from '../../public/groundi_text.svg'
 
 import BrainStormContent from '../components/content/BrainStormContent'
 import useTopMenu from '../hooks/useTopMenu'
@@ -35,7 +32,8 @@ import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
 import TopMenu from '../components/TopMenu'
 import GalleryContent from '../components/content/GalleryContent'
-import CustomZoom from '../components/CustomZoom'
+// import CustomZoom from '../components/CustomZoom'
+import NavDrawer from '../components/NavDrawer'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -264,18 +262,19 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         )}
         {is_start_project && <TallyStartProject />}
         <Panel position="top-left">
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <img className='w-4' src={main_logo} alt="" />
             <img className='w-16' src={text_logo} alt="" />
-          </div>
+          </div> */}
+          <NavDrawer />
         </Panel>
         <Panel position="top-center">
           <TopMenu />
         </Panel>
 
-        <Panel position="bottom-left">
+        {/* <Panel position="bottom-left">
           <CustomZoom />
-        </Panel>
+        </Panel> */}
         <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
         {isOpenBrainStormContent && <BrainStormContent />}
         {isOpenGalleryContent && (
