@@ -168,7 +168,7 @@ const PasswordRecoveryPage = () => {
 
   // Step 0 => 發送驗證碼
   const handleSendCodes = async () => {
-    if (validateEmail(email)) {
+    if (!validateEmail(email)) {
       return messageApi.warning('電子郵件地址格式不正確')
     }
 
