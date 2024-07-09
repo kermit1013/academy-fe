@@ -246,13 +246,131 @@ const Bubble = ({ data }: props) => {
       messageApi.warning('超過字數限制!')
     }
   }
+  function renderAddButton() {
+    if (!can_reference && data.level !== 3 && reference_user_id === '') {
+      return (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+          <button
+            className="absolute -left-1 -top-3 h-6 w-6 rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
+            onClick={handlerNewBubble}
+            title="新增泡泡"
+          >
+            +
+          </button>
+        </NodeToolbar>
+      );
+    }
+  }
+  
+  function renderDeleteButton() {
+    if (!can_reference &&
+        ((data.level === 1 && data.category === null) ||
+         data.level === 2 ||
+         (data.level === 3 && data.is_launched === false)) &&
+        reference_user_id === '') {
+      return (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
+          <button
+            className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
+            onClick={handlerRemoveBubble}
+            title="刪除泡泡"
+          >
+            <img src={delete_bubble} alt="" />
+          </button>
+        </NodeToolbar>
+      );
+    }
+  }
+  
+  function renderDiscordButton() {
+    if (data.level === 3 && data.is_launched === true) {
+      return (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+          <button
+            className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
+            title="加入Discord"
+            onClick={() => setAheadDiscordStatus(true)}
+          >
+            <img src={icon_discord} alt="" />
+          </button>
+        </NodeToolbar>
+      );
+    }
+  }
+  
+  function renderStartProjectButton() {
+    if (!can_reference &&
+        data.level === 3 &&
+        data.is_launched === false &&
+        reference_user_id === '' &&
+        data.label !== '') {
+      return (
+        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+          <button
+            className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
+            title="開始計劃"
+            onClick={() => setStartProjectStatus(true)}
+          >
+            <img src={start_project} alt="" />
+          </button>
+        </NodeToolbar>
+      );
+    }
+  }
+  
+  function renderContent() {
+    const shouldRenderTextarea = !can_reference &&
+      ((data.level === 1 && data.category === null) ||
+       data.level === 2 ||
+       data.level === 3) &&
+      data.isVisible == true &&
+      reference_user_id === '' &&
+      edit_bubble_id == data.id;
+  
+    if (shouldRenderTextarea) {
+      return data.level === 3 ? renderProjectThemeInput() : renderThoughtInput();
+    } else {
+      return (
+        <p className={`${data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}>
+          {data.label}
+        </p>
+      );
+    }
+  }
+
+  function renderProjectThemeInput() {
+    return (
+      <textarea
+        className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent px-4 pt-4 text-center font-sans text-base text-[#6ca579] focus:outline-none"
+        value={modifyData}
+        autoFocus
+        placeholder="聯想到什麼專案主題？"
+        onChange={(e) => handlerModifyData(e)}
+        onKeyDown={(e) => handlerKeyDown(e)}
+      />
+    );
+  }
+  
+  function renderThoughtInput() {
+    return (
+      <textarea
+        className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent px-4 pt-2 text-center font-sans text-base text-[#6ca579] focus:outline-none"
+        value={modifyData}
+        autoFocus
+        placeholder="請輸入您的想法"
+        onChange={(e) => handlerModifyData(e)}
+        onKeyDown={(e) => handlerKeyDown(e)}
+      />
+    );
+  }
+
 
   return (
     <div
       className="relative flex h-full w-full items-center justify-center text-center"
-      onClick={() => selectBubble()}
-      onDoubleClick={() => handlerEdit()}
-      onBlur={() => handlerFinishEdit()}
+      onClick={selectBubble}
+      onDoubleClick={handlerEdit}
+      onBlur={handlerFinishEdit}
       key={data.id}
     >
       {/* <>
@@ -267,91 +385,19 @@ const Bubble = ({ data }: props) => {
         is_launched = false (在畫廊不跳任何東西、如果自已顯示執行計劃)
       </> */}
       {contextHolder}
-
-      {!can_reference && data.level !== 3 && reference_user_id === '' && (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-          <button
-            className="absolute -left-1 -top-3 h-6 w-6 rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
-            onClick={() => handlerNewBubble()}
-            title="新增泡泡"
-          >
-            +
-          </button>
-        </NodeToolbar>
-      )}
-      {!can_reference &&
-        ((data.level === 1 && data.category === null) ||
-          data.level === 2 ||
-          (data.level === 3 && data.is_launched === false)) &&
-        reference_user_id === '' && (
-          <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
-            <button
-              className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
-              onClick={() => handlerRemoveBubble()}
-              title="刪除泡泡"
-            >
-              <img src={delete_bubble} alt="" />
-            </button>
-          </NodeToolbar>
-        )}
-      {data.level === 3 && data.is_launched === true && (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-          <button
-            className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
-            title="加入Discord"
-            onClick={() => {
-              setAheadDiscordStatus(true)
-            }}
-          >
-            <img src={icon_discord} alt="" />
-          </button>
-        </NodeToolbar>
-      )}
-      {!can_reference &&
-        data.level === 3 &&
-        data.is_launched === false &&
-        reference_user_id === '' &&
-        data.label != '' && (
-          <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
-            <button
-              className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
-              title="開始計劃"
-              onClick={() => {
-                setStartProjectStatus(true)
-              }}
-            >
-              <img src={start_project} alt="" />
-            </button>
-          </NodeToolbar>
-        )}
-      {!can_reference &&
-      ((data.level === 1 && data.category === null) ||
-        data.level === 2 ||
-        data.level === 3) &&
-      data.isVisible == true &&
-      reference_user_id === '' &&
-      edit_bubble_id == data.id ? (
-        <textarea
-          className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent p-2 text-center font-sans text-sm text-[#6ca579] focus:outline-none"
-          value={modifyData}
-          autoFocus
-          placeholder= {data.level === 3 ? "聯想到什麼專案主題？":"請輸入您的想法" }
-          onChange={(e) => handlerModifyData(e)}
-          onKeyDown={(e) => handlerKeyDown(e)}
-        />
-      ) : (
-        <p
-          className={`${
-            data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-          } font-sans`}
-        >
-          {data.label}
-        </p>
-      )}
+  
+      {renderAddButton()}
+      {renderDeleteButton()}
+      {renderDiscordButton()}
+      {renderStartProjectButton()}
+      {renderContent()}
+  
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
-  )
+  );
 }
 
 export default Bubble
+
+
