@@ -25,6 +25,7 @@ const Thinking = ({ action_type }: props) => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [modifyText, setModifyText] = useState('')
+  const [isComposing, setIsComposing] = useState(false);
 
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -118,15 +119,23 @@ const Thinking = ({ action_type }: props) => {
     setModifyText(e.target.value)
   }
 
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+    if (e.key === 'Enter' && !isComposing) {
       if (select_bubble == null) {
-        messageApi.warning('請選擇一顆泡泡後在送出資料!')
-        return
+        messageApi.warning('請選擇一顆泡泡後再送出資料!');
+        return;
       }
-      handlerNewBubble()
+      handlerNewBubble();
     }
-  }
+  };
 
   const ActionType1 = () => {
     return (
@@ -258,15 +267,22 @@ const Thinking = ({ action_type }: props) => {
         <></>
       )}
       <div className="flex gap-2">
-        <input
-          type="text"
-          value={modifyText}
-          placeholder=" 輸入..."
-          className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-        <img className='w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer' onClick={() => handlerNewBubble()} src={icon_enter} alt="" />
+      <input
+        type="text"
+        value={modifyText}
+        placeholder=" 輸入..."
+        className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
+      />
+      <img 
+        className='w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer' 
+        onClick={() => handlerNewBubble()} 
+        src={icon_enter} 
+        alt="" 
+      />
       </div>
     </div>
   )
