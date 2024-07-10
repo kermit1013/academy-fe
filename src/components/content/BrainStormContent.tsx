@@ -259,8 +259,9 @@ const Thinking = ({ action_type }: props) => {
   }, [action_type])
 
   return (
-    <div className="flex h-full w-full items-center justify-center gap-6 pl-16 text-base font-normal text-[#7B7C7B]">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-6 pl-10 text-base font-normal text-[#7B7C7B]">
       {contextHolder}
+    <div className="flex items-center justify-center gap-6 w-full">
       {action_type == 1 ? (
         <ActionType1 />
       ) : action_type == 2 ? (
@@ -274,7 +275,7 @@ const Thinking = ({ action_type }: props) => {
       <input
         type="text"
         value={modifyText}
-        placeholder=" 輸入..."
+        placeholder=" 聯想到什麼專案主題？"
         className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -289,6 +290,10 @@ const Thinking = ({ action_type }: props) => {
       />
       </div>
     </div>
+    <div className="text-sm text-[#6ca579] italic">
+      看似奇怪的組合說不定會迸出有趣的專案主題！
+    </div>
+  </div>
   )
 }
 type think_done_props = {
@@ -374,25 +379,25 @@ const BrainStormContent = () => {
             className={`${
               action_type == 1 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } h-7 rounded-full px-[10px] py-1 font-sans`}
-            onClick={() => setActionType(1)}
-          >
-            瘋狂乘法
-          </button>
-          <button
-            className={`${
-              action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(2)}
           >
             人物風暴
           </button>
           <button
             className={`${
-              action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+              action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(3)}
           >
             情境迷宮
+          </button>
+          <button
+            className={`${
+              action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
+            } h-7 rounded-full px-[10px] py-1 font-sans`}
+            onClick={() => setActionType(1)}
+          >
+            瘋狂乘法
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
