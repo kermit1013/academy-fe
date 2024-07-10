@@ -334,7 +334,7 @@ const Bubble = ({ data }: props) => {
     } else {
       return (
         <p
-          title={data.label}
+          title={data.label.length > 15 ? data.label : ''}
           className={`${data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}
         >
           {data.label}
