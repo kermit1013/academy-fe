@@ -243,7 +243,7 @@ const Thinking = ({ action_type }: props) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 pl-10 text-base font-normal text-[#7B7C7B]">
       {contextHolder}
-      <div className="flex w-full items-center justify-center gap-6">
+      <div className="flex w-full items-center justify-center gap-6 pt-8">
         {action_type == 1 ? (
           <ActionType1 />
         ) : action_type == 2 ? (
@@ -360,7 +360,7 @@ const BrainStormContent = () => {
           <button
             className={`${
               action_type == 1 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } h-7 rounded-full px-[10px] py-1 font-sans`}
+            } h-7 rounded-full px-[10px] py-1 font-sans transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer`}
             onClick={() => setActionType(1)}
           >
             人物風暴
@@ -368,7 +368,7 @@ const BrainStormContent = () => {
           <button
             className={`${
               action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } h-7 rounded-full px-[10px] py-1 font-sans`}
+            } h-7 rounded-full px-[10px] py-1 font-sans transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer`}
             onClick={() => setActionType(2)}
           >
             情境迷宮
@@ -376,7 +376,7 @@ const BrainStormContent = () => {
           <button
             className={`${
               action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
-            } h-7 rounded-full px-[10px] py-1 font-sans`}
+            } h-7 rounded-full px-[10px] py-1 font-sans transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer`}
             onClick={() => setActionType(3)}
           >
             瘋狂乘法
