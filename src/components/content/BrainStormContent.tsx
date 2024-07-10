@@ -129,6 +129,10 @@ const Thinking = ({ action_type }: props) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isComposing) {
+      if (modifyText.trim() === '') {
+        messageApi.warning('請輸入內容後再送出!');
+        return;
+      }
       if (select_bubble == null) {
         messageApi.warning('請選擇一顆泡泡後再送出資料!');
         return;
