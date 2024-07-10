@@ -25,7 +25,7 @@ const Thinking = ({ action_type }: props) => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [modifyText, setModifyText] = useState('')
-  const [isComposing, setIsComposing] = useState(false);
+  const [isComposing, setIsComposing] = useState(false)
 
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -120,55 +120,28 @@ const Thinking = ({ action_type }: props) => {
   }
 
   const handleCompositionStart = () => {
-    setIsComposing(true);
-  };
+    setIsComposing(true)
+  }
 
   const handleCompositionEnd = () => {
-    setIsComposing(false);
-  };
+    setIsComposing(false)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isComposing) {
       if (modifyText.trim() === '') {
-        messageApi.warning('請輸入內容後再送出!');
-        return;
+        messageApi.warning('請輸入內容後再送出!')
+        return
       }
       if (select_bubble == null) {
-        messageApi.warning('請選擇一顆泡泡後再送出資料!');
-        return;
+        messageApi.warning('請選擇一顆泡泡後再送出資料!')
+        return
       }
-      handlerNewBubble();
+      handlerNewBubble()
     }
-  };
-
-  const ActionType1 = () => {
-    return (
-      <>
-        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
-          {select_bubble == null ? (
-            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
-          ) : (
-            <div>{select_bubble?.data.label}</div>
-          )}
-        </div>
-        <img src={icon_plus} alt="" />
-        <div className="flex gap-[6px]">
-          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
-            <div className="font-sans">{action_bubble}</div>
-          </div>
-          <img
-            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
-            onClick={() => handler_refresh_api()}
-            src={icon_change}
-            alt=""
-          />
-        </div>
-        <div className="font-sans text-3xl font-normal">=</div>
-      </>
-    )
   }
 
-  const ActionType2 = () => {
+  const ActionType1 = () => {
     return (
       <>
         <div className="flex gap-1">
@@ -195,7 +168,7 @@ const Thinking = ({ action_type }: props) => {
     )
   }
 
-  const ActionType3 = () => {
+  const ActionType2 = () => {
     return (
       <>
         <div className="flex h-[47px] w-[60px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] text-center text-base">
@@ -226,12 +199,39 @@ const Thinking = ({ action_type }: props) => {
     )
   }
 
+  const ActionType3 = () => {
+    return (
+      <>
+        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
+          {select_bubble == null ? (
+            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
+          ) : (
+            <div>{select_bubble?.data.label}</div>
+          )}
+        </div>
+        <img src={icon_plus} alt="" />
+        <div className="flex gap-[6px]">
+          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
+            <div className="font-sans">{action_bubble}</div>
+          </div>
+          <img
+            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
+            onClick={() => handler_refresh_api()}
+            src={icon_change}
+            alt=""
+          />
+        </div>
+        <div className="font-sans text-3xl font-normal">=</div>
+      </>
+    )
+  }
+
   const handler_refresh_api = async () => {
-    if (action_type === 1) {
+    if (action_type === 3) {
       const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data.label)
-    } else if (action_type === 2) {
+    } else if (action_type === 1) {
       const result = await axios.get(
         'https://api.loudy.in/api/interactions/celebrities',
         {
@@ -241,7 +241,7 @@ const Thinking = ({ action_type }: props) => {
         }
       )
       setActionBubble(result.data.name)
-    } else if (action_type === 3) {
+    } else if (action_type === 2) {
       const result = await axios.get(
         'https://api.loudy.in/api/interactions/scenarios',
         {
@@ -261,53 +261,55 @@ const Thinking = ({ action_type }: props) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 pl-10 text-base font-normal text-[#7B7C7B]">
       {contextHolder}
-    <div className="flex items-center justify-center gap-6 w-full">
-      {action_type == 1 ? (
-        <ActionType1 />
-      ) : action_type == 2 ? (
-        <ActionType2 />
-      ) : action_type == 3 ? (
-        <ActionType3 />
-      ) : (
-        <></>
-      )}
-      <div className="flex gap-2">
-      <input
-        type="text"
-        value={modifyText}
-        placeholder=" 聯想到什麼專案主題？"
-        className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd}
-      />
-      <img 
-        className='w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer' 
-        onClick={() => handlerNewBubble()} 
-        src={icon_enter} 
-        alt="" 
-      />
+      <div className="flex w-full items-center justify-center gap-6">
+        {action_type == 1 ? (
+          <ActionType1 />
+        ) : action_type == 2 ? (
+          <ActionType2 />
+        ) : action_type == 3 ? (
+          <ActionType3 />
+        ) : (
+          <></>
+        )}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={modifyText}
+            placeholder=" 聯想到什麼專案主題？"
+            className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
+          />
+          <img
+            className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
+            onClick={() => handlerNewBubble()}
+            src={icon_enter}
+            alt=""
+          />
+        </div>
+      </div>
+      <div className="text-sm italic text-[#6ca579]">
+        看似奇怪的組合說不定會迸出有趣的專案主題！
       </div>
     </div>
-    <div className="text-sm text-[#6ca579] italic">
-      看似奇怪的組合說不定會迸出有趣的專案主題！
-    </div>
-  </div>
   )
 }
 type think_done_props = {
   bubbleCount: number
-  finishBubbleCount: number
 }
-const ThinkDone = ({ bubbleCount, finishBubbleCount }: think_done_props) => {
+const ThinkDone = ({ bubbleCount }: think_done_props) => {
+  const { getNodes } = useReactFlow()
+  const finishBubbleCount = getNodes().length
+  console.log(finishBubbleCount - bubbleCount)
   return (
     <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-[#7B7C7B]">
       <div>
         {' '}
-        {finishBubbleCount - bubbleCount != 3
-          ? '再接再厲！越常發想，你的創造力會越強！'
-          : '太厲害了！你有超出常人的創造力！'}
+        {finishBubbleCount - bubbleCount >= 3
+          ? '太厲害了！你有超出常人的創造力！'
+          : '再接再厲！越常發想，你的創造力會越強！'}
       </div>
     </div>
   )
@@ -320,8 +322,7 @@ const BrainStormContent = () => {
   const { setIsOpenBrainStormContent } = useTopMenu()
   const { getNodes } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
-  const [finishBubbleCount, setFinishBubbleCount] = useState(0)
-  const [showThinkDone, setShowThinkDone] = useState(false);
+  const [showThinkDone, setShowThinkDone] = useState(false)
   useEffect(() => {
     setSelectBubble(null)
   }, [])
@@ -332,30 +333,29 @@ const BrainStormContent = () => {
       const t = setInterval(() => {
         setTimes((prev) => {
           if (prev <= 1) {
-            clearInterval(t);
-            return 0;
+            clearInterval(t)
+            return 0
           }
-          return prev - 1;
-        });
-      }, 1000);
+          return prev - 1
+        })
+      }, 1000)
       return () => {
-        clearInterval(t);
-      };
+        clearInterval(t)
+      }
     }
-  }, [select_bubble]);
+  }, [select_bubble])
 
   useEffect(() => {
     if (times === 0) {
-      setFinishBubbleCount(getNodes().length);
-      setShowThinkDone(true);
+      setShowThinkDone(true)
       const timer = setTimeout(() => {
-        setTimes(60);
-        setSelectBubble(null);
-        setShowThinkDone(false);
-      }, 3000);
-      return () => clearTimeout(timer);
+        setTimes(60)
+        setSelectBubble(null)
+        setShowThinkDone(false)
+      }, 3000)
+      return () => clearTimeout(timer)
     }
-  }, [times]);
+  }, [times])
 
   useEffect(() => {
     setSelectBubble(null)
@@ -381,7 +381,7 @@ const BrainStormContent = () => {
             } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(2)}
           >
-            人物風暴
+            人物風暴 人物風暴
           </button>
           <button
             className={`${
@@ -389,7 +389,7 @@ const BrainStormContent = () => {
             } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(3)}
           >
-            情境迷宮
+            情境迷宮 情境迷宮
           </button>
           <button
             className={`${
@@ -397,7 +397,7 @@ const BrainStormContent = () => {
             } h-7 rounded-full px-[10px] py-1 font-sans`}
             onClick={() => setActionType(1)}
           >
-            瘋狂乘法
+            瘋狂乘法 瘋狂乘法
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
@@ -413,13 +413,15 @@ const BrainStormContent = () => {
       </div>
       <div className="h-full w-full">
         {showThinkDone ? (
-          <ThinkDone
-            bubbleCount={bubbleCount}
-            finishBubbleCount={finishBubbleCount}
-          />
+          <ThinkDone bubbleCount={bubbleCount} />
         ) : (
           <Thinking action_type={action_type} />
         )}
+      </div>
+      <div className="flex items-center justify-center">
+        <p className="font-sans text-sm text-[#6ca579]">
+          看似奇怪的組合說不定會迸出有趣的專案主題！
+        </p>
       </div>
     </div>
   )
