@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useReactFlow } from 'reactflow'
 import { message } from 'antd'
 import axios from 'axios'
-import styles from '../../styles.module.css'
 import useBubble from '../../hooks/useBubble'
 import useTopMenu from '../../hooks/useTopMenu'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
@@ -48,7 +47,7 @@ const Thinking = ({ action_type }: props) => {
       }
     )
     if (result.status === 200) {
-      const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
+      // const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
       const user_id = localStorage.getItem('user_id')
       if (user_id == null) {
         messageApi.warning('取不到使用者id')

@@ -29,7 +29,6 @@ import Loading from '../components/Loading'
 import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
-import TopMenu from '../components/TopMenu'
 import GalleryContent from '../components/content/GalleryContent'
 // import CustomZoom from '../components/CustomZoom'
 import NavDrawer from '../components/NavDrawer'
@@ -80,9 +79,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
-  const [hasSubmitTally, setHasSubmitTally] = useState(true)
+  const [setHasSubmitTally] = useState(true)
   const [actionType, setActionType] = useState(0)
-  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal } =
+  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal, isOpenTallyPopup } =
     useTopMenu()
 
   useEffect(() => {
@@ -134,9 +133,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         })
 
         updateUserIdList(action_type, result.data.id)
-        if (action_type === 0) {
-          setHasSubmitTally(result.data.has_submitted_tally)
-        }
+        // todo kermit update setHasSubmitTally
+        // if (action_type === 0) {
+        //   setHasSubmitTally(result.data.has_submitted_tally)
+        // }
 
         const nodeList = mapNodesToReactFlow(
           result.data.nodes,
@@ -255,7 +255,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         defaultEdgeOptions={defaultEdgeOptions}
       >
         {isLoading && <Loading />}
-        {!hasSubmitTally && (
+        {isOpenTallyPopup && (
           <TallyPopup
             getPersonData={() => getPersonData(0)}
             setActionType={setActionType}
@@ -269,10 +269,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </div> */}
           <NavDrawer />
         </Panel>
-        <Panel position="top-center">
-          <TopMenu />
-        </Panel>
-
         {/* <Panel position="bottom-left">
           <CustomZoom />
         </Panel> */}

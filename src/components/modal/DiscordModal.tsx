@@ -31,7 +31,7 @@ const DiscordModal = ({ isOpen, onClose }: DiscordModalProps) => {
           </span>
           <span className="font-sans text-[13px] text-[#52525B]">
             在 Groundi Discord
-            社群中，你可以紀錄、執行「音樂與植物治療的研究」專案，並隨時提問！
+            社群中，你可以紀錄、執行屬於自己的專案，並隨時提問！快來看看上面有什麼有趣的專案吧！
           </span>
         </div>
       </header>

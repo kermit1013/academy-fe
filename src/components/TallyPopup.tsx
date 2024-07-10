@@ -2,6 +2,8 @@ import React, { useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import message from 'antd/es/message'
+import useTopMenu from '../hooks/useTopMenu'
+
 
 declare global {
   interface Window {
@@ -17,8 +19,12 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
   getPersonData,
   setActionType
 }) => {
+  
   const navigate = useNavigate()
   const [messageApi] = message.useMessage()
+  const {
+    setIsOpenTallyPopup
+  } = useTopMenu()
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://tally.so/widgets/embed.js'
@@ -49,6 +55,9 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
               setActionType(0)
               await getPersonData(1)
             }
+          },
+          onClose: () => {
+            setIsOpenTallyPopup(false)
           }
         })
       }

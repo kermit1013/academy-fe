@@ -5,6 +5,7 @@ type State = {
   isOpenSettingModal: boolean
   isOpenGalleryContent: boolean
   isOpenBrainStormContent: boolean
+  isOpenTallyPopup: boolean
 }
 
 type Actions = {
@@ -12,6 +13,7 @@ type Actions = {
   setIsOpenSettingModal: (status: boolean) => void
   setIsOpenGalleryContent: (status: boolean) => void
   setIsOpenBrainStormContent: (status: boolean) => void
+  setIsOpenTallyPopup: (status: boolean) => void
 }
 
 const useTopMenu = create<State & Actions>()(
@@ -20,6 +22,7 @@ const useTopMenu = create<State & Actions>()(
     isOpenSettingModal: false,
     isOpenGalleryContent: false,
     isOpenBrainStormContent: false,
+    isOpenTallyPopup: false,
     setActionMenu: (action: number) =>
       set((state) => {
         return { ...state, action_menu: action }
@@ -35,7 +38,11 @@ const useTopMenu = create<State & Actions>()(
     setIsOpenBrainStormContent: (status: boolean) =>
       set((state) => {
         return { ...state, isOpenBrainStormContent: status }
-      })
+      }),
+    setIsOpenTallyPopup: (status: boolean) =>
+      set((state) => {
+        return { ...state, isOpenTallyPopup: status }
+      }),
   }))
 )
 
