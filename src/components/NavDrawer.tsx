@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import main_logo from '../../public/groundi_logo.svg'
 import text_logo from '../../public/groundi_text.svg'
 import light_bulb from '../../public/light_bulb.svg'
@@ -48,26 +48,25 @@ const NavDrawer = () => {
     setIsOpenTallyPopup(true)
   }
 
-    const [isExpanded, setIsExpanded] = useState(false);
-  
-    const menuItems = [
-      { icon: <img src={self_explore} alt="" />, label: '自我探索', onClick: handlerTallyPopup},
-      { icon: <img src={light_bulb} alt="" />, label: '靈感發想', onClick: handlerChange2BrainStorm},
-      { icon: <img src={change_think} alt="" />, label: '畫廊漫步', onClick: handlerChange2Gallery},
-    ];
-  
-    const actionItems = [
-      { icon:  <img src={start_project} alt="" />, label: '開始計畫' },
-      { icon: <img src={icon_discord} alt="" />, label: '專案社群', onClick: handlerAheadDiscordStatus},
-    ];
-  
-    return (
-      <>      
-        {contextHolder}
-      <div 
-        className={`fixed top-0 left-0 h-full bg-gray-50 border-r border-gray-200 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out flex flex-col ${
-          isExpanded ? 'w-48' : 'w-22'
-        }`}
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const menuItems = [
+    { icon: <img src={self_explore} alt="" />, label: '自我探索', onClick: handlerTallyPopup },
+    { icon: <img src={light_bulb} alt="" />, label: '靈感發想', onClick: handlerChange2BrainStorm },
+    { icon: <img src={change_think} alt="" />, label: '畫廊漫步', onClick: handlerChange2Gallery },
+  ];
+
+  const actionItems = [
+    { icon: <img src={start_project} alt="" />, label: '開始計畫' },
+    { icon: <img src={icon_discord} alt="" />, label: '專案社群', onClick: handlerAheadDiscordStatus },
+  ];
+
+  return (
+    <>
+      {contextHolder}
+      <div
+        className={`fixed top-0 left-0 h-full bg-gray-50 border-r border-gray-200 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out flex flex-col ${isExpanded ? 'w-48' : 'w-22'
+          }`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
@@ -79,22 +78,24 @@ const NavDrawer = () => {
           <div className={`text-[#6CA579] font-sans text-xs font-medium mb-4 ${isExpanded ? 'block' : 'text-center'}`}>發想主題</div>
           {menuItems.map((item, index) => (
             <div key={index} className={`flex items-center mb-4 cursor-pointer group ${!isExpanded && 'justify-center'}`}>
-              <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
-              <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}
-                onClick={item.onClick}>
-                {item.label}
-              </span>
+              <div onClick={item.onClick} className='flex'>
+                <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
+                <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}>
+                  {item.label}
+                </span>
+              </div>
             </div>
           ))}
           <div className="border-t border-gray-200 my-4"></div>
           <div className={`text-[#6CA579] text-xs font-sans font-medium mb-4 ${isExpanded ? 'block' : 'text-center'}`}>執行計畫</div>
           {actionItems.map((item, index) => (
             <div key={index} className={`flex items-center mb-4 cursor-pointer group ${!isExpanded && 'justify-center'}`}>
-              <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
-              <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}
-              onClick={item.onClick}>
-                {item.label}
-              </span>
+              <div onClick={item.onClick} className='flex'>
+                <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
+                <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}>
+                  {item.label}
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -108,8 +109,8 @@ const NavDrawer = () => {
           </div>
         </div>
       </div>
-      </>
-    );
-  };
-  
-  export default NavDrawer;
+    </>
+  );
+};
+
+export default NavDrawer;
