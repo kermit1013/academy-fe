@@ -361,25 +361,25 @@ const BrainStormContent = () => {
             className={`${
               action_type == 1 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } h-7 rounded-full px-[10px] py-1 font-sans`}
-            onClick={() => setActionType(2)}
+            onClick={() => setActionType(1)}
           >
-            人物風暴 人物風暴
+            人物風暴
           </button>
           <button
             className={`${
               action_type == 2 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } h-7 rounded-full px-[10px] py-1 font-sans`}
-            onClick={() => setActionType(3)}
+            onClick={() => setActionType(2)}
           >
-            情境迷宮 情境迷宮
+            情境迷宮
           </button>
           <button
             className={`${
               action_type == 3 ? 'text-[#6ca579]' : 'text-[#7B7C7B]'
             } h-7 rounded-full px-[10px] py-1 font-sans`}
-            onClick={() => setActionType(1)}
+            onClick={() => setActionType(3)}
           >
-            瘋狂乘法 瘋狂乘法
+            瘋狂乘法
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
@@ -399,11 +399,6 @@ const BrainStormContent = () => {
         ) : (
           <Thinking action_type={action_type} />
         )}
-      </div>
-      <div className="flex items-center justify-center">
-        <p className="font-sans text-sm text-[#6ca579]">
-          看似奇怪的組合說不定會迸出有趣的專案主題！
-        </p>
       </div>
     </div>
   )
