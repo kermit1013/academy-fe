@@ -1,3 +1,5 @@
+import styles from '../styles.module.css'
+
 export function stringToColor(str: string) {
   let colour = '#'
   let hash = 0
@@ -14,8 +16,32 @@ export function stringToColor(str: string) {
   return colour.substring(0, 7)
 }
 
-export const validateEmail= (email:string) =>{
+export const validateEmail = (email: string) => {
   return email.match(
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   )
+}
+
+export const getNodeClassName = (data: {
+  level: number
+  is_launched: boolean
+  is_visible: boolean
+}) => {
+  if (data.level === 0) {
+    if (data.is_visible) return styles.node1_center_hover
+    return styles.node1_center
+  }
+  if (data.level === 1) {
+    if (data.is_visible) return styles.node1_level1_node_hover
+    return styles.node1_level1_node
+  }
+  if (data.level === 2) {
+    if (data.is_visible) return styles.node1_level2_node_hover
+    return styles.node1_level2_node
+  }
+  if (data.level === 3) {
+    if (data.is_launched) return styles.node1_level3_node_is_launched
+    if (data.is_visible) return styles.node1_level3_node_hover
+    return styles.node1_level3_node
+  }
 }

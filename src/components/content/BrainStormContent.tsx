@@ -12,6 +12,7 @@ import icon_change from '/public/change.svg'
 import icon_enter from '/public/icons/icon_enter.svg'
 import close_btn from '/public/close_btn.svg'
 import icon_plus from '/public/icons/icon_plus.svg'
+import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
 }
@@ -53,47 +54,28 @@ const Thinking = ({ action_type }: props) => {
         messageApi.warning('取不到使用者id')
         return
       }
-      const childId =
-        data.category === 'ABOUT'
-          ? `level1_${result.data.id}_user${user_id}`
-          : data.category === null
-            ? `level3_${result.data.id}_user${user_id}`
-            : `level2_${result.data.id}_user${user_id}`
 
       const childNode = {
-        id: childId,
+        id: `${result.data.id}`,
         type: 'bubble',
-        position: {
-          x: this_bubble.position.x * 1.5,
-          y: this_bubble.position.y * 1.5
-        },
+        position: { x: 0, y: 0 },
         data: {
-          id: childId,
-          label: modifyText,
-          isVisible: true,
-          category: null,
-          position: {
-            x: this_bubble.position.x * 1.5,
-            y: this_bubble.position.y * 1.5
-          }
+          id: `${result.data.id}`,
+          label: result.data.label,
+          category: result.data.category,
+          level: result.data.level,
+          is_launched: result.data.is_launched
         },
-        className:
-          data.category === 'ABOUT'
-            ? data.id != user_id
-              ? styles.node1_level1_node
-              : styles.node2_level1_node
-            : data.category === null
-              ? data.id != user_id
-                ? styles.node1_level3_node
-                : styles.node2_level3_node
-              : data.id != user_id
-                ? styles.node1_level2_node
-                : styles.node2_level2_node
+        className: getNodeClassName({
+          level: result.data.level,
+          is_launched: false,
+          is_visible: false
+        })
       }
       const childEdge = {
-        id: `${data.id}->${childId}`,
-        source: data.id,
-        target: childId,
+        id: `${data.id}->${result.data.id}`,
+        source: `${data.id}`,
+        target: `${result.data.id}`,
         type: 'straight'
       }
 

@@ -10,7 +10,7 @@ import 'reactflow/dist/style.css'
 import useForceLayout from '../hooks/useForceLayout'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
-import styles from '../styles.module.css'
+
 import { message } from 'antd'
 import Bubble from '../components/Bubble'
 import axios from 'axios'
@@ -33,6 +33,7 @@ import TopMenu from '../components/TopMenu'
 import GalleryContent from '../components/content/GalleryContent'
 // import CustomZoom from '../components/CustomZoom'
 import NavDrawer from '../components/NavDrawer'
+import { getNodeClassName } from '../funcs/utils'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -172,17 +173,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         level: item.data.level,
         is_launched: item.data.is_launched
       },
-      className: getNodeClassName(item.data)
+      className: getNodeClassName({
+        level: item.data.level,
+        is_launched: item.data.is_launched,
+        is_visible: false
+      })
     }))
-  }
-
-  const getNodeClassName = (data: { level: number; is_launched: boolean }) => {
-    if (data.level === 0) return styles.node1_center
-    if (data.level === 1) return styles.node1_level1_node
-    if (data.level === 2) return styles.node1_level2_node
-    if (data.level === 3 && data.is_launched)
-      return styles.node1_level3_node_is_launched
-    return styles.node1_level3_node
   }
 
   const mapEdgesToReactFlow = (edges: InputEdge[]) => {
@@ -217,30 +213,21 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         if (_node.id === node.id) {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: true }
-          if (node.data.level === 0) {
-            newNode.className = styles.node1_center_hover
-          } else if (node.data.level === 1) {
-            newNode.className = styles.node1_level1_node_hover
-          } else if (node.data.level === 2) {
-            newNode.className = styles.node1_level2_node_hover
-          } else {
-            newNode.className = styles.node1_level3_node_hover
-          }
+          newNode.className = getNodeClassName({
+            level: node.data.level,
+            is_launched: node.data.is_launched,
+            is_visible: true
+          })
           return newNode
         } else {
           const newNode = { ..._node }
           newNode.data = { ...newNode.data, isVisible: false }
-          if (newNode.data.level === 0) {
-            newNode.className = styles.node1_center
-          } else if (newNode.data.level === 1) {
-            newNode.className = styles.node1_level1_node
-          } else if (newNode.data.level === 2) {
-            newNode.className = styles.node1_level2_node
-          } else if (newNode.data.level === 3 && newNode.data.is_launched) {
-            newNode.className = styles.node1_level3_node_is_launched
-          } else {
-            newNode.className = styles.node1_level3_node
-          }
+          newNode.className = getNodeClassName({
+            level: newNode.data.level,
+            is_launched: newNode.data.is_launched,
+            is_visible: false
+          })
+
           return newNode
         }
       })
