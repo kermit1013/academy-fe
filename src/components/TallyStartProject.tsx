@@ -48,7 +48,7 @@ const TallyStartProject: React.FC = () => {
               console.log('do is_launched = true')
             }
           },
-          onclose: () => {
+          onClose: () => {
             setStartProjectStatus(false)
           }
         })
@@ -57,6 +57,7 @@ const TallyStartProject: React.FC = () => {
     document.body.appendChild(script)
 
     return () => {
+      setStartProjectStatus(false)
       document.body.removeChild(script)
     }
   }, [navigate])
