@@ -6,12 +6,12 @@ import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import { message } from 'antd'
 import useBubble from '../hooks/useBubble'
-import useReferenceThink from '../hooks/useReferenceThink'
 import start_project from '../../public/start_project.svg'
 import delete_bubble from '../../public/delete_bubble.svg'
 import icon_discord from '../../public/discord_green.svg'
 import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
+import useTopMenu from '../hooks/useTopMenu'
 interface props {
   data: {
     id: string
@@ -33,7 +33,7 @@ const Bubble = ({ data }: props) => {
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
   const { edit_bubble_id, setEditBubbleId } = useBubble()
-  const { reference_user_id, can_reference } = useReferenceThink()
+  const { isOpenGalleryContent } = useTopMenu()
 
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
@@ -247,7 +247,7 @@ const Bubble = ({ data }: props) => {
     }
   }
   function renderAddButton() {
-    if (!can_reference && data.level !== 3 && reference_user_id === '') {
+    if (!isOpenGalleryContent && data.level !== 3) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
@@ -258,16 +258,17 @@ const Bubble = ({ data }: props) => {
             +
           </button>
         </NodeToolbar>
-      );
+      )
     }
   }
-  
+
   function renderDeleteButton() {
-    if (!can_reference &&
-        ((data.level === 1 && data.category === null) ||
-         data.level === 2 ||
-         (data.level === 3 && data.is_launched === false)) &&
-        reference_user_id === '') {
+    if (
+      !isOpenGalleryContent &&
+      ((data.level === 1 && data.category === null) ||
+        data.level === 2 ||
+        (data.level === 3 && data.is_launched === false))
+    ) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
           <button
@@ -278,10 +279,10 @@ const Bubble = ({ data }: props) => {
             <img src={delete_bubble} alt="" />
           </button>
         </NodeToolbar>
-      );
+      )
     }
   }
-  
+
   function renderDiscordButton() {
     if (data.level === 3 && data.is_launched === true) {
       return (
@@ -294,16 +295,17 @@ const Bubble = ({ data }: props) => {
             <img src={icon_discord} alt="" />
           </button>
         </NodeToolbar>
-      );
+      )
     }
   }
-  
+
   function renderStartProjectButton() {
-    if (!can_reference &&
-        data.level === 3 &&
-        data.is_launched === false &&
-        reference_user_id === '' &&
-        data.label !== '') {
+    if (
+      !isOpenGalleryContent &&
+      data.level === 3 &&
+      data.is_launched === false &&
+      data.label !== ''
+    ) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
@@ -314,27 +316,30 @@ const Bubble = ({ data }: props) => {
             <img src={start_project} alt="" />
           </button>
         </NodeToolbar>
-      );
+      )
     }
   }
-  
+
   function renderContent() {
-    const shouldRenderTextarea = !can_reference &&
+    const shouldRenderTextarea =
+      !isOpenGalleryContent &&
       ((data.level === 1 && data.category === null) ||
-       data.level === 2 ||
-       data.level === 3) &&
+        data.level === 2 ||
+        data.level === 3) &&
       data.isVisible == true &&
-      reference_user_id === '' &&
-      edit_bubble_id == data.id;
-  
+      edit_bubble_id == data.id
+
     if (shouldRenderTextarea) {
-      return data.level === 3 ? renderProjectThemeInput() : renderThoughtInput();
+      return data.level === 3 ? renderProjectThemeInput() : renderThoughtInput()
     } else {
       return (
-        <p className={`${data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}>
+        <p
+          title={data.label}
+          className={`${data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}
+        >
           {data.label}
         </p>
-      );
+      )
     }
   }
 
@@ -348,9 +353,9 @@ const Bubble = ({ data }: props) => {
         onChange={(e) => handlerModifyData(e)}
         onKeyDown={(e) => handlerKeyDown(e)}
       />
-    );
+    )
   }
-  
+
   function renderThoughtInput() {
     return (
       <textarea
@@ -361,9 +366,8 @@ const Bubble = ({ data }: props) => {
         onChange={(e) => handlerModifyData(e)}
         onKeyDown={(e) => handlerKeyDown(e)}
       />
-    );
+    )
   }
-
 
   return (
     <div
@@ -385,19 +389,17 @@ const Bubble = ({ data }: props) => {
         is_launched = false (在畫廊不跳任何東西、如果自已顯示執行計劃)
       </> */}
       {contextHolder}
-  
+
       {renderAddButton()}
       {renderDeleteButton()}
       {renderDiscordButton()}
       {renderStartProjectButton()}
       {renderContent()}
-  
+
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>
-  );
+  )
 }
 
 export default Bubble
-
-
