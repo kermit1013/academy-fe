@@ -4,8 +4,7 @@ import ReactFlow, {
   ProOptions,
   ReactFlowProvider,
   NodeOrigin,
-  NodeMouseHandler,
-  MiniMap,
+  NodeMouseHandler
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import useForceLayout from '../hooks/useForceLayout'
@@ -89,71 +88,80 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     getPersonData(0)
   }, [])
 
-  const userIdListRef = useRef<number[]>([]);
+  const userIdListRef = useRef<number[]>([])
 
   // Update the ref whenever userIdList changes
   useEffect(() => {
     console.log(userIdListRef)
-    userIdListRef.current = userIdList;
-  }, [userIdList]);
+    userIdListRef.current = userIdList
+  }, [userIdList])
 
   const navigate = useNavigate()
 
-  const getPersonData = useCallback(async (action_type: number) => {
-    console.log(actionType)
-    const access_token = localStorage.getItem('access_token')
-    if (!access_token) {
-      navigate('/')
-      return
-    }
-
-    let user_id: number | undefined;
-
-    if (action_type === -1) {
-      if (userIdListRef.current.length > 1) {
-        user_id = userIdListRef.current[userIdListRef.current.length - 2];
-        console.log(user_id);
-      } else {
-        messageApi.warning('已經沒有上一位用戶了哦！')
-        console.log("userIdList is empty");
-        return;
-      }
-    }
-    const baseUrl = 'https://api.loudy.in/api/users/me'
-    const url = action_type === -1 ? `${baseUrl}?user_id=${user_id}` :
-      action_type === 1 ? `${baseUrl}?user_id=0` :
-        baseUrl
-
-    try {
-      const result = await axios.get(url, {
-        headers: { Authorization: `Bearer ${access_token}` }
-      })
-
-      updateUserIdList(action_type, result.data.id)
-      if (action_type === 0) {
-        setHasSubmitTally(result.data.has_submitted_tally)
+  const getPersonData = useCallback(
+    async (action_type: number) => {
+      console.log(actionType)
+      const access_token = localStorage.getItem('access_token')
+      if (!access_token) {
+        navigate('/')
+        return
       }
 
-      const nodeList = mapNodesToReactFlow(result.data.nodes, result.data.username)
-      const edgeList = mapEdgesToReactFlow(result.data.edges)
+      let user_id: number | undefined
 
-      updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
-    } catch (error) {
-      console.error("Error fetching data:", error)
-      navigate('/')
-    }
-  }, [navigate, setUserIdList, setHasSubmitTally, setUserId, setNodes, setEdges])
+      if (action_type === -1) {
+        if (userIdListRef.current.length > 1) {
+          user_id = userIdListRef.current[userIdListRef.current.length - 2]
+          console.log(user_id)
+        } else {
+          messageApi.warning('已經沒有上一位用戶了哦！')
+          console.log('userIdList is empty')
+          return
+        }
+      }
+      const baseUrl = 'https://api.loudy.in/api/users/me'
+      const url =
+        action_type === -1
+          ? `${baseUrl}?user_id=${user_id}`
+          : action_type === 1
+            ? `${baseUrl}?user_id=0`
+            : baseUrl
+
+      try {
+        const result = await axios.get(url, {
+          headers: { Authorization: `Bearer ${access_token}` }
+        })
+
+        updateUserIdList(action_type, result.data.id)
+        if (action_type === 0) {
+          setHasSubmitTally(result.data.has_submitted_tally)
+        }
+
+        const nodeList = mapNodesToReactFlow(
+          result.data.nodes,
+          result.data.username
+        )
+        const edgeList = mapEdgesToReactFlow(result.data.edges)
+
+        updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        navigate('/')
+      }
+    },
+    [navigate, setUserIdList, setHasSubmitTally, setUserId, setNodes, setEdges]
+  )
 
   const updateUserIdList = (action_type: number, id: number) => {
     if (action_type === 1) {
-      setUserIdList(prev => [...prev, id])
+      setUserIdList((prev) => [...prev, id])
     } else if (action_type === -1) {
-      setUserIdList(prev => prev.slice(0, -1))
+      setUserIdList((prev) => prev.slice(0, -1))
     }
   }
 
   const mapNodesToReactFlow = (nodes: InputNode[], username: string) => {
-    return nodes.map(item => ({
+    return nodes.map((item) => ({
       id: `${item.id}`,
       type: 'bubble',
       position: { x: 0, y: 0 },
@@ -168,16 +176,17 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }))
   }
 
-  const getNodeClassName = (data: { level: number, is_launched: boolean }) => {
+  const getNodeClassName = (data: { level: number; is_launched: boolean }) => {
     if (data.level === 0) return styles.node1_center
     if (data.level === 1) return styles.node1_level1_node
     if (data.level === 2) return styles.node1_level2_node
-    if (data.level === 3 && data.is_launched) return styles.node1_level3_node_is_launched
+    if (data.level === 3 && data.is_launched)
+      return styles.node1_level3_node_is_launched
     return styles.node1_level3_node
   }
 
   const mapEdgesToReactFlow = (edges: InputEdge[]) => {
-    return edges.map(item => ({
+    return edges.map((item) => ({
       id: `${item.source}->${item.target}`,
       source: `${item.source}`,
       target: `${item.target}`,
@@ -185,7 +194,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }))
   }
 
-  const updateStateAndStorage = (id: number, nodeList: any[], edgeList: any[], action_type: number) => {
+  const updateStateAndStorage = (
+    id: number,
+    nodeList: any[],
+    edgeList: any[],
+    action_type: number
+  ) => {
     setUserId(id)
     setNodes(nodeList)
     setEdges(edgeList)
@@ -284,7 +298,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           />
         )}
         <Cursors cursors={cursors} />
-        <MiniMap />
       </ReactFlow>
       <DiscordModal
         isOpen={is_ahead_discord}
