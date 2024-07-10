@@ -316,6 +316,7 @@ const BrainStormContent = () => {
   const { getNodes } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
   const [finishBubbleCount, setFinishBubbleCount] = useState(0)
+  const [showThinkDone, setShowThinkDone] = useState(false);
   useEffect(() => {
     setSelectBubble(null)
   }, [])
@@ -324,27 +325,36 @@ const BrainStormContent = () => {
     if (select_bubble != null) {
       setBubbleCount(getNodes().length)
       const t = setInterval(() => {
-        setTimes((prev) => prev - 1)
-      }, 1000)
+        setTimes((prev) => {
+          if (prev <= 1) {
+            clearInterval(t);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
       return () => {
-        clearInterval(t)
-      }
+        clearInterval(t);
+      };
     }
-  }, [select_bubble])
+  }, [select_bubble]);
 
   useEffect(() => {
     if (times === 0) {
-      setFinishBubbleCount(getNodes().length)
-      setTimeout(() => {
-        setTimes(60)
-        setSelectBubble(null)
-      }, 3000)
+      setFinishBubbleCount(getNodes().length);
+      setShowThinkDone(true);
+      const timer = setTimeout(() => {
+        setTimes(60);
+        setSelectBubble(null);
+        setShowThinkDone(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [times])
+  }, [times]);
 
   useEffect(() => {
     setSelectBubble(null)
-    setTimes(60)
+    setTimes(5)
   }, [action_type])
   const handlerCloseContent = () => {
     console.log('close')
@@ -397,13 +407,13 @@ const BrainStormContent = () => {
         </div>
       </div>
       <div className="h-full w-full">
-        {times ? (
-          <Thinking action_type={action_type} />
-        ) : (
+        {showThinkDone ? (
           <ThinkDone
             bubbleCount={bubbleCount}
             finishBubbleCount={finishBubbleCount}
           />
+        ) : (
+          <Thinking action_type={action_type} />
         )}
       </div>
     </div>
