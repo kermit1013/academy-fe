@@ -354,7 +354,7 @@ const BrainStormContent = () => {
 
   useEffect(() => {
     setSelectBubble(null)
-    setTimes(5)
+    setTimes(60)
   }, [action_type])
   const handlerCloseContent = () => {
     console.log('close')
