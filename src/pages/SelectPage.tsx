@@ -279,7 +279,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         )}
         </Panel>
         
-        <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
+        <img src={bg} className="object-cover w-full h-full" alt="" />
        
         <Cursors cursors={cursors} />
       </ReactFlow>

@@ -271,7 +271,7 @@ const Thinking = ({ action_type }: props) => {
           />
         </div>
       </div>
-      <div className="text-sm italic text-[#6ca579]">
+      <div className="text-sm font-sans text-[#6ca579]">
         看似奇怪的組合說不定會迸出有趣的專案主題！
       </div>
     </div>

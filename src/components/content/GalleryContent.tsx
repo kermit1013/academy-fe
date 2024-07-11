@@ -1,6 +1,6 @@
-import disconnect from '/public/disconnect.svg'
-import prev_button from '/public/prev_button.svg'
-import next_button from '/public/next_button.svg'
+import disconnect from '/public/exit.svg'
+import prev_button from '/public/swipe-left.svg'
+import next_button from '/public/swipe-right.svg'
 import useTopMenu from '../../hooks/useTopMenu'
 
 interface GalleryContentProps {
@@ -28,6 +28,8 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
   }
 
   return (
+  <>
+    
     <div className=" flex items-center justify-center pb-5">
       <div className="flex items-center space-x-2 ">
   
@@ -57,6 +59,7 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
         </button>
         </div>
     </div>
+    </>
   )
 }
 
