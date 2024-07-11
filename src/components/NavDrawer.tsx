@@ -57,7 +57,7 @@ const NavDrawer = () => {
   ];
 
   const actionItems = [
-    { icon: <img src={start_project} alt="" />, label: '開始計畫' , prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫'},
+    { icon: <img src={start_project} alt="" />, label: '開始計畫', prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫' },
     { icon: <img src={icon_discord} alt="" />, label: '專案社群', prompt: '在 Discord 中交流專案想法。若你的計畫通過審核，還有專屬頻道', onClick: handlerAheadDiscordStatus },
   ];
 
@@ -101,11 +101,13 @@ const NavDrawer = () => {
         </div>
         <div className={`p-4 ${isExpanded ? 'pl-4' : 'text-center'}`}>
           <div className={`cursor-pointer group flex items-center ${!isExpanded && 'justify-center'}`}>
-            <img src={setting} alt="" />
-            <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-green-600 ${isExpanded ? 'inline' : 'hidden'}`}
-              onClick={handlerSetting}>
-              個人設定
-            </span>
+            <div className="flex" onClick={handlerSetting}>
+              <img src={setting} alt="" />
+              <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-green-600 ${isExpanded ? 'inline' : 'hidden'}`}
+                onClick={handlerSetting}>
+                個人設定
+              </span>
+            </div>
           </div>
         </div>
       </div>

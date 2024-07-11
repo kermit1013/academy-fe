@@ -12,6 +12,7 @@ import GoogleLogin from './components/GoogleLogin'
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const [passwdType, setPasswdType] = useState('password')
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user_name, setUserName, passwd, setPasswd, setIsRegister } =
     useLogin()
 
@@ -26,7 +27,9 @@ const LoginColumns = () => {
   const handlerLogin = async () => {
     if (user_name === '' || passwd === '') {
       messageApi.warning('請輸入帳號、密碼')
+      return
     }
+    setIsLoggingIn(true)
     try {
       const result = await axios.post('https://api.loudy.in/api/token/pair', {
         username: user_name,
@@ -38,9 +41,10 @@ const LoginColumns = () => {
         messageApi.success(`歡迎${user_name}`)
         setTimeout(() => {
           navigate('/search')
-        }, 2000)
+        }, 1000)
       }
     } catch {
+      setIsLoggingIn(false)
       messageApi.warning('登入失敗，帳號或密碼錯誤')
     }
   }
@@ -99,8 +103,9 @@ const LoginColumns = () => {
         </button>
       </div>
       <button
-        className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
+        className={`h-[72px] w-full rounded-[20px] p-4 text-2xl text-white  ${isLoggingIn ? 'bg-[#ABAAA6]' : 'bg-[#735E5E]'}`}
         onClick={() => handlerLogin()}
+        disabled={isLoggingIn}
       >
         登入
       </button>
