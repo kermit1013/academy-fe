@@ -51,14 +51,14 @@ const NavDrawer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const menuItems = [
-    { icon: <img src={self_explore} alt="" />, label: '自我探索', onClick: handlerTallyPopup },
-    { icon: <img src={light_bulb} alt="" />, label: '靈感發想', onClick: handlerChange2BrainStorm },
-    { icon: <img src={change_think} alt="" />, label: '畫廊漫步', onClick: handlerChange2Gallery },
+    { icon: <img src={self_explore} alt="" />, label: '自我探索', prompt: '從自身出發找尋專案點子', onClick: handlerTallyPopup },
+    { icon: <img src={light_bulb} alt="" />, label: '靈感發想', prompt: '從破碎的靈感中，拼出有趣的專案主題', onClick: handlerChange2BrainStorm },
+    { icon: <img src={change_think} alt="" />, label: '畫廊漫步', prompt: '逛逛他人的心智圖', onClick: handlerChange2Gallery },
   ];
 
   const actionItems = [
-    { icon: <img src={start_project} alt="" />, label: '開始計畫' },
-    { icon: <img src={icon_discord} alt="" />, label: '專案社群', onClick: handlerAheadDiscordStatus },
+    { icon: <img src={start_project} alt="" />, label: '開始計畫' , prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫'},
+    { icon: <img src={icon_discord} alt="" />, label: '專案社群', prompt: '在 Discord 中交流專案想法。若你的計畫通過審核，還有專屬頻道', onClick: handlerAheadDiscordStatus },
   ];
 
   return (
@@ -78,7 +78,7 @@ const NavDrawer = () => {
           <div className={`text-[#6CA579] font-sans text-xs font-medium mb-4 ${isExpanded ? 'block' : 'text-center'}`}>發想主題</div>
           {menuItems.map((item, index) => (
             <div key={index} className={`flex items-center mb-4 cursor-pointer group ${!isExpanded && 'justify-center'}`}>
-              <div onClick={item.onClick} className='flex'>
+              <div className="flex tooltip tooltip-right font-sans" data-tip={item.prompt} onClick={item.onClick}>
                 <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
                 <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}>
                   {item.label}
@@ -90,7 +90,7 @@ const NavDrawer = () => {
           <div className={`text-[#6CA579] text-xs font-sans font-medium mb-4 ${isExpanded ? 'block' : 'text-center'}`}>執行計畫</div>
           {actionItems.map((item, index) => (
             <div key={index} className={`flex items-center mb-4 cursor-pointer group ${!isExpanded && 'justify-center'}`}>
-              <div onClick={item.onClick} className='flex'>
+              <div className="flex tooltip tooltip-right font-sans" data-tip={item.prompt} onClick={item.onClick}>
                 <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">{item.icon}</span>
                 <span className={`ml-3 text-gray-600 text-sm font-sans group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}>
                   {item.label}

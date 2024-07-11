@@ -28,23 +28,17 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center p-4">
-      <div className="flex h-full w-full items-center justify-between">
+    <div className=" flex items-center justify-center pb-5">
+      <div className="flex items-center space-x-2 ">
+  
         <button
           onClick={() => handlerMoveBtn(-1)}
-          className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
+          className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1"
         >
           <img src={prev_button} alt="" />
         </button>
-        <button
-          onClick={() => handlerMoveBtn(1)}
-          className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] hover:bg-[#7B7C7B]/10"
-        >
-          <img src={next_button} alt="" />
-        </button>
-      </div>
-      <div className="z-10 flex h-10 w-fit items-center justify-center rounded border border-[#7B7C7B]/20 bg-[#7B7C7B]/10 px-2 py-1">
-        <p className="font-sans text-[13px] text-[#7B7C7B]">
+      <div className="z-10 flex h-10 w-fit items-center justify-center rounded border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 px-2 py-1">
+        <p className="font-sans text-[13px] text-[#EF6E52]">
           按左右鍵可以逛逛他人的心智圖
         </p>
         <p className="ml-2 h-full w-1 border-l border-[#7B7C7B]"></p>
@@ -55,6 +49,13 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
           <img src={disconnect} alt="" />
         </button>
       </div>
+      <button
+          onClick={() => handlerMoveBtn(1)}
+          className="z-10 flex h-10 w-10 items-center justify-center rounded border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1"
+        >
+          <img src={next_button} alt="" />
+        </button>
+        </div>
     </div>
   )
 }

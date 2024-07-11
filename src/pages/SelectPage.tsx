@@ -269,10 +269,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           </div> */}
           <NavDrawer />
         </Panel>
-        {/* <Panel position="bottom-left">
-          <CustomZoom />
-        </Panel> */}
-        <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
+        <Panel position="bottom-center">
         {isOpenBrainStormContent && <BrainStormContent />}
         {isOpenGalleryContent && (
           <GalleryContent
@@ -280,6 +277,10 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             setActionType={setActionType}
           />
         )}
+        </Panel>
+        
+        <img src={bg} className="absolute bottom-0 -z-50 w-screen" alt="" />
+       
         <Cursors cursors={cursors} />
       </ReactFlow>
       <DiscordModal
