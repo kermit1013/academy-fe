@@ -55,7 +55,14 @@ interface InputNode {
     category: string
     is_launched: boolean
     level: number
+    reference: string
   }
+}
+
+interface referenceTooltipProps {
+  content: string
+  x: number
+  y: number
 }
 
 interface InputEdge {
@@ -83,6 +90,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [actionType, setActionType] = useState(0)
   const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal, isOpenTallyPopup } =
     useTopMenu()
+  const [tooltipData, setTooltipData] = useState({ show: false, content: '', x: 0, y: 0 });
 
   useEffect(() => {
     getPersonData(0)
@@ -171,7 +179,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         label: item.data.level === 0 ? username : item.data.label,
         category: item.data.category,
         level: item.data.level,
-        is_launched: item.data.is_launched
+        is_launched: item.data.is_launched,
+        reference: item.data.reference
       },
       className: getNodeClassName({
         level: item.data.level,
@@ -206,6 +215,40 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   }
 
   useForceLayout({ strength, distance, setIsLoading, userId })
+
+  const onNodeMouseEnter: NodeMouseHandler = useCallback(
+    (event, node) => {
+      const { clientX, clientY } = event as React.MouseEvent;
+      if (!node.data.reference) return 
+      if (node.data.level === 3) {
+        console.log(node)
+        setTooltipData({
+          show: true,
+          content: node.data.reference || 'unknown',
+          x: clientX,
+          y: clientY
+        });
+      }
+    },
+    []
+  );
+
+
+  const onNodeMouseLeave: NodeMouseHandler = useCallback(
+    () => {
+      setTooltipData(prev => ({ ...prev, show: false }));
+    },
+    []
+  );
+
+  const Tooltip = ({ content, x, y }: referenceTooltipProps) => (
+    <div 
+      className="absolute z-10 p-2 border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B] rounded shadow-md"
+      style={{ left: x, top: y }}
+    >
+      {content}
+    </div>
+  );
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
@@ -242,6 +285,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onNodeMouseEnter={onNodeMouseEnter}
+        onNodeMouseLeave={onNodeMouseLeave}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
@@ -288,6 +333,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         onClose={() => setAheadDiscordStatus(false)}
       />
       {isOpenSettingModal && <SettingModal />}
+      {tooltipData.show && (
+      <Tooltip 
+        content={tooltipData.content} 
+        x={tooltipData.x} 
+        y={tooltipData.y} 
+      />
+    )}
     </>
   )
 }

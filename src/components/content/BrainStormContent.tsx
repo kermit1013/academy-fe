@@ -38,7 +38,8 @@ const Thinking = ({ action_type }: props) => {
       {
         source: data.id,
         label: modifyText,
-        category: ''
+        category: '',
+        reference: action_bubble
       },
       {
         headers: {
@@ -153,7 +154,7 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex h-[47px] w-[60px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] text-center text-base">
-          <div>{setting_bubble}</div>
+          <div className="font-sans">{setting_bubble}</div>
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
