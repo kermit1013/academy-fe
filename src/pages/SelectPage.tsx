@@ -86,9 +86,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
-  const [setHasSubmitTally] = useState(true)
   const [actionType, setActionType] = useState(0)
-  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal, isOpenTallyPopup } =
+  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal, isOpenTallyPopup, setIsOpenTallyPopup } =
     useTopMenu()
   const [tooltipData, setTooltipData] = useState({ show: false, content: '', x: 0, y: 0 });
 
@@ -141,10 +140,9 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         })
 
         updateUserIdList(action_type, result.data.id)
-        // todo kermit update setHasSubmitTally
-        // if (action_type === 0) {
-        //   setHasSubmitTally(result.data.has_submitted_tally)
-        // }
+        if (action_type === 0) {
+          setIsOpenTallyPopup(!result.data.has_submitted_tally)
+        }
 
         const nodeList = mapNodesToReactFlow(
           result.data.nodes,
@@ -158,7 +156,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         navigate('/')
       }
     },
-    [navigate, setUserIdList, setHasSubmitTally, setUserId, setNodes, setEdges]
+    [navigate, setUserIdList, setUserId, setNodes, setEdges]
   )
 
   const updateUserIdList = (action_type: number, id: number) => {

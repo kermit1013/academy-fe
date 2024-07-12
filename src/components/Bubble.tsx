@@ -34,6 +34,15 @@ const Bubble = ({ data }: props) => {
   const [messageApi, contextHolder] = message.useMessage()
   const { edit_bubble_id, setEditBubbleId } = useBubble()
   const { isOpenGalleryContent } = useTopMenu()
+  const [isComposing, setIsComposing] = useState(false)
+
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false)
+  }
 
   const selectBubble = () => {
     const node = getNodes().filter((node) => node.id === data.id)[0]
@@ -226,7 +235,7 @@ const Bubble = ({ data }: props) => {
   }
 
   const handlerKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+    if (e.key === 'Enter' && !isComposing) {
       if (modifyData === '') {
         messageApi.warning('不可為空白!')
         return
@@ -352,6 +361,8 @@ const Bubble = ({ data }: props) => {
         placeholder="聯想到什麼專案主題？"
         onChange={(e) => handlerModifyData(e)}
         onKeyDown={(e) => handlerKeyDown(e)}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
     )
   }
@@ -365,6 +376,8 @@ const Bubble = ({ data }: props) => {
         placeholder="請輸入您的想法"
         onChange={(e) => handlerModifyData(e)}
         onKeyDown={(e) => handlerKeyDown(e)}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
     )
   }
