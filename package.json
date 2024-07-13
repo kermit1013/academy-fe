@@ -11,6 +11,9 @@
     "generate-js": "npx tsc --jsx preserve -t es2020 --outDir srcJs --noEmit false && npx prettier srcJs --write && npx shx cp src/*.css srcJs"
   },
   "dependencies": {
+    "@blocknote/core": "^0.14.5",
+    "@blocknote/mantine": "^0.14.6",
+    "@blocknote/react": "^0.14.6",
     "@react-oauth/google": "^0.12.1",
     "antd": "^5.16.2",
     "axios": "^1.6.7",

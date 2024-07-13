@@ -11,11 +11,13 @@ import { message } from 'antd'
 
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
+import Editor from './Editor';
 
 
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -57,13 +59,17 @@ const NavDrawer = () => {
   ];
 
   const actionItems = [
-    { icon: <img src={start_project} alt="" />, label: '開始計畫', prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫' },
+    { icon: <img src={start_project} alt="" />, label: '開始計畫', prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫',  onClick: () => setIsEditorOpen(true) },
     { icon: <img src={icon_discord} alt="" />, label: '專案社群', prompt: '在 Discord 中交流專案想法。若你的計畫通過審核，還有專屬頻道', onClick: handlerAheadDiscordStatus },
   ];
 
   return (
     <>
       {contextHolder}
+      <Editor 
+        isOpen={isEditorOpen} 
+        onClose={() => setIsEditorOpen(false)} 
+      />
       <div
         className={`fixed top-0 left-0 h-full bg-gray-50 border-r border-gray-200 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out flex flex-col ${isExpanded ? 'w-48' : 'w-22'
           }`}
