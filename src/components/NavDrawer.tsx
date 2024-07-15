@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import main_logo from '../../public/groundi_logo.svg'
 import text_logo from '../../public/groundi_text.svg'
 import light_bulb from '../../public/light_bulb.svg'
@@ -7,17 +7,29 @@ import change_think from '../../public/change_think.svg'
 import icon_discord from '../../public/discord.svg'
 import start_project from '../../public/pencil-square.svg'
 import self_explore from '../../public/puzzle.svg'
+import hashtag from '../../public/icons/icon_hashtag.svg'
+import gallery from '../../public/icons/icon_gallery.svg'
 import { message } from 'antd'
 
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor';
+import axios from 'axios';
+import ProjectWall from './ProjectWall';
 
+interface Project {
+  id: string | number;
+  name: string;
+  description: string;
+}
 
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isProjectWallOpen, setIsProjectWallOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState({} as Project);
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -26,6 +38,7 @@ const NavDrawer = () => {
     setIsOpenSettingModal,
     setIsOpenTallyPopup
   } = useTopMenu()
+
 
   const handlerChange2BrainStorm = () => {
     if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
@@ -49,6 +62,36 @@ const NavDrawer = () => {
   const handlerTallyPopup = () => {
     setIsOpenTallyPopup(true)
   }
+  useEffect(() => {
+    getProjects()
+  }, [])
+
+  const getProjects = useCallback(
+    async () => {
+      const access_token = localStorage.getItem('access_token')
+      if (!access_token) {
+        return
+      }
+      const url = 'https://api.loudy.in/api/projects/me'
+      try {
+        const result = await axios.get(url, {
+          headers: { Authorization: `Bearer ${access_token}` }
+        })
+        if (result.status === 200) {
+          setProjects(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    []
+  )
+  const handleProjectClick = (project: Project) => {
+    console.log(project)
+    setSelectedProject(project);
+    setIsEditorOpen(true);
+  };
+
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -58,17 +101,31 @@ const NavDrawer = () => {
     { icon: <img src={change_think} alt="" />, label: '畫廊漫步', prompt: '逛逛他人的心智圖', onClick: handlerChange2Gallery },
   ];
 
-  const actionItems = [
-    { icon: <img src={start_project} alt="" />, label: '開始計畫', prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫',  onClick: () => setIsEditorOpen(true) },
+  const actionItems = projects.map((project: Project) => ({
+    icon: <img src={hashtag} alt="" />,
+    label: project.name,
+    prompt: project.description,
+    onClick: () => handleProjectClick(project),
+  }));
+
+  actionItems.unshift(
+    { icon: <img src={start_project} alt="" />, label: '開始計畫', prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫', onClick: () => setIsEditorOpen(true) },
     { icon: <img src={icon_discord} alt="" />, label: '專案社群', prompt: '在 Discord 中交流專案想法。若你的計畫通過審核，還有專屬頻道', onClick: handlerAheadDiscordStatus },
-  ];
+    { icon: <img src={gallery} alt="" />, label: '專案瀏覽', prompt: '來看看其他人的專案記錄吧', onClick: () => setIsProjectWallOpen(true), }
+  );
 
   return (
     <>
       {contextHolder}
-      <Editor 
-        isOpen={isEditorOpen} 
-        onClose={() => setIsEditorOpen(false)} 
+      <Editor
+        isOpen={isEditorOpen}
+        onClose={() => setIsEditorOpen(false)}
+        project={selectedProject}
+      />
+
+      <ProjectWall
+        isOpen={isProjectWallOpen}
+        onClose={() => setIsProjectWallOpen(false)}
       />
       <div
         className={`fixed top-0 left-0 h-full bg-gray-50 border-r border-gray-200 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out flex flex-col ${isExpanded ? 'w-48' : 'w-22'

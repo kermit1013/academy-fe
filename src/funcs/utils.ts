@@ -1,4 +1,6 @@
+import { useCallback, useEffect, useRef } from 'react'
 import styles from '../styles.module.css'
+
 
 export function stringToColor(str: string) {
   let colour = '#'
@@ -44,4 +46,55 @@ export const getNodeClassName = (data: {
     if (data.is_visible) return styles.node1_level3_node_hover
     return styles.node1_level3_node
   }
+}
+
+// export function useDebounce(callback, delay) {
+//   const timeoutRef = useRef(null);
+
+//   useEffect(() => {
+//     return () => {
+//       if (timeoutRef.current) {
+//         clearTimeout(timeoutRef.current);
+//       }
+//     };
+//   }, []);
+
+//   const debouncedCallback = useCallback((...args: any) => {
+//     if (timeoutRef.current) {
+//       clearTimeout(timeoutRef.current);
+//     }
+
+//     timeoutRef.current = setTimeout(() => {
+//       callback(...args);
+//     }, delay);
+//   }, [callback, delay]);
+
+//   return debouncedCallback;
+// }
+
+export function useDebounce<T extends (...args: any[]) => void>(
+  callback: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedCallback = useCallback((...args: Parameters<T>) => {
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = window.setTimeout(() => {
+      callback(...args);
+    }, delay);
+  }, [callback, delay]);
+
+  return debouncedCallback;
 }

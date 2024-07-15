@@ -99,7 +99,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   // Update the ref whenever userIdList changes
   useEffect(() => {
-    console.log(userIdListRef)
     userIdListRef.current = userIdList
   }, [userIdList])
 
@@ -219,7 +218,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       const { clientX, clientY } = event as React.MouseEvent;
       if (!node.data.reference) return 
       if (node.data.level === 3) {
-        console.log(node)
         setTooltipData({
           show: true,
           content: node.data.reference || 'unknown',
