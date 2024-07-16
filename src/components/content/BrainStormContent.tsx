@@ -64,7 +64,8 @@ const Thinking = ({ action_type }: props) => {
           label: result.data.label,
           category: result.data.category,
           level: result.data.level,
-          is_launched: result.data.is_launched
+          is_launched: false,
+          reference: result.data.reference
         },
         className: getNodeClassName({
           level: result.data.level,
