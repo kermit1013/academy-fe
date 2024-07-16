@@ -257,7 +257,7 @@ const Thinking = ({ action_type }: props) => {
           <input
             type="text"
             value={modifyText}
-            placeholder=" 聯想到什麼專案主題？"
+            placeholder="輸入聯想到的專案主題…"
             className="h-[58px] w-[192px] rounded-lg border-2 border-[#7B7C7B] bg-white/20 pl-3 text-start font-sans text-base focus:outline-none"
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -272,7 +272,7 @@ const Thinking = ({ action_type }: props) => {
           />
         </div>
       </div>
-      <div className="text-sm font-sans text-[#6ca579]">
+      <div className="font-sans text-sm text-[#6ca579]">
         看似奇怪的組合說不定會迸出有趣的專案主題！
       </div>
     </div>
