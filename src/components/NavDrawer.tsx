@@ -111,14 +111,7 @@ const NavDrawer = () => {
     }
   ]
 
-  const actionItems = projects.map((project: Project) => ({
-    icon: <img src={hashtag} alt="" />,
-    label: project.name,
-    prompt: project.description,
-    onClick: () => handleProjectClick(project)
-  }))
-
-  actionItems.unshift(
+  const actionItems =[
     {
       icon: <img src={start_project} alt="" />,
       label: '開始計畫',
@@ -137,7 +130,15 @@ const NavDrawer = () => {
       prompt: '來看看其他人的專案記錄吧',
       onClick: () => setIsProjectWallOpen(true)
     }
-  )
+  ]
+
+  const projectItems = projects.map((project: Project) => ({
+    icon: <img src={hashtag} alt="" />,
+    label: project.name,
+    prompt: project.description,
+    onClick: () => handleProjectClick(project)
+  }))
+
 
   return (
     <>
@@ -228,7 +229,35 @@ const NavDrawer = () => {
               </div>
             </div>
           ))}
+                    <div className="my-4 border-t border-gray-200"></div>
+          <div
+            className={`mb-4 font-sans text-xs font-medium text-[#6CA579] ${isExpanded ? 'block' : 'text-center'}`}
+          >
+            我的專案
+          </div>
+          {projectItems.map((item, index) => (
+            <div
+              key={index}
+              className={`group mb-4 flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
+            >
+              <div
+                className="tooltip tooltip-right flex font-sans"
+                data-tip={item.prompt}
+                onClick={item.onClick}
+              >
+                <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
+                  {item.icon}
+                </span>
+                <span
+                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}
+                >
+                  {item.label}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
+        
         <div className={`p-4 ${isExpanded ? 'pl-4' : 'text-center'}`}>
           <div
             className={`group flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
