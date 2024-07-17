@@ -13,9 +13,10 @@ declare global {
 const TallyStartProject: React.FC = () => {
   const navigate = useNavigate()
   const [messageApi] = message.useMessage()
-  const { setStartProjectStatus } = useStartProject()
+  const { selectedNode , setStartProjectStatus } = useStartProject()
 
   useEffect(() => {
+    console.log(selectedNode)
     const script = document.createElement('script')
     script.src = 'https://tally.so/widgets/embed.js'
     script.onload = () => {
@@ -26,30 +27,58 @@ const TallyStartProject: React.FC = () => {
             const access_token = localStorage.getItem('access_token')
             if (access_token == null) {
               navigate('/')
+              return
             }
             const data = JSON.stringify(payload)
             let encoded = encodeURI(data)
-            const result = await axios.post(
-              // 'http://localhost:8000/api/graphs/nodes/1043/received-project',
-              'https://api.loudy.in/api/graphs/nodes/${node_id}/received-project',
-              {
-                data: encoded
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${access_token}`
+            try {
+              const receivedResult = await axios.post(
+                `https://api.loudy.in/api/projects/received/nodes/${selectedNode?.data.id}`,
+                {
+                  data: encoded
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${access_token}`
+                  }
+                }
+              )
+              
+              if (receivedResult.status === 200) {
+                messageApi.info(
+                  '已收到你的專案提案，我們將儘快生成你的專案計畫表，並邀請你加入 Groundi Discord 🚀'
+                )
+                console.log('do is_launched = true')
+                
+                // Immediately call create project API
+                const createProjectUrl = 'https://api.loudy.in/api/projects'
+                try {
+                  const createResult = await axios.post(
+                    createProjectUrl,
+                    {
+                      name: receivedResult.data.label, // Using the label from the received API response
+                    },
+                    {
+                      headers: {
+                        Authorization: `Bearer ${access_token}`
+                      }
+                    }
+                  )
+                  
+                  if (createResult.status === 200) {
+                    console.log('Project created successfully')
+                  }
+                } catch (error) {
+                  console.error('Error creating project:', error)
                 }
               }
-            )
-            if (result.status === 200) {
-              messageApi.info(
-                '已收到你的專案提案，我們將儘快生成你的專案計畫表，並邀請你加入 Groundi Discord 🚀'
-              )
-              console.log('do is_launched = true')
+            } catch (error) {
+              console.error('Error submitting proposal:', error)
             }
           },
           onClose: () => {
             setStartProjectStatus(false)
+            window.location.reload()
           }
         })
       }

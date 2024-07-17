@@ -82,7 +82,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
   const [cursors, onMouseMove] = useCursorStateSynced()
-  const { is_start_project } = useStartProject()
+  const { setSelectedNode, is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
@@ -248,6 +248,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
+      setSelectedNode(node)
       const newNodeList = nodes.map((_node) => {
         if (_node.id === node.id) {
           const newNode = { ..._node }

@@ -16,6 +16,7 @@ import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor'
 import axios from 'axios'
 import ProjectWall from './ProjectWall'
+import useStartProject from '../hooks/useStartProject'
 
 interface Project {
   id: string | number
@@ -36,8 +37,10 @@ const NavDrawer = () => {
     setIsOpenBrainStormContent,
     setIsOpenGalleryContent,
     setIsOpenSettingModal,
-    setIsOpenTallyPopup
+    setIsOpenTallyPopup,
   } = useTopMenu()
+
+  const { selectedNode , setStartProjectStatus } = useStartProject()
 
   const handlerChange2BrainStorm = () => {
     if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
@@ -60,6 +63,12 @@ const NavDrawer = () => {
 
   const handlerTallyPopup = () => {
     setIsOpenTallyPopup(true)
+  }
+
+  const handlerTallyStartProject = () => {
+    if (!selectedNode || selectedNode.data.level !== 3) return messageApi.warning('請先選擇一個方形泡泡哦！')
+    setStartProjectStatus(true)
+
   }
   useEffect(() => {
     getProjects()
@@ -116,7 +125,8 @@ const NavDrawer = () => {
       icon: <img src={start_project} alt="" />,
       label: '開始計畫',
       prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫',
-      onClick: () => setIsEditorOpen(true)
+      onClick: handlerTallyStartProject,
+      disabled: !selectedNode || selectedNode.data.level !== 3
     },
     {
       icon: <img src={icon_discord} alt="" />,
@@ -214,7 +224,7 @@ const NavDrawer = () => {
               className={`group mb-4 flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
             >
               <div
-                className="tooltip tooltip-right flex font-sans"
+                className={`tooltip tooltip-right flex font-sans ${item.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 data-tip={item.prompt}
                 onClick={item.onClick}
               >
@@ -222,7 +232,11 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}
+                 className={`ml-3 flex items-center font-sans text-sm ${
+                  item.disabled 
+                    ? 'text-gray-300' 
+                    : 'text-gray-600 group-hover:text-[#6CA579]'
+                } ${isExpanded ? 'block' : 'hidden'}`}
                 >
                   {item.label}
                 </span>
