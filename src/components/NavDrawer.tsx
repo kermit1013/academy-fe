@@ -146,6 +146,7 @@ const NavDrawer = () => {
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}
         project={selectedProject}
+        isEditable={true}
       />
 
       <ViewOtherUserFrame

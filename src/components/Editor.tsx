@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import close_btn from '/public/close_btn.svg'
 
 import "@blocknote/core/fonts/inter.css"
@@ -6,8 +6,7 @@ import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
 import "@blocknote/mantine/style.css"
 import { Block } from "@blocknote/core";
-import axios from 'axios';
-import { useDebounce } from '../funcs/utils';
+import axios from 'axios'
 
 interface Project {
   id: string | number;
@@ -19,10 +18,12 @@ interface EditorProps {
   isOpen: boolean;
   onClose: () => void;
   project: Project;
+  isEditable: boolean;
 }
 
-const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project }) => {
+const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable }) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const saveTimeoutRef = useRef<number | null>(null);
 
   const editor = useCreateBlockNote({
     initialContent: [
@@ -64,6 +65,13 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project }) => {
     if (isOpen) {
       getProject();
     } 
+    
+    // Clear any pending save operations when component unmounts or closes
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [isOpen, getProject]);
 
   const saveContent = useCallback(async (content: Block[]) => {
@@ -90,9 +98,24 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project }) => {
     } catch (error) {
       console.error('Error saving data:', error)
     }
-  }, [project]);
+  }, [project])
 
-  const debouncedSave = useDebounce(saveContent, 1000);
+  const debouncedSave = useCallback((content: Block[]) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = window.setTimeout(() => {
+      saveContent(content);
+    }, 1000);
+  }, [saveContent])
+
+  const handlerCloseEditor = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+    editor.replaceBlocks(editor.document, [])
+    onClose()
+  }
 
   if (!isOpen) return null;
 
@@ -105,10 +128,10 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project }) => {
             debouncedSave(editor.document);
             setBlocks(editor.document)
           }}
-          editable={true}
+          editable={isEditable}
         />
         <button
-          onClick={onClose}
+          onClick={handlerCloseEditor}
           className="fixed right-[calc(10%-1rem)] top-[calc(10%-2rem)] flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40 z-10"
         >
           <img src={close_btn} alt="" />

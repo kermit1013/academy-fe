@@ -68,6 +68,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isOpen, onClose }) => {
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}
         project={selectedProject}
+        isEditable={false}
       />
       <div className="bg-[#F9F6F5] p-12 w-5/6 h-[90%] rounded-lg relative overflow-auto">
         <button
