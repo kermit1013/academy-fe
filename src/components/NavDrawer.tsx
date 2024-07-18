@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import main_logo from '../../public/groundi_logo.svg'
 import text_logo from '../../public/groundi_text.svg'
-import light_bulb from '../../public/light_bulb.svg'
 import setting from '../../public/setting.svg'
-import change_think from '../../public/change_think.svg'
 import icon_discord from '../../public/discord.svg'
-import start_project from '../../public/pencil-square.svg'
-import self_explore from '../../public/puzzle.svg'
-import hashtag from '../../public/icons/icon_hashtag.svg'
-import gallery from '../../public/icons/icon_gallery.svg'
+import wavingHand from '../../public/nav_icons/waving_hand.svg'
+import jamJar from '../../public/nav_icons/jam_jar.svg'
+import idea from '../../public/nav_icons/idea.svg'
+import rocket from '../../public/nav_icons/rocket.svg'
+import dashboard from '../../public/nav_icons/dashboard.svg'
+import file from '../../public/nav_icons/file.svg'
 import { message } from 'antd'
 
 import useTopMenu from '../hooks/useTopMenu'
@@ -101,20 +101,20 @@ const NavDrawer = () => {
 
   const menuItems = [
     {
-      icon: <img src={self_explore} alt="" />,
-      label: '自我探索',
-      prompt: '從自身出發找尋專案點子',
+      icon: <img src={wavingHand} alt="" />,
+      label: '探索問卷',
+      prompt: '透過問卷生成心智圖',
       onClick: handlerTallyPopup
     },
     {
-      icon: <img src={light_bulb} alt="" />,
-      label: '靈感發想',
-      prompt: '從破碎的靈感中，拼出有趣的專案主題',
+      icon: <img src={jamJar} alt="" />,
+      label: '靈感果醬',
+      prompt: '透過即興遊戲生成專案主題',
       onClick: handlerChange2BrainStorm
     },
     {
-      icon: <img src={change_think} alt="" />,
-      label: '畫廊漫步',
+      icon: <img src={idea} alt="" />,
+      label: '點子畫廊',
       prompt: '逛逛他人的心智圖',
       onClick: handlerChange2Gallery
     }
@@ -122,28 +122,28 @@ const NavDrawer = () => {
 
   const actionItems =[
     {
-      icon: <img src={start_project} alt="" />,
+      icon: <img src={rocket} alt="" />,
       label: '開始計畫',
-      prompt: '心智圖可以新增方形的專案主題，請選擇一個方形主題開始計畫',
+      prompt: '請選擇一個專案主題開始',
       onClick: handlerTallyStartProject,
       disabled: !selectedNode || selectedNode.data.level !== 3
     },
     {
-      icon: <img src={icon_discord} alt="" />,
-      label: '專案社群',
-      prompt: '在 Discord 中交流專案想法。若你的計畫通過審核，還有專屬頻道',
-      onClick: handlerAheadDiscordStatus
+      icon: <img src={dashboard} alt="" />,
+      label: '專案畫廊',
+      prompt: '逛逛他人的專案',
+      onClick: () => setIsProjectWallOpen(true)
     },
     {
-      icon: <img src={gallery} alt="" />,
-      label: '專案瀏覽',
-      prompt: '來看看其他人的專案記錄吧',
-      onClick: () => setIsProjectWallOpen(true)
+      icon: <img src={icon_discord} alt="" />,
+      label: '社群互動',
+      prompt: '在 Discord 中提問、交流',
+      onClick: handlerAheadDiscordStatus
     }
   ]
 
   const projectItems = projects.map((project: Project) => ({
-    icon: <img src={hashtag} alt="" />,
+    icon: <img src={file} alt="" />,
     label: project.name,
     prompt: project.description,
     onClick: () => handleProjectClick(project)
