@@ -9,21 +9,21 @@ import { Block } from "@blocknote/core";
 import axios from 'axios'
 
 interface Project {
-  id: string | number;
+  id: string | number
   name: string;
   // Add other properties as needed
 }
 
 interface EditorProps {
-  isOpen: boolean;
-  onClose: () => void;
-  project: Project;
-  isEditable: boolean;
+  isOpen: boolean
+  onClose: () => void
+  project: Project
+  isEditable: boolean
 }
 
 const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable }) => {
-  const [blocks, setBlocks] = useState<Block[]>([]);
-  const saveTimeoutRef = useRef<number | null>(null);
+  const [blocks, setBlocks] = useState<Block[]>([])
+  const saveTimeoutRef = useRef<number | null>(null)
 
   const editor = useCreateBlockNote({
     initialContent: [
@@ -36,8 +36,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
 
   const getProject = useCallback(async () => {
     if (!project || !project.id) {
-      console.log('Project or project ID is not available');
-      return;
+      console.log('Project or project ID is not available')
+      return
     }
     const access_token = localStorage.getItem('access_token')
     if (!access_token) {
@@ -54,25 +54,27 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
       )
       if (result.status === 200) {
         console.log(blocks)
+        console.log(result.data.content)
         editor.replaceBlocks(editor.document, result.data.content)
+        setBlocks(result.data.content)
       }
     } catch (error) {
       console.error('Error fetching data:', error)
     }
-  }, [project, editor]);
+  }, [project, editor])
 
   useEffect(() => {
     if (isOpen) {
-      getProject();
+      getProject()
     } 
     
     // Clear any pending save operations when component unmounts or closes
     return () => {
       if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+        clearTimeout(saveTimeoutRef.current)
       }
     };
-  }, [isOpen, getProject]);
+  }, [isOpen, getProject])
 
   const saveContent = useCallback(async (content: Block[]) => {
     const access_token = localStorage.getItem('access_token')
@@ -105,8 +107,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
       clearTimeout(saveTimeoutRef.current);
     }
     saveTimeoutRef.current = window.setTimeout(() => {
-      saveContent(content);
-    }, 1000);
+      saveContent(content)
+    }, 1000)
   }, [saveContent])
 
   const handlerCloseEditor = () => {
@@ -117,7 +119,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
     onClose()
   }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -125,7 +127,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
         <BlockNoteView theme={"light"} editor={editor}
           onChange={() => {
             console.log(editor.document)
-            debouncedSave(editor.document);
+            debouncedSave(editor.document)
             setBlocks(editor.document)
           }}
           editable={isEditable}
@@ -141,4 +143,4 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
   );
 };
 
-export default Editor;
+export default Editor
