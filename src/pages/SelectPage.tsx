@@ -295,6 +295,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         zoomOnDoubleClick={false}
         className="intersection-flow relative h-screen w-screen font-serif"
         defaultEdgeOptions={defaultEdgeOptions}
+        minZoom={0.3}
       >
         {isLoading && <Loading />}
         {isOpenTallyPopup && (
