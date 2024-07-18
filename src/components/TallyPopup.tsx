@@ -32,6 +32,10 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
       if (window.Tally) {
         window.Tally.openPopup('n0x5Z6', {
           overlay: true,
+          emoji: {
+            text: '👋',
+            animation: 'wave'
+          },
           onSubmit: async (payload: any) => {
             const access_token = localStorage.getItem('access_token')
             if (access_token == null) {
