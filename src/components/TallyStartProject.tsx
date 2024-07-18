@@ -49,28 +49,6 @@ const TallyStartProject: React.FC = () => {
                   '已收到你的專案提案，我們將儘快生成你的專案計畫表，並邀請你加入 Groundi Discord 🚀'
                 )
                 console.log('do is_launched = true')
-                
-                // Immediately call create project API
-                const createProjectUrl = 'https://api.loudy.in/api/projects'
-                try {
-                  const createResult = await axios.post(
-                    createProjectUrl,
-                    {
-                      name: receivedResult.data.label, // Using the label from the received API response
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${access_token}`
-                      }
-                    }
-                  )
-                  
-                  if (createResult.status === 200) {
-                    console.log('Project created successfully')
-                  }
-                } catch (error) {
-                  console.error('Error creating project:', error)
-                }
               }
             } catch (error) {
               console.error('Error submitting proposal:', error)
