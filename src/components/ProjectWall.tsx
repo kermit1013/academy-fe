@@ -12,9 +12,10 @@ interface ProjectWallProps {
 }
 
 interface Project {
-    id: string | number;
-    name: string;
-    description: string;
+    id: string | number
+    name: string
+    description: string
+    imagePath: string
   }
 
 
@@ -44,7 +45,11 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isOpen, onClose }) => {
                     }
                   )
               if (result.status === 200) {
-                setProjects(result.data)
+                const projectsWithImages = result.data.map((project: Project) => ({
+                  ...project,
+                  imagePath: `/project_covers/project_${Math.floor(Math.random() * 5) + 1}.webp`
+                }));
+                setProjects(projectsWithImages)
               }
             } catch (error) {
               console.error('Error fetching data:', error)
@@ -82,10 +87,8 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isOpen, onClose }) => {
           {projects.map((project: Project, index) => (
             <div key={index} className="card bg-base-100 shadow-lg hover:cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
             onClick={() => handleProjectClick(project)}>
-              <figure>
-                <img
-                  src="https://fastly.picsum.photos/id/20/3670/2462.jpg?hmac=CmQ0ln-k5ZqkdtLvVO23LjVAEabZQx2wOaT4pyeG10I"
-                  alt="" />
+              <figure className="h-48 overflow-hidden">
+              <img src={project.imagePath} alt={project.name} className="w-full h-full object-cover"/>
               </figure>
               <div className="card-body">
                 <h2 className="card-title font-sans">
