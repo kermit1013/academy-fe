@@ -263,7 +263,7 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'} max-w-[150px] truncate`}
+                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'} max-w-[120px] truncate`}
                 >
                   {item.label}
                 </span>
