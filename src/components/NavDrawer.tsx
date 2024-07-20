@@ -9,6 +9,7 @@ import idea from '../../public/nav_icons/idea.svg'
 import rocket from '../../public/nav_icons/rocket.svg'
 import dashboard from '../../public/nav_icons/dashboard.svg'
 import file from '../../public/nav_icons/file.svg'
+import delete_project from '../../public/nav_icons/delete.svg'
 import { message } from 'antd'
 
 import useTopMenu from '../hooks/useTopMenu'
@@ -40,7 +41,23 @@ const NavDrawer = () => {
     setIsOpenTallyPopup,
   } = useTopMenu()
 
-  const { selectedNode , setStartProjectStatus } = useStartProject()
+  const { selectedNode, setStartProjectStatus } = useStartProject()
+
+  const handleProjectDelete = async (projectId: string | number) => {
+    const access_token = localStorage.getItem('access_token');
+    if (!access_token) return;
+
+    try {
+      await axios.delete(`https://api.loudy.in/api/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      setProjects(projects.filter((project: Project) => project.id !== projectId));
+      messageApi.success('Project deleted successfully');
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      messageApi.error('Failed to delete project');
+    }
+  };
 
   const handlerChange2BrainStorm = () => {
     if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
@@ -120,7 +137,7 @@ const NavDrawer = () => {
     }
   ]
 
-  const actionItems =[
+  const actionItems = [
     {
       icon: <img src={rocket} alt="" />,
       label: '開始計畫',
@@ -146,8 +163,10 @@ const NavDrawer = () => {
     icon: <img src={file} alt="" />,
     label: project.name,
     prompt: project.description,
-    onClick: () => handleProjectClick(project)
+    onClick: () => handleProjectClick(project),
+    onDelete: () => handleProjectDelete(project.id)
   }))
+
 
 
   return (
@@ -170,7 +189,7 @@ const NavDrawer = () => {
       />
       <div
         className={`fixed left-0 top-0 flex h-full flex-col border-r border-gray-200 bg-gray-50 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out ${
-          isExpanded ? 'w-48' : 'w-22'
+          isExpanded ? 'w-52' : 'w-22'
         }`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
@@ -194,7 +213,9 @@ const NavDrawer = () => {
           {menuItems.map((item, index) => (
             <div
               key={index}
-              className={`group mb-4 flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
+              className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+                !isExpanded ? 'justify-center' : 'w-full pr-2'
+              }`}
             >
               <div
                 className="tooltip tooltip-right flex font-sans"
@@ -221,7 +242,9 @@ const NavDrawer = () => {
           {actionItems.map((item, index) => (
             <div
               key={index}
-              className={`group mb-4 flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
+              className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+                !isExpanded ? 'justify-center' : 'w-full pr-2'
+              }`}
             >
               <div
                 className={`tooltip tooltip-right flex font-sans ${item.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -232,49 +255,64 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                 className={`ml-3 flex items-center font-sans text-sm ${
-                  item.disabled 
-                    ? 'text-gray-300' 
-                    : 'text-gray-600 group-hover:text-[#6CA579]'
-                } ${isExpanded ? 'block' : 'hidden'}`}
+                  className={`ml-3 flex items-center font-sans text-sm ${item.disabled
+                      ? 'text-gray-300'
+                      : 'text-gray-600 group-hover:text-[#6CA579]'
+                    } ${isExpanded ? 'block' : 'hidden'}`}
                 >
                   {item.label}
                 </span>
               </div>
             </div>
           ))}
-                    <div className="my-4 border-t border-gray-200"></div>
+          <div className="my-4 border-t border-gray-200"></div>
           <div
             className={`mb-4 font-sans text-xs font-medium text-[#6CA579] ${isExpanded ? 'block' : 'text-center'}`}
           >
             我的專案
           </div>
-          {projectItems.map((item, index) => (
+          {projectItems.map((item) => (
             <div
-              key={index}
-              className={`group mb-4 flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
+            className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+              !isExpanded ? 'justify-center' : 'w-full pr-2'
+            }`}
+          >
+            <div
+              className="tooltip tooltip-right flex items-center font-sans"
+              data-tip={item.prompt}
+              onClick={item.onClick}
             >
-              <div
-                className="tooltip tooltip-right flex font-sans"
-                data-tip={item.prompt}
-                onClick={item.onClick}
-              >
-                <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
-                  {item.icon}
-                </span>
+              <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
+                {item.icon}
+              </span>
+              {isExpanded && (
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'} max-w-[120px] truncate`}
+                  className="ml-3 font-sans text-sm text-gray-600 group-hover:text-[#6CA579] max-w-[110px] truncate"
                 >
                   {item.label}
                 </span>
-              </div>
+              )}
             </div>
+            {isExpanded && (
+              <img 
+                src={delete_project} 
+                alt="Delete" 
+                className="h-4 w-4 flex-shrink-0 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // handleDeleteProject()
+                }}
+              />
+            )}
+          </div>
           ))}
         </div>
-        
+
         <div className={`p-4 ${isExpanded ? 'pl-4' : 'text-center'}`}>
           <div
-            className={`group flex cursor-pointer items-center ${!isExpanded && 'justify-center'}`}
+            className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+              !isExpanded ? 'justify-center' : 'w-full pr-2'
+            }`}
           >
             <div className="flex" onClick={handlerSetting}>
               <img src={setting} alt="" />
