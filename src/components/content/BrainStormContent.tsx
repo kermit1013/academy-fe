@@ -302,7 +302,7 @@ const ThinkDone = ({ bubbleCount }: think_done_props) => {
 
 const BrainStormContent = memo(() => {
   const [action_type, setActionType] = useState(1)
-  const [times, setTimes] = useState(60)
+  const [times, setTimes] = useState(120)
 
   const { setSelectedNode, selectedNode } = useStartProject()
   const { setIsOpenBrainStormContent } = useTopMenu()
@@ -335,7 +335,7 @@ const BrainStormContent = memo(() => {
     if (times === 0) {
       setShowThinkDone(true)
       const timer = setTimeout(() => {
-        setTimes(60)
+        setTimes(120)
         setSelectedNode(null)
         setShowThinkDone(false)
       }, 3000)
@@ -345,7 +345,7 @@ const BrainStormContent = memo(() => {
 
   useEffect(() => {
     setSelectedNode(null)
-    setTimes(60)
+    setTimes(120)
   }, [action_type])
   const handlerCloseContent = () => {
     console.log('close')
@@ -387,13 +387,13 @@ const BrainStormContent = memo(() => {
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
-          <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
-          <div className="flex w-20 justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
+          <div className="text-sm text-[#EF6E52]">2分鐘內寫出5個點子</div>
+          <div className="flex w-auto justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
-            <div>
-              {' '}
-              {times === 60 ? '1:00' : `0:${times.toString().padStart(2, '0')}`}
-            </div>
+            <span className="countdown font-mono text-base">
+              <span style={{"--value": Math.floor(times / 60)} as React.CSSProperties}></span>:
+              <span style={{"--value": times % 60} as React.CSSProperties}></span>
+            </span>
           </div>
         </div>
       </div>
