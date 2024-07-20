@@ -7,23 +7,20 @@ import { BlockNoteView } from "@blocknote/mantine"
 import "@blocknote/mantine/style.css"
 import { Block } from "@blocknote/core";
 import axios from 'axios'
+import useEditor from '../hooks/useEditor';
 
-interface Project {
-  id: string | number
-  name: string;
-  // Add other properties as needed
-}
 
 interface EditorProps {
   isOpen: boolean
-  onClose: () => void
-  project: Project
+  projectId: string
   isEditable: boolean
+  nodeId?: string
 }
 
-const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable }) => {
+const Editor: React.FC<EditorProps> = ({ isOpen, projectId, isEditable, nodeId }) => {
   const [blocks, setBlocks] = useState<Block[]>([])
   const saveTimeoutRef = useRef<number | null>(null)
+  const {setIsOpen, setProjectId, setNodeId} = useEditor()
 
   const editor = useCreateBlockNote({
     initialContent: [
@@ -35,7 +32,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
   });
 
   const getProject = useCallback(async () => {
-    if (!project || !project.id) {
+    if (!projectId && !nodeId) {
       console.log('Project or project ID is not available')
       return
     }
@@ -44,8 +41,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
       return
     }
     try {
-      const result = await axios.get(
-        `https://api.loudy.in/api/projects/${project.id}`,
+      const result = await axios.get(nodeId? `http://localhost:8000/api/projects/nodes/${nodeId}`:
+        `https://api.loudy.in/api/projects/${projectId}`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`
@@ -61,7 +58,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
     } catch (error) {
       console.error('Error fetching data:', error)
     }
-  }, [project, editor])
+  }, [projectId, editor, nodeId])
 
   useEffect(() => {
     if (isOpen) {
@@ -83,9 +80,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
     }
     try {
       const result = await axios.put(
-        `https://api.loudy.in/api/projects/${project.id}`,
+        `https://api.loudy.in/api/projects/${projectId}`,
         {
-          name: project.name,
           content: content
         },
         {
@@ -100,7 +96,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
     } catch (error) {
       console.error('Error saving data:', error)
     }
-  }, [project])
+  }, [projectId])
 
   const debouncedSave = useCallback((content: Block[]) => {
     if (saveTimeoutRef.current) {
@@ -116,7 +112,9 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, project, isEditable })
       clearTimeout(saveTimeoutRef.current)
     }
     editor.replaceBlocks(editor.document, [])
-    onClose()
+    setIsOpen(false)
+    setProjectId('')
+    setNodeId('')
   }
 
   if (!isOpen) return null

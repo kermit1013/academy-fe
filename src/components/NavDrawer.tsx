@@ -18,6 +18,7 @@ import Editor from './Editor'
 import axios from 'axios'
 import ProjectWall from './ProjectWall'
 import useStartProject from '../hooks/useStartProject'
+import useEditor from '../hooks/useEditor'
 
 interface Project {
   id: string | number
@@ -28,10 +29,11 @@ interface Project {
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
-  const [isEditorOpen, setIsEditorOpen] = useState(false)
+
   const [isProjectWallOpen, setIsProjectWallOpen] = useState(false)
   const [projects, setProjects] = useState([])
-  const [selectedProject, setSelectedProject] = useState({} as Project)
+  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } = useEditor()
+
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -109,10 +111,11 @@ const NavDrawer = () => {
       console.error('Error fetching data:', error)
     }
   }, [])
-  const handleProjectClick = (project: Project) => {
-    console.log(project)
-    setSelectedProject(project)
-    setIsEditorOpen(true)
+  const handleProjectClick = (projectId: string) => {
+    console.log(projectId)
+    setProjectId(projectId)
+    setIsOpen(true)
+    setEditable(true)
   }
 
   const [isExpanded, setIsExpanded] = useState(false)
@@ -164,7 +167,7 @@ const NavDrawer = () => {
     icon: <img src={file} alt="" />,
     label: project.name,
     prompt: project.description,
-    onClick: () => handleProjectClick(project),
+    onClick: () => handleProjectClick(project.id.toString()),
     onDelete: () => handleProjectDelete(project.id)
   }))
 
@@ -173,20 +176,21 @@ const NavDrawer = () => {
   return (
     <>
       {contextHolder}
-      <Editor
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        project={selectedProject}
-        isEditable={true}
-      />
+
 
       <ViewOtherUserFrame
         isExpanded={isExpanded}
         isOpenGalleryContent={isOpenGalleryContent}
       ></ViewOtherUserFrame>
       <ProjectWall
-        isOpen={isProjectWallOpen}
+        isWallOpen={isProjectWallOpen}
         onClose={() => setIsProjectWallOpen(false)}
+      />
+      <Editor
+        isOpen={isOpen}
+        projectId={projectId}
+        isEditable={true}
+        nodeId={nodeId}
       />
       <div
         className={`fixed left-0 top-0 flex h-full flex-col border-r border-gray-200 bg-gray-50 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out ${

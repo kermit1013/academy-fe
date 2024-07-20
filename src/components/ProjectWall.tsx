@@ -4,10 +4,10 @@ import close_btn from '/public/close_btn.svg'
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/mantine/style.css"
 import axios from 'axios';
-import Editor from './Editor';
+import useEditor from '../hooks/useEditor';
 
 interface ProjectWallProps {
-  isOpen: boolean
+  isWallOpen: boolean
   onClose: () => void
 }
 
@@ -19,10 +19,10 @@ interface Project {
   }
 
 
-const ProjectWall: React.FC<ProjectWallProps> = ({ isOpen, onClose }) => {
+const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
     const [projects, setProjects] = useState([]);
-    const [selectedProject, setSelectedProject] = useState({} as Project);
-    const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const {  setIsOpen, setProjectId, setEditable } = useEditor()
+
 
     useEffect(() => {
         getAllProjects()
@@ -60,21 +60,16 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isOpen, onClose }) => {
 
         const handleProjectClick = (project: Project) => {
             console.log(project)
-            setSelectedProject(project);
-            setIsEditorOpen(true);
+            setProjectId(project.id.toString());
+            setIsOpen(true);
+            setEditable(false)
           };
 
         
-  if (!isOpen) return null;
+  if (!isWallOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-         <Editor
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        project={selectedProject}
-        isEditable={false}
-      />
       <div className="bg-[#F9F6F5] p-12 w-5/6 h-[90%] rounded-lg relative overflow-auto">
         <button
           onClick={onClose}

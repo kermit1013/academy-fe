@@ -8,10 +8,10 @@ import { message } from 'antd'
 import useBubble from '../hooks/useBubble'
 import start_project from '../../public/start_project.svg'
 import delete_bubble from '../../public/delete_bubble.svg'
-import icon_discord from '../../public/discord_green.svg'
+import icon_project from '../../public/icon_project.svg'
 import useStartProject from '../hooks/useStartProject'
-import useAheadDiscord from '../hooks/useAheadDiscord'
 import useTopMenu from '../hooks/useTopMenu'
+import useEditor from '../hooks/useEditor'
 interface props {
   data: {
     id: string
@@ -27,7 +27,6 @@ const Bubble = ({ data }: props) => {
   const { getNodes, getEdges } = useReactFlow()
   const { setSelectBubble } = useBubble()
   const { setStartProjectStatus } = useStartProject()
-  const { setAheadDiscordStatus } = useAheadDiscord()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const [modifyData, setModifyData] = useState(data.label)
@@ -35,6 +34,7 @@ const Bubble = ({ data }: props) => {
   const { edit_bubble_id, setEditBubbleId } = useBubble()
   const { isOpenGalleryContent } = useTopMenu()
   const [isComposing, setIsComposing] = useState(false)
+  const { setIsOpen, setEditable, setNodeId } = useEditor()
 
   const handleCompositionStart = () => {
     setIsComposing(true)
@@ -255,6 +255,12 @@ const Bubble = ({ data }: props) => {
       messageApi.warning('超過字數限制!')
     }
   }
+   const handleOpenProjectEditor= () => {
+    setIsOpen(true)
+    setEditable(false)
+    setNodeId(data.id)
+  }
+
   function renderAddButton() {
     if (!isOpenGalleryContent && data.level !== 3) {
       return (
@@ -298,10 +304,10 @@ const Bubble = ({ data }: props) => {
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
-            title="加入Discord"
-            onClick={() => setAheadDiscordStatus(true)}
+            title="打開專案"
+            onClick={handleOpenProjectEditor}
           >
-            <img src={icon_discord} alt="" />
+            <img src={icon_project} alt="" />
           </button>
         </NodeToolbar>
       )
