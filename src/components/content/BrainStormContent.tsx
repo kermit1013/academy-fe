@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useReactFlow } from 'reactflow'
 import { message } from 'antd'
 import axios from 'axios'
@@ -6,11 +6,11 @@ import useBubble from '../../hooks/useBubble'
 import useTopMenu from '../../hooks/useTopMenu'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
-import icon_clock from '/public/clock.svg'
-import icon_change from '/public/change.svg'
-import icon_enter from '/public/icons/icon_enter.svg'
-import close_btn from '/public/close_btn.svg'
-import icon_plus from '/public/icons/icon_plus.svg'
+import icon_clock from '/clock.svg'
+import icon_change from '/change.svg'
+import icon_enter from '/icons/icon_enter.svg'
+import close_btn from '/close_btn.svg'
+import icon_plus from '/icons/icon_plus.svg'
 import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
@@ -124,7 +124,7 @@ const Thinking = ({ action_type }: props) => {
     }
   }
 
-  const ActionType1 = () => {
+  const ActionType1 = memo(() => {
     return (
       <>
         <div className="flex gap-1">
@@ -143,15 +143,15 @@ const Thinking = ({ action_type }: props) => {
           {select_bubble == null ? (
             <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
-            <div>{select_bubble?.data.label}</div>
+            <div className="font-sans">{select_bubble?.data.label}</div>
           )}
         </div>
         <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
-  }
+  })
 
-  const ActionType2 = () => {
+  const ActionType2 = memo(() => {
     return (
       <>
         <div className="flex h-[47px] w-[60px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] text-center text-base">
@@ -162,7 +162,7 @@ const Thinking = ({ action_type }: props) => {
           {select_bubble == null ? (
             <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
-            <div>{select_bubble?.data.label}</div>
+            <div className="font-sans">{select_bubble?.data.label}</div>
           )}
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
@@ -180,16 +180,16 @@ const Thinking = ({ action_type }: props) => {
         <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
-  }
+  })
 
-  const ActionType3 = () => {
+  const ActionType3 = memo(() => {
     return (
       <>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
           {select_bubble == null ? (
             <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
           ) : (
-            <div>{select_bubble?.data.label}</div>
+            <div className="font-sans">{select_bubble?.data.label}</div>
           )}
         </div>
         <img src={icon_plus} alt="" />
@@ -207,39 +207,50 @@ const Thinking = ({ action_type }: props) => {
         <div className="font-sans text-3xl font-normal">=</div>
       </>
     )
+  })
+
+  const selectBubble = () => {
+    if (select_bubble == null) return (
+      <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
+    )
+
+
+    if (select_bubble.data.level!=3) return messageApi.warning('請選擇一顆泡泡')
+
+    return ( 
+      <div>{select_bubble?.data.label}</div>
+    )
   }
 
-  const handler_refresh_api = async () => {
+  const handler_refresh_api = useCallback(async () => {
+    if (!access_token) return;
+  
+    let result;
     if (action_type === 3) {
       const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data.label)
-    } else if (action_type === 1) {
-      const result = await axios.get(
-        'https://api.loudy.in/api/interactions/celebrities',
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`
+    } else {
+      const endpoint = action_type === 1 ? 'celebrities' : 'scenarios';
+      try {
+        result = await axios.get(
+          `https://api.loudy.in/api/interactions/${endpoint}`,
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`
+            }
           }
-        }
-      )
-      setActionBubble(result.data.name)
-    } else if (action_type === 2) {
-      const result = await axios.get(
-        'https://api.loudy.in/api/interactions/scenarios',
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        }
-      )
-      setActionBubble(result.data.name)
+        )
+        setActionBubble(result.data.name)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
     }
-  }
+  }, [action_type, access_token, getNodes])
 
   useEffect(() => {
     handler_refresh_api()
-  }, [action_type])
+  }, [action_type, handler_refresh_api])
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 pl-10 text-base font-normal text-[#7B7C7B]">
@@ -298,7 +309,7 @@ const ThinkDone = ({ bubbleCount }: think_done_props) => {
   )
 }
 
-const BrainStormContent = () => {
+const BrainStormContent = memo(() => {
   const [action_type, setActionType] = useState(1)
   const [times, setTimes] = useState(60)
   const { setSelectBubble, select_bubble } = useBubble()
@@ -384,7 +395,7 @@ const BrainStormContent = () => {
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
-          <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
+          <div className="text-sm text-[#EF6E52]">2分鐘內寫出3個點子</div>
           <div className="flex w-20 justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
             <div>
@@ -403,6 +414,6 @@ const BrainStormContent = () => {
       </div>
     </div>
   )
-}
+})
 
 export default BrainStormContent

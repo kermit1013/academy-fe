@@ -221,10 +221,10 @@ const SettingModal = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-right gap-2 tooltip tooltip-bottom" data-tip="允許他人於漫步中看見你">
           <img src={icon_eye} alt="icon" className="h-5 w-5" />
-          <p className="flex-1">公開你的心智泡泡</p>
-          <Switch
+          <p className="flex-1">公開你的心智圖與專案</p>
+          <Switch 
             checked={formValue.is_public}
             onChange={(e) => {
               setFormValue((prev) => {
