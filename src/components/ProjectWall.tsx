@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react'
 import close_btn from '/public/close_btn.svg'
-
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/mantine/style.css"
-import axios from 'axios';
-import useEditor from '../hooks/useEditor';
+import axios from 'axios'
+import useEditor from '../hooks/useEditor'
 
 interface ProjectWallProps {
   isWallOpen: boolean
@@ -12,61 +11,58 @@ interface ProjectWallProps {
 }
 
 interface Project {
-    id: string | number
-    name: string
-    description: string
-    imagePath: string
-  }
-
+  id: string | number
+  name: string
+  description: string
+  imagePath: string
+}
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
-    const [projects, setProjects] = useState([]);
-  const {  setIsOpen, setProjectId, setEditable } = useEditor()
+  const [projects, setProjects] = useState<Project[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const { setIsOpen, setProjectId, setEditable } = useEditor()
 
+  useEffect(() => {
+    getAllProjects()
+  }, [])
 
-    useEffect(() => {
-        getAllProjects()
-      }, [])
-      
-      const getAllProjects = useCallback(
-          async () => {
-            const access_token = localStorage.getItem('access_token')
-            if (!access_token) {
-              return
-            }
-            const url = 'https://api.loudy.in/api/projects'
-            try {
-                const result = await axios.get(
-                    url,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${access_token}`
-                      }
-                    }
-                  )
-              if (result.status === 200) {
-                const projectsWithImages = result.data.map((project: Project) => ({
-                  ...project,
-                  imagePath: `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
-                }));
-                setProjects(projectsWithImages)
-              }
-            } catch (error) {
-              console.error('Error fetching data:', error)
-            }
-          },
-          []
-        )
+  const getAllProjects = useCallback(async () => {
+    const access_token = localStorage.getItem('access_token')
+    if (!access_token) {
+      return
+    }
+    const url = 'https://api.loudy.in/api/projects'
+    try {
+      const result = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
+      if (result.status === 200) {
+        const projectsWithImages = result.data.map((project: Project) => ({
+          ...project,
+          imagePath: `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
+        }))
+        setProjects(projectsWithImages)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }, [])
 
-        const handleProjectClick = (project: Project) => {
-            console.log(project)
-            setProjectId(project.id.toString());
-            setIsOpen(true);
-            setEditable(false)
-          };
+  const handleProjectClick = (project: Project) => {
+    console.log(project)
+    setProjectId(project.id.toString())
+    setIsOpen(true)
+    setEditable(false)
+  };
 
-        
-  if (!isWallOpen) return null;
+  const filteredProjects = projects.filter(project =>
+    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (!isWallOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -77,13 +73,23 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
         >
           <img src={close_btn} alt="" />
         </button>
+
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="想搜尋什麼專案..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input input-bordered w-full p-2 font-sans"
+          />
+        </div>
         
         <div className="grid grid-cols-3 gap-6">
-          {projects.map((project: Project, index) => (
+          {filteredProjects.map((project: Project, index) => (
             <div key={index} className="card bg-base-100 shadow-lg hover:cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
             onClick={() => handleProjectClick(project)}>
               <figure className="h-48 overflow-hidden">
-              <img src={project.imagePath} alt={project.name} className="w-full h-full object-cover"/>
+                <img src={project.imagePath} alt={project.name} className="w-full h-full object-cover"/>
               </figure>
               <div className="card-body">
                 <h2 className="card-title font-sans">
@@ -91,14 +97,13 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                   <div className="badge badge-secondary">NEW</div>
                 </h2>
                 <p className="font-sans">{project.description}</p>
-
               </div>
             </div>
           ))}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default ProjectWall
