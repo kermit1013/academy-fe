@@ -41,7 +41,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, isEditable, nodeId }
       return
     }
     try {
-      const result = await axios.get(nodeId? `http://localhost:8000/api/projects/nodes/${nodeId}`:
+      const result = await axios.get(nodeId? `https://api.loudy.in/api/projects/nodes/${nodeId}`:
         `https://api.loudy.in/api/projects/${projectId}`,
         {
           headers: {
