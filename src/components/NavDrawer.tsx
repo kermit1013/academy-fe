@@ -46,16 +46,17 @@ const NavDrawer = () => {
   const handleProjectDelete = async (projectId: string | number) => {
     const access_token = localStorage.getItem('access_token');
     if (!access_token) return;
+    if (confirm('確定刪除該專案嗎？') === false) return;
 
     try {
       await axios.delete(`https://api.loudy.in/api/projects/${projectId}`, {
         headers: { Authorization: `Bearer ${access_token}` }
       });
       setProjects(projects.filter((project: Project) => project.id !== projectId));
-      messageApi.success('Project deleted successfully');
+      messageApi.success('專案刪除成功！');
     } catch (error) {
       console.error('Error deleting project:', error);
-      messageApi.error('Failed to delete project');
+      messageApi.error('專案刪除失敗，請稍後再試。');
     }
   };
 
@@ -297,11 +298,8 @@ const NavDrawer = () => {
               <img 
                 src={delete_project} 
                 alt="Delete" 
-                className="h-4 w-4 flex-shrink-0 cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // handleDeleteProject()
-                }}
+                className="h-4 w-4 flex-shrink-0  transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer"
+                onClick={item.onDelete}
               />
             )}
           </div>
