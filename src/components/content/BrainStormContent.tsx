@@ -2,10 +2,10 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { useReactFlow } from 'reactflow'
 import { message } from 'antd'
 import axios from 'axios'
-import useBubble from '../../hooks/useBubble'
 import useTopMenu from '../../hooks/useTopMenu'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import useStartProject from '../../hooks/useStartProject'
 import icon_clock from '/clock.svg'
 import icon_change from '/change.svg'
 import icon_enter from '/icons/icon_enter.svg'
@@ -20,17 +20,17 @@ const Thinking = ({ action_type }: props) => {
   const setting_bubble = '如果'
   const [action_bubble, setActionBubble] = useState('')
   const access_token = localStorage.getItem('access_token')
-  const { select_bubble } = useBubble()
   const { getNodes } = useReactFlow()
 
   const [messageApi, contextHolder] = message.useMessage()
+  const { setSelectedNode, selectedNode } = useStartProject()
   const [modifyText, setModifyText] = useState('')
   const [isComposing, setIsComposing] = useState(false)
 
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const handlerNewBubble = useCallback(async () => {
-    const data = select_bubble?.data
+    const data = selectedNode?.data
     const access_token = localStorage.getItem('access_token')
 
     const result = await axios.post(
@@ -96,7 +96,7 @@ const Thinking = ({ action_type }: props) => {
       setModifyText('')
       messageApi.info('已新增')
     }
-  }, [select_bubble, modifyText])
+  }, [selectedNode, modifyText])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setModifyText(e.target.value)
@@ -116,12 +116,24 @@ const Thinking = ({ action_type }: props) => {
         messageApi.warning('請輸入內容後再送出!')
         return
       }
-      if (select_bubble == null) {
+      if (selectedNode == null) {
         messageApi.warning('請選擇一顆泡泡後再送出資料!')
         return
       }
       handlerNewBubble()
     }
+  }
+  const renderSelectBubble = () => {
+    if (selectedNode == null) {
+      return <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
+    }
+    if (selectedNode.data.level !== 2) {
+      messageApi.warning('請點選第三層的泡泡')
+      setSelectedNode(null)
+      return <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
+    }
+
+    return <div className="font-sans">{selectedNode.data.label}</div>
   }
 
   const ActionType1 = memo(() => {
@@ -133,18 +145,14 @@ const Thinking = ({ action_type }: props) => {
           </div>
           <img
             className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
-            onClick={() => handler_refresh_api()}
+            onClick={handler_refresh_api}
             src={icon_change}
             alt=""
           />
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
-          {select_bubble == null ? (
-            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
-          ) : (
-            <div className="font-sans">{select_bubble?.data.label}</div>
-          )}
+          {renderSelectBubble()}
         </div>
         <div className="font-sans text-3xl font-normal">=</div>
       </>
@@ -159,11 +167,7 @@ const Thinking = ({ action_type }: props) => {
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
-          {select_bubble == null ? (
-            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
-          ) : (
-            <div className="font-sans">{select_bubble?.data.label}</div>
-          )}
+        {renderSelectBubble()}
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex gap-1">
@@ -186,11 +190,7 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
-          {select_bubble == null ? (
-            <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
-          ) : (
-            <div className="font-sans">{select_bubble?.data.label}</div>
-          )}
+        {renderSelectBubble()}
         </div>
         <img src={icon_plus} alt="" />
         <div className="flex gap-[6px]">
@@ -208,19 +208,6 @@ const Thinking = ({ action_type }: props) => {
       </>
     )
   })
-
-  const selectBubble = () => {
-    if (select_bubble == null) return (
-      <div className="font-sans text-gray-400">請選擇一顆泡泡</div>
-    )
-
-
-    if (select_bubble.data.level!=3) return messageApi.warning('請選擇一顆泡泡')
-
-    return ( 
-      <div>{select_bubble?.data.label}</div>
-    )
-  }
 
   const handler_refresh_api = useCallback(async () => {
     if (!access_token) return;
@@ -312,17 +299,18 @@ const ThinkDone = ({ bubbleCount }: think_done_props) => {
 const BrainStormContent = memo(() => {
   const [action_type, setActionType] = useState(1)
   const [times, setTimes] = useState(60)
-  const { setSelectBubble, select_bubble } = useBubble()
+
+  const { setSelectedNode, selectedNode } = useStartProject()
   const { setIsOpenBrainStormContent } = useTopMenu()
   const { getNodes } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
   const [showThinkDone, setShowThinkDone] = useState(false)
   useEffect(() => {
-    setSelectBubble(null)
+    setSelectedNode(null)
   }, [])
 
   useEffect(() => {
-    if (select_bubble != null) {
+    if (selectedNode != null) {
       setBubbleCount(getNodes().length)
       const t = setInterval(() => {
         setTimes((prev) => {
@@ -337,14 +325,14 @@ const BrainStormContent = memo(() => {
         clearInterval(t)
       }
     }
-  }, [select_bubble])
+  }, [selectedNode])
 
   useEffect(() => {
     if (times === 0) {
       setShowThinkDone(true)
       const timer = setTimeout(() => {
         setTimes(60)
-        setSelectBubble(null)
+        setSelectedNode(null)
         setShowThinkDone(false)
       }, 3000)
       return () => clearTimeout(timer)
@@ -352,7 +340,7 @@ const BrainStormContent = memo(() => {
   }, [times])
 
   useEffect(() => {
-    setSelectBubble(null)
+    setSelectedNode(null)
     setTimes(60)
   }, [action_type])
   const handlerCloseContent = () => {
@@ -395,7 +383,7 @@ const BrainStormContent = memo(() => {
           </button>
         </div>
         <div className="flex items-center justify-center gap-2 font-sans">
-          <div className="text-sm text-[#EF6E52]">2分鐘內寫出3個點子</div>
+          <div className="text-sm text-[#EF6E52]">1分鐘內寫出3個點子</div>
           <div className="flex w-20 justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
             <div>
