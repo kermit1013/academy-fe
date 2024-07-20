@@ -15,13 +15,17 @@ import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
 }
+type actionBubble = {
+  name: string
+  label?: string
+  description?: string
+}
 
 const Thinking = ({ action_type }: props) => {
   const setting_bubble = '如果'
-  const [action_bubble, setActionBubble] = useState('')
+  const [action_bubble, setActionBubble] = useState({} as actionBubble)
   const access_token = localStorage.getItem('access_token')
   const { getNodes } = useReactFlow()
-
   const [messageApi, contextHolder] = message.useMessage()
   const { setSelectedNode, selectedNode } = useStartProject()
   const [modifyText, setModifyText] = useState('')
@@ -39,7 +43,7 @@ const Thinking = ({ action_type }: props) => {
         source: data.id,
         label: modifyText,
         category: '',
-        reference: action_bubble
+        reference: action_bubble.name
       },
       {
         headers: {
@@ -140,8 +144,8 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex gap-1">
-          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base">
-            <div className="font-sans">{action_bubble}</div>
+          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base tooltip tooltip-bottom font-sans" data-tip={action_bubble?.description}>
+            <div className="font-sans">{action_bubble?.name}</div>
           </div>
           <img
             className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
@@ -172,7 +176,7 @@ const Thinking = ({ action_type }: props) => {
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex gap-1">
           <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base">
-            <div className="font-sans">{action_bubble}</div>
+            <div className="font-sans">{action_bubble?.name}</div>
           </div>
           <img
             className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
@@ -195,7 +199,7 @@ const Thinking = ({ action_type }: props) => {
         <img src={icon_plus} alt="" />
         <div className="flex gap-[6px]">
           <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
-            <div className="font-sans">{action_bubble}</div>
+            <div className="font-sans">{action_bubble?.label}</div>
           </div>
           <img
             className="w-8 transition-transform duration-200 ease-in-out hover:scale-150 hover:cursor-pointer"
@@ -216,7 +220,7 @@ const Thinking = ({ action_type }: props) => {
     if (action_type === 3) {
       const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
-      setActionBubble(select_random_bubble.data.label)
+      setActionBubble(select_random_bubble.data)
     } else {
       const endpoint = action_type === 1 ? 'celebrities' : 'scenarios';
       try {
@@ -228,7 +232,7 @@ const Thinking = ({ action_type }: props) => {
             }
           }
         )
-        setActionBubble(result.data.name)
+        setActionBubble(result.data)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
