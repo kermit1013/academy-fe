@@ -23,6 +23,31 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, isEditable, nodeId }
   const {setIsOpen, setProjectId, setNodeId} = useEditor()
 
   const editor = useCreateBlockNote({
+    uploadFile: async (file: File) => {
+      const access_token = localStorage.getItem('access_token')
+      if (!access_token) {
+        return { url: '' };
+      }
+      console.log('Uploading file:', file);
+    
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+       const result = await axios.post('https://api.loudy.in/api/projects/images', formData,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`
+          }
+        }
+      )
+      if (result.status === 200) {
+        return result.data.url
+      }
+      } catch (error) {
+        console.error('Error uploading file:', error)
+        return ''
+      }
+    },
     initialContent: [
       {
         type: "paragraph",
