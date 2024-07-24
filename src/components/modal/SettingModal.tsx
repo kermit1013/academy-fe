@@ -1,5 +1,5 @@
 import { Switch, message } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { SetStateAction, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,6 +19,7 @@ import icon_gender from '/icons/icon_gender.svg'
 import icon_instagram from '/icons/icon_instagram.svg'
 import icon_logout from '/icons/icon_logout.svg'
 import icon_user from '/icons/icon_user.svg'
+import icon_edit from '/icons/icon_edit.svg'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
 
@@ -59,6 +60,36 @@ const SettingModal = () => {
       grade: '',
       is_public: true
     })
+  }
+
+  const [isEditingUsername, setIsEditingUsername] = useState(false)
+  const [editedUsername, setEditedUsername] = useState(userData.username)
+
+  const handleUsernameEdit = () => {
+    setIsEditingUsername(true)
+    setEditedUsername(userData.username)
+  }
+
+  const handleUsernameChange = (e: { target: { value: SetStateAction<string> } }) => {
+    setEditedUsername(e.target.value)
+  }
+
+  const handleUsernameSubmit = async () => {
+    if (editedUsername === userData.username) {
+      setIsEditingUsername(false)
+      return
+    }
+    try {
+      // 這裡需要添加一個 API 調用來更新用戶名
+      const res = await request.put(`/users/${userData?.id}/username`, { username: editedUsername })
+      if (res.status === 200) {
+        setUserData({ ...userData, username: editedUsername })
+        setIsEditingUsername(false)
+        messageApi.success('用戶名更新成功')
+      }
+    } catch (error) {
+      messageApi.error('更新用戶名失敗，用戶名已被使用')
+    }
   }
 
   const handleLogout = async () => {
@@ -137,7 +168,29 @@ const SettingModal = () => {
 
       <header className="px-4">
         <h3 className="flex items-center justify-between pb-2 text-xl font-medium">
-          <span>{userData.username}</span>
+        {isEditingUsername ? (
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={editedUsername}
+                onChange={handleUsernameChange}
+                className="mr-2 rounded border px-1 max-w-40"
+              />
+              <button onClick={handleUsernameSubmit} className="text-sm text-blue-500">
+                保存
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <span>{userData.username}</span>
+              <img
+                src={icon_edit}
+                alt="編輯"
+                className="ml-2 h-4 w-4 cursor-pointer"
+                onClick={handleUsernameEdit}
+              />
+            </div>
+          )}
           <img
             className="h-5 w-5 cursor-pointer"
             src={close_btn}
