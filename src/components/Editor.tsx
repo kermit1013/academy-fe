@@ -17,10 +17,10 @@ interface EditorProps {
   nodeId?: string
 }
 
-const Editor: React.FC<EditorProps> = ({ isOpen, projectId, isEditable, nodeId }) => {
+const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
   const [blocks, setBlocks] = useState<Block[]>([])
   const saveTimeoutRef = useRef<number | null>(null)
-  const {setIsOpen, setProjectId, setNodeId} = useEditor()
+  const {setIsOpen, setProjectId, setNodeId, editable} = useEditor()
 
   const editor = useCreateBlockNote({
     uploadFile: async (file: File) => {
@@ -153,7 +153,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, isEditable, nodeId }
             debouncedSave(editor.document)
             setBlocks(editor.document)
           }}
-          editable={isEditable}
+          editable={editable}
         />
         <button
           onClick={handlerCloseEditor}

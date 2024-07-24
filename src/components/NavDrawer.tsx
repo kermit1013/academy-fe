@@ -276,8 +276,9 @@ const NavDrawer = () => {
           >
             我的專案
           </div>
-          {projectItems.map((item) => (
+          {projectItems.map((item, index) => (
             <div
+            key={index}
             className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
               !isExpanded ? 'justify-center' : 'w-full pr-2'
             }`}
