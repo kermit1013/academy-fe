@@ -203,7 +203,7 @@ const NavDrawer = () => {
           <div
             className={`mb-6 flex items-center ${!isExpanded && 'justify-center'}`}
           >
-            <img src={main_logo} alt="Groundi" className="h-6 w-6" />
+            <img src={main_logo} alt="Groundi" className="h-12 w-12" />
             <img
               src={text_logo}
               alt="Groundi"
