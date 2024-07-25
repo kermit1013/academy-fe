@@ -8,9 +8,7 @@ import password_hide from '/password_hide.svg'
 import password_show from '/password_show.svg'
 import enter from '/prev_button.svg'
 import { validateEmail } from '../funcs/utils'
-const filedStyle =
-  'mt-3 h-[72px] w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/30 pl-4 text-3xl focus:outline-none'
-
+const inputStyle = "pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20 text-[#7B7C7B] focus:outline-none"
 const PasswordRecoveryPage = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const navigate = useNavigate()
@@ -34,6 +32,7 @@ const PasswordRecoveryPage = () => {
     /** 渲染 Field Column */
     renderFields: () => JSX.Element
   }[] = useMemo(() => {
+    
     return [
       {
         title: '忘記密碼',
@@ -43,16 +42,16 @@ const PasswordRecoveryPage = () => {
         renderFields: () => {
           return (
             <div>
-              <p className="text-xl">電子郵件</p>
-              <input
-                className={filedStyle}
-                type="text"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                }}
-              />
-            </div>
+            <p className="text-md text-[#7B7C7B]">電子郵件</p>
+            <input
+              className={inputStyle}
+              type="text"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+              }}
+            />
+          </div>
           )
         }
       },
@@ -67,27 +66,28 @@ const PasswordRecoveryPage = () => {
               {codes.map((data, index) => {
                 return (
                   <input
-                    key={index}
-                    className="h-[4.5rem] w-[4.5rem] rounded-[20px] border-[3px] border-[#7B7C7B] text-center text-3xl font-bold focus:outline-none"
-                    type="text"
-                    maxLength={1}
-                    value={data}
-                    onChange={(e) => {
-                      setCodes([
-                        ...codes.map((d, idx) =>
-                          idx === index ? e.target.value : d
-                        )
-                      ])
-                      if (e.target.value && e.target.nextSibling) {
-                        const nextSibling = e.target
-                          .nextSibling as HTMLInputElement
-                        nextSibling.focus()
-                      }
-                    }}
-                  />
-                )
-              })}
-            </div>
+                  key={index}
+                  className="h-[3.5rem] w-[3.5rem] rounded-xl border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 text-center text-base font-bold text-[#7B7C7B] focus:outline-none hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20"
+                  type="text"
+                  maxLength={1}
+                  value={data}
+                  onChange={(e) => {
+                    setCodes([
+                      ...codes.map((d, idx) =>
+                        idx === index ? e.target.value : d
+                      )
+                    ])
+                    if (e.target.value && e.target.nextSibling) {
+                      const nextSibling = e.target
+                        .nextSibling as HTMLInputElement
+                      nextSibling.focus()
+                    }
+                  }}
+
+                />
+              )
+            })}
+          </div>
           )
         }
       },
@@ -99,56 +99,56 @@ const PasswordRecoveryPage = () => {
         renderFields: () => {
           return (
             <>
-              <div>
-                <p className="text-xl">密碼</p>
-                <div className="relative">
-                  <input
-                    className={filedStyle}
-                    type={passwdType}
-                    value={passwd}
-                    onChange={(e) => {
-                      setPasswd(e.target.value)
-                    }}
+            <div>
+              <p className="text-md text-[#7B7C7B]">密碼</p>
+              <div className="relative">
+                <input
+                  className={inputStyle}
+                  type={passwdType}
+                  value={passwd}
+                  onChange={(e) => {
+                    setPasswd(e.target.value)
+                  }}
+                />
+                <button
+                  className="absolute right-3 top-3"
+                  onClick={() => handlerChangePasswdType()}
+                  tabIndex={-1}
+                >
+                  <img
+                    className="h-5 w-5 text-[#7B7C7B]"
+                    src={passwdType == 'text' ? password_show : password_hide}
+                    alt=""
                   />
-                  <button
-                    className="absolute right-3 top-7"
-                    onClick={() => handlerChangePasswdType()}
-                    tabIndex={-1}
-                  >
-                    <img
-                      className="w-10 text-[#7B7C7B]"
-                      src={passwdType == 'text' ? password_hide : password_show}
-                      alt=""
-                    />
-                  </button>
-                </div>
+                </button>
               </div>
+            </div>
 
-              <div>
-                <p className="text-xl">確認密碼</p>
-                <div className="relative">
-                  <input
-                    className={filedStyle}
-                    type={passwdType}
-                    value={checkPasswd}
-                    onChange={(e) => {
-                      setCheckPasswd(e.target.value)
-                    }}
+            <div className="mt-5">
+              <p className="text-md text-[#7B7C7B]">確認密碼</p>
+              <div className="relative">
+                <input
+                  className={inputStyle}
+                  type={passwdType}
+                  value={checkPasswd}
+                  onChange={(e) => {
+                    setCheckPasswd(e.target.value)
+                  }}
+                />
+                <button
+                  className="absolute right-3 top-3"
+                  onClick={() => handlerChangePasswdType()}
+                  tabIndex={-1}
+                >
+                  <img
+                    className="h-5 w-5 text-[#7B7C7B]"
+                    src={passwdType == 'text' ? password_show : password_hide}
+                    alt=""
                   />
-                  <button
-                    className="absolute right-3 top-7"
-                    onClick={() => handlerChangePasswdType()}
-                    tabIndex={-1}
-                  >
-                    <img
-                      className="w-10 text-[#7B7C7B]"
-                      src={passwdType == 'text' ? password_hide : password_show}
-                      alt=""
-                    />
-                  </button>
-                </div>
+                </button>
               </div>
-            </>
+            </div>
+          </>
           )
         }
       },
@@ -244,62 +244,70 @@ const PasswordRecoveryPage = () => {
   }
 
   return (
-    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] bg-white/20 p-10 text-[#7B7C7B] backdrop-blur-sm">
-      {contextHolder}
-
-      <button
-        className="h-10 w-10 rounded-md border border-[#7B7C7B80] bg-[#D9D9D933]"
-        onClick={() => {
-          if (step === 0) {
-            navigate('/')
-            return
-          }
-
-          setStep(step - 1)
-        }}
-      >
-        <img src={enter} alt="step-back" className="mx-auto border-red-300" />
-      </button>
-
-      <div>
-        <h2 className="text-[2rem] font-bold text-[#7B7C7B]">
-          {stepList[step].title}
-        </h2>
-        <p className="text-xl">{stepList[step].desc}</p>
-      </div>
-
-      {stepList[step].renderFields()}
-
-      {(email == '' && step == 0) ||
-      (codes.join('').length != 5 && step == 1) ||
-      ((passwd == '' || checkPasswd == '') && step == 2) ? (
-        <button
-          className="h-[72px] w-full rounded-[20px] bg-[#7B7C7B]/20 p-4 text-2xl text-[#7B7C7B]/50"
-          onClick={() => stepList[step].onClick()}
-        >
-          {stepList[step].buttonText}
-        </button>
-      ) : (
-        <button
-          className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
-          onClick={() => stepList[step].onClick()}
-        >
-          {stepList[step].buttonText}
-        </button>
-      )}
-
-      {stepList[step].title === '查看你的電子郵件' && (
-        <p className="text-center text-xl">
-          還沒有收到電子郵件嗎？
-          <span
-            className="cursor-pointer underline"
-            onClick={() => handleSendCodes()}
+      <div className="relative sm:max-w-sm w-full">
+        <div className="relative w-full rounded-3xl px-6 py-4 border-2 border-[#7B7C7B] shadow-2xl">
+          {contextHolder}
+          <div className="flex flex-col items-center justify-center gap-4 mb-4">
+            {/* <img className='w-1/3' src={groundi_logo} alt="" /> */}
+          </div>
+          
+          <button
+            className="h-10 w-10 rounded-xl border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20"
+            onClick={() => {
+              if (step === 0) {
+                navigate('/')
+                return
+              }
+              setStep(step - 1)
+            }}
           >
-            重發電子郵件
-          </span>
-        </p>
-      )}
-    </div>
+            <img src={enter} alt="step-back" className="mx-auto" />
+          </button>
+
+          <div className="mt-5">
+            <h2 className="text-2xl font-bold text-[#7B7C7B]">
+              {stepList[step].title}
+            </h2>
+            <p className="text-md text-[#7B7C7B]">{stepList[step].desc}</p>
+          </div>
+
+          <div className="mt-5">
+            {stepList[step].renderFields()}
+          </div>
+
+          <button
+            className={`mt-7 w-full rounded-[20px] p-3 text-md text-white shadow-md hover:shadow-inner transition duration-500 hover:-translate-x hover:scale-105 ${
+              (email === '' && step === 0) ||
+              (codes.join('').length !== 5 && step === 1) ||
+              ((passwd === '' || checkPasswd === '') && step === 2)
+                ? 'bg-[#ABAAA6]'
+                : 'bg-[#735E5E]'
+            }`}
+            onClick={() => stepList[step].onClick()}
+            disabled={
+              (email === '' && step === 0) ||
+              (codes.join('').length !== 5 && step === 1) ||
+              ((passwd === '' || checkPasswd === '') && step === 2)
+            }
+          >
+            {stepList[step].buttonText}
+          </button>
+
+          {stepList[step].title === '查看你的電子郵件' && (
+            <div className="flex justify-center mt-4">
+              <p className="text-center text-base text-[#7B7C7B]">
+                還沒有收到電子郵件嗎？
+                <span
+                  className="cursor-pointer underline ml-1"
+                  onClick={() => handleSendCodes()}
+                >
+                  重發電子郵件
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
   )
 }
 

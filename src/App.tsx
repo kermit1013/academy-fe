@@ -8,6 +8,7 @@ import useLogin from './hooks/useLogin'
 import password_hide from '../public/password_hide.svg'
 import password_show from '../public/password_show.svg'
 import GoogleLogin from './components/GoogleLogin'
+import groundi_logo from '/groundi_logo.svg'
 
 const LoginColumns = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -56,45 +57,50 @@ const LoginColumns = () => {
   // }
 
   return (
-    <div className="z-20 flex h-[694px] w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] p-10 backdrop-blur-sm">
-      {contextHolder}
-      <div>
-        <p className="text-xl text-[#7B7C7B]">帳號</p>
-        <input
-          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
-          type="text"
-          value={user_name}
-          onChange={(e) => {
-            setUserName(e.target.value)
-          }}
-        />
-      </div>
-      <div>
-        <p className="text-xl text-[#7B7C7B]">密碼</p>
-        <div className="relative">
+    <div className="relative sm:max-w-sm w-full">
+      <div className="relative w-full rounded-3xl px-6 py-4 border-2 border-[#7B7C7B] shadow-2xl">
+        {contextHolder}
+        <div className="flex flex-col items-center justify-center gap-4">
+          <img className='w-1/3' src={groundi_logo} alt="" />
+        </div>
+        <div>
+          <p className="text-md text-[#7B7C7B]">帳號</p>
           <input
-            className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
-            type={passwdType}
-            value={passwd}
+            className="pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20  text-[#7B7C7B]  focus:outline-none"
+            type="text"
+            value={user_name}
             onChange={(e) => {
-              setPasswd(e.target.value)
+              setUserName(e.target.value)
             }}
           />
-          <button
-            className="absolute right-3 top-6"
-            onClick={() => handlerChangePasswdType()}
-          >
-            <img
-              className="h-full w-12 text-[#7B7C7B]"
-              src={passwdType == 'text' ? password_show : password_hide}
-              alt=""
-            />
-          </button>
         </div>
-      </div>
-      <div className="flex justify-end">
+        <div className="mt-5">
+          <p className="text-md text-[#7B7C7B]">密碼</p>
+          <div className="relative">
+            <input
+              className="pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20  text-[#7B7C7B]  focus:outline-none"
+              type={passwdType}
+              value={passwd}
+              onChange={(e) => {
+                setPasswd(e.target.value)
+              }}
+            />
+            <button
+              className="absolute right-3 top-3"
+              onClick={() => handlerChangePasswdType()}
+            >
+              <img
+                className="h-5 w-5 text-[#7B7C7B]"
+                src={passwdType == 'text' ? password_show : password_hide}
+                alt=""
+              />
+            </button>
+          </div>
+        </div>
+
+      <div className="flex mt-4 justify-end">
         <button
-          className="text-xl text-[#7B7C7B] underline hover:cursor-pointer"
+          className="text-base text-[#7B7C7B] underline hover:cursor-pointer"
           onClick={() => {
             navigate('/forgetPwd')
           }}
@@ -103,15 +109,15 @@ const LoginColumns = () => {
         </button>
       </div>
       <button
-        className={`h-[72px] w-full rounded-[20px] p-4 text-2xl text-white  ${isLoggingIn ? 'bg-[#ABAAA6]' : 'bg-[#735E5E]'}`}
+        className={`mt-4 w-full rounded-[20px] p-3 text-md text-white  ${isLoggingIn ? 'bg-[#ABAAA6]' : 'bg-[#735E5E]'} shadow-md hover:shadow-inner e-in-out transition duration-500 hover:-translate-x hover:scale-105`}
         onClick={() => handlerLogin()}
         disabled={isLoggingIn}
       >
         登入
       </button>
-      <div className="flex h-6 w-full items-center justify-center gap-2">
+      <div className="flex mt-4 w-full items-center justify-center gap-2">
         <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
-        <p className="text-2xl text-[#7B7C7B]">或</p>
+        <p className="text-base text-[#7B7C7B]">或</p>
         <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
       </div>
       <GoogleLogin>
@@ -120,11 +126,12 @@ const LoginColumns = () => {
       </GoogleLogin>
       <div className="flex justify-center">
         <button
-          className="text-center text-xl font-thin text-[#7B7C7B] underline hover:cursor-pointer"
+          className="mt-2 text-center text-base font-thin text-[#7B7C7B] underline hover:cursor-pointer"
           onClick={() => setIsRegister(true)}
         >
           還沒有帳號?註冊
         </button>
+        </div>
       </div>
     </div>
   )
@@ -179,77 +186,81 @@ const RegisterColumns = () => {
   }
 
   return (
-    <div className="z-20 flex h-fit w-[520px] flex-col justify-start gap-6 rounded-[50px] border-[3px] border-[#7B7C7B] px-10 pb-[20px] pt-[50px] backdrop-blur-sm">
-      {contextHolder}
-
-      <div>
-        <p className="text-xl text-[#7B7C7B]">電子信箱</p>
-        <input
-          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
-          type="text"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value)
-          }}
-        />
-      </div>
-      <div>
-        <p className="flex items-start text-xl text-[#7B7C7B]">用戶名稱</p>
-        <input
-          className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
-          type="text"
-          value={user_name}
-          onChange={(e) => {
-            setUserName(e.target.value)
-          }}
-        />
-      </div>
-      <div>
-        <p className="text-xl text-[#7B7C7B]">密碼</p>
-        <div className="relative">
+    <div className="relative sm:max-w-sm w-full">
+      <div className="relative w-full rounded-3xl px-6 py-4 border-2 border-[#7B7C7B] shadow-2xl">
+        {contextHolder}
+        <div className="flex flex-col items-center justify-center gap-4">
+          <img className='w-1/3' src={groundi_logo} alt="" />
+        </div>
+        <div>
+          <p className="text-md text-[#7B7C7B]">電子信箱</p>
           <input
-            className="mt-3 h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-[#7B7C7B]/10 pl-4 text-3xl text-[#7B7C7B] focus:outline-none"
-            type={passwdType}
-            value={passwd}
+            className="pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20 text-[#7B7C7B] focus:outline-none"
+            type="text"
+            value={email}
             onChange={(e) => {
-              setPasswd(e.target.value)
+              setEmail(e.target.value)
             }}
           />
-          <button
-            className="absolute right-3 top-6"
-            onClick={() => handlerChangePasswdType()}
-          >
-            <img
-              className="h-full w-12 text-[#7B7C7B]"
-              src={passwdType == 'text' ? password_show : password_hide}
-              alt=""
+        </div>
+        <div className="mt-5">
+          <p className="text-md text-[#7B7C7B]">用戶名稱</p>
+          <input
+            className="pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20 text-[#7B7C7B] focus:outline-none"
+            type="text"
+            value={user_name}
+            onChange={(e) => {
+              setUserName(e.target.value)
+            }}
+          />
+        </div>
+        <div className="mt-5">
+          <p className="text-md text-[#7B7C7B]">密碼</p>
+          <div className="relative">
+            <input
+              className="pl-3 mt-1 block w-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 h-11 rounded-xl shadow-lg hover:bg-[#735E5E]/20 text-[#7B7C7B]  focus:outline-none"
+              type={passwdType}
+              value={passwd}
+              onChange={(e) => {
+                setPasswd(e.target.value)
+              }}
             />
+            <button
+              className="absolute right-3 top-3"
+              onClick={() => handlerChangePasswdType()}
+            >
+              <img
+                className="h-5 w-5 text-[#7B7C7B]"
+                src={passwdType == 'text' ? password_show : password_hide}
+                alt=""
+              />
+            </button>
+          </div>
+        </div>
+  
+        <button
+          className="mt-7 w-full rounded-[20px] p-3 text-md text-white bg-[#735E5E] shadow-md hover:shadow-inner transition duration-500 hover:-translate-x hover:scale-105"
+          onClick={() => handlerRegister()}
+        >
+          註冊
+        </button>
+        <div className="flex mt-4 w-full items-center justify-center gap-2">
+          <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
+          <p className="text-base text-[#7B7C7B]">或</p>
+          <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
+        </div>
+        <GoogleLogin>
+          {' '}
+          <p>使用Gmail註冊</p>
+        </GoogleLogin>
+        <div className="flex justify-center">
+          <button
+            className="mt-2 text-center text-base font-thin text-[#7B7C7B] underline hover:cursor-pointer"
+            onClick={() => setIsRegister(false)}
+          >
+            已經有帳號?登入
           </button>
         </div>
-      </div>
-
-      <button
-        className="h-[72px] w-full rounded-[20px] bg-[#735E5E] p-4 text-2xl text-white"
-        onClick={() => handlerRegister()}
-      >
-        註冊
-      </button>
-      <div className="flex h-6 w-full items-center justify-center gap-2">
-        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
-        <p className="text-2xl text-[#7B7C7B]">或</p>
-        <p className="h-0 w-1/2 border border-[#7B7C7B]"></p>
-      </div>
-      <GoogleLogin>
-        {' '}
-        <p>使用Gmail註冊</p>
-      </GoogleLogin>
-      <div className="flex justify-center">
-        <button
-          className="text-xl font-thin text-[#7B7C7B] underline hover:cursor-pointer"
-          onClick={() => setIsRegister(false)}
-        >
-          已經有帳號?登入
-        </button>
       </div>
     </div>
   )
@@ -258,7 +269,9 @@ const RegisterColumns = () => {
 const Login = () => {
   const { isRegister } = useLogin()
 
-  return <>{isRegister ? <RegisterColumns /> : <LoginColumns />}</>
+  return <>
+  {isRegister ? <RegisterColumns /> : <LoginColumns />}
+  </>
 }
 
 export default Login

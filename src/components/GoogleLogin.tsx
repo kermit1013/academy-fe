@@ -36,7 +36,7 @@ const GoogleLogin = ({ children }: PropsWithChildren) => {
     <>
       {contextHolder}
       <button
-        className="h-[72px] w-full rounded-[20px] border-[3px] border-[#7B7C7B] bg-white/30 p-4 text-2xl text-[#7B7C7B] backdrop-blur-sm"
+        className="mt-4 w-full rounded-[20px] border-2 border-[#7B7C7B] bg-white/30 p-3 text-md text-[#7B7C7B] backdrop-blur-sm shadow-md hover:shadow-inner e-in-out transition duration-500 hover:-translate-x hover:scale-105"
         onClick={() => googleLogin()}
       >
         {children}
