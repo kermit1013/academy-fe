@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import close_btn from '/public/close_btn.svg'
-
 import "@blocknote/core/fonts/inter.css"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/mantine"
@@ -8,7 +7,11 @@ import "@blocknote/mantine/style.css"
 import { Block } from "@blocknote/core";
 import axios from 'axios'
 import useEditor from '../hooks/useEditor';
-
+import { unified } from "unified";
+import markdown from "remark-parse";
+import docx from "remark-docx";
+import { saveAs } from "file-saver";
+import icon_doc from "/public/icons/icon_doc.svg"
 
 interface EditorProps {
   isOpen: boolean
@@ -141,6 +144,19 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
     setProjectId('')
     setNodeId('')
   }
+  
+  const handlerExport = async () => {
+    const processor = unified().use(markdown).use(docx, { output: "blob" });
+    const content = (await editor.blocksToMarkdownLossy()).toString();
+    try {
+      const doc = await processor.process(content);
+      const blob = await doc.result;
+      saveAs(blob, "project_export.docx");
+    } catch (error) {
+      console.error('Error exporting document:', error);
+      // You might want to show an error message to the user here
+    }
+  }
 
   if (!isOpen) return null
 
@@ -155,6 +171,12 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
           }}
           editable={editable}
         />
+        <button
+          onClick={handlerExport}
+          className="fixed right-[calc(10%+2rem)] top-[calc(10%-2rem)] flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40 z-10"
+        >
+          <img src={icon_doc} alt="" />
+        </button>
         <button
           onClick={handlerCloseEditor}
           className="fixed right-[calc(10%-1rem)] top-[calc(10%-2rem)] flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40 z-10"
