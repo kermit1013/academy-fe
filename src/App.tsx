@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import axios from 'axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import useLogin from './hooks/useLogin'
@@ -16,6 +16,13 @@ const LoginColumns = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user_name, setUserName, passwd, setPasswd, setIsRegister } =
     useLogin()
+
+    useEffect(() => {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        alert("為了更好的使用體驗，建議您使用桌面版進行操作。");
+      }
+    }, []);
 
   const handlerChangePasswdType = () => {
     if (passwdType === 'password') {
