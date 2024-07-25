@@ -22,8 +22,6 @@ import BrainStormContent from '../components/content/BrainStormContent'
 import useTopMenu from '../hooks/useTopMenu'
 import TallyPopup from '../components/TallyPopup'
 import TallyStartProject from '../components/TallyStartProject'
-
-import bg from '../../public/bg.svg'
 import SettingModal from '../components/modal/SettingModal'
 import Loading from '../components/Loading'
 import useStartProject from '../hooks/useStartProject'
@@ -321,9 +319,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           />
         )}
         </Panel>
-        
-        <img src={bg} className="object-cover w-full h-full" alt="" />
-       
         <Cursors cursors={cursors} />
       </ReactFlow>
       <DiscordModal

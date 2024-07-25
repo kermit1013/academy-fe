@@ -327,7 +327,7 @@ const SettingModal = () => {
           <img src={icon_logout} alt="icon" className="h-5 w-5" />
           <p>Log out</p>
         </div>
-        <p className="text-[#A1A1AA]">Groundi Beta Version</p>
+        <p className="text-[#A1A1AA] text-xs font-thin flex justify-end">Groundi Beta Version</p>
       </footer>
     </dialog>,
     document.body
