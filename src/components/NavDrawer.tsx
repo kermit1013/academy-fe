@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import main_logo from '../../public/groundi_logo.svg'
-import text_logo from '../../public/groundi_text.svg'
-import setting from '../../public/setting.svg'
-import icon_discord from '../../public/discord.svg'
-import wavingHand from '../../public/nav_icons/waving_hand.svg'
-import jamJar from '../../public/nav_icons/jam_jar.svg'
-import idea from '../../public/nav_icons/idea.svg'
-import rocket from '../../public/nav_icons/rocket.svg'
-import dashboard from '../../public/nav_icons/dashboard.svg'
-import file from '../../public/nav_icons/file.svg'
-import delete_project from '../../public/nav_icons/delete.svg'
+import main_logo from '/nav_icons/logo.svg'
+import text_logo from '/nav_icons/logo_text.svg'
+import setting from '/setting.svg'
+import icon_discord from '/discord.svg'
+import wavingHand from '/nav_icons/waving_hand.svg'
+import jamJar from '/nav_icons/jam_jar.svg'
+import idea from '/nav_icons/idea.svg'
+import rocket from '/nav_icons/rocket.svg'
+import dashboard from '/nav_icons/dashboard.svg'
+import file from '/nav_icons/file.svg'
+import delete_project from '/nav_icons/delete.svg'
 import { message } from 'antd'
 
 import useTopMenu from '../hooks/useTopMenu'
@@ -207,7 +207,7 @@ const NavDrawer = () => {
             <img
               src={text_logo}
               alt="Groundi"
-              className={`h-6 pl-2 ${isExpanded ? 'block' : 'hidden'}`}
+              className={`h-6 pl-1 ${isExpanded ? 'block' : 'hidden'}`}
             />
           </div>
           <div
