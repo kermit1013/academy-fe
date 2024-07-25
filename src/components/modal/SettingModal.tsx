@@ -198,7 +198,7 @@ const SettingModal = () => {
             onClick={() => handlerOnClose()}
           />
         </h3>
-        <span className="text-[#52525B]">{userData.email}</span>
+        <span className="text-[#A1A1AA] text-sm">{userData.email}</span>
       </header>
 
       <hr className="my-2" />

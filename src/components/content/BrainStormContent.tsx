@@ -390,7 +390,7 @@ const BrainStormContent = memo(() => {
           <div className="text-sm text-[#EF6E52]">2分鐘內寫出5個點子</div>
           <div className="flex w-auto justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
-            <span className="countdown font-mono text-base">
+            <span className="countdown pt-px font-mono text-base">
               <span style={{"--value": Math.floor(times / 60)} as React.CSSProperties}></span>:
               <span style={{"--value": times % 60} as React.CSSProperties}></span>
             </span>
