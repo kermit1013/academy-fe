@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import main_logo from '/nav_icons/logo.svg'
-import text_logo from '/nav_icons/logo_text.svg'
+import text_logo from '/groundi_text.svg'
 import setting from '/setting.svg'
 import icon_discord from '/discord.svg'
 import wavingHand from '/nav_icons/waving_hand.svg'
@@ -201,13 +201,13 @@ const NavDrawer = () => {
       >
         <div className="flex-grow p-4">
           <div
-            className={`mb-6 flex items-center ${!isExpanded && 'justify-center'}`}
+            className='group mb-4 pl-2 flex cursor-pointer items-center'
           >
-            <img src={main_logo} alt="Groundi" className="h-12 w-12" />
+            <img src={main_logo} alt="Groundi" className="h-8 w-8" />
             <img
               src={text_logo}
               alt="Groundi"
-              className={`h-6 pl-1 ${isExpanded ? 'block' : 'hidden'}`}
+              className={`h-3 pl-2 ${isExpanded ? 'block' : 'hidden'}`}
             />
           </div>
           <div
