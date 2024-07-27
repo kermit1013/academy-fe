@@ -20,12 +20,12 @@ const TopMenu = () => {
   }
 
   const handlerChange2BrainStorm = () => {
-    if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
     setIsOpenBrainStormContent(true)
   }
 
   const handlerChange2Gallery = () => {
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感發想')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
 
     setIsOpenGalleryContent(true)
   }
@@ -38,7 +38,7 @@ const TopMenu = () => {
     <div className="flex gap-3">
       {contextHolder}
       <button
-        title="靈感發想"
+        title="靈感果醬"
         className={`relative flex h-10 w-10 items-center justify-center rounded border ${
           isOpenBrainStormContent
             ? 'border-[#6CA579] bg-[#6CA579]/20'

@@ -68,7 +68,7 @@ const NavDrawer = () => {
   }
 
   const handlerChange2Gallery = () => {
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感發想')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
 
     setIsOpenGalleryContent(true)
   }
@@ -112,10 +112,18 @@ const NavDrawer = () => {
     }
   }, [])
   const handleProjectClick = (projectId: string) => {
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
     console.log(projectId)
     setProjectId(projectId)
     setIsOpen(true)
     setEditable(true)
+  }
+
+  const handlerOpenProjectWall = () => {
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
+    setIsProjectWallOpen(true)
   }
 
   const [isExpanded, setIsExpanded] = useState(false)
@@ -153,7 +161,7 @@ const NavDrawer = () => {
       icon: <img src={dashboard} alt="" />,
       label: '專案畫廊',
       prompt: '逛逛他人的專案',
-      onClick: () => setIsProjectWallOpen(true)
+      onClick: handlerOpenProjectWall
     },
     {
       icon: <img src={icon_discord} alt="" />,
