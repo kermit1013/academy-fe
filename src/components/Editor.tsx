@@ -8,6 +8,7 @@ import "@blocknote/mantine/style.css"
 import { Block } from "@blocknote/core";
 import axios from 'axios'
 import useEditor from '../hooks/useEditor';
+import { message } from 'antd'
 
 
 interface EditorProps {
@@ -18,6 +19,7 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
+  const [messageApi, contextHolder] = message.useMessage()
   const [blocks, setBlocks] = useState<Block[]>([])
   const saveTimeoutRef = useRef<number | null>(null)
   const {setIsOpen, setProjectId, setNodeId, editable} = useEditor()
@@ -29,11 +31,16 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
         return { url: '' };
       }
       console.log('Uploading file:', file);
+       // Check file size
+      if (file.size > 1 * 1024 * 1024) { // 1MB in bytes
+        messageApi.warning('檔案上傳大小上限為1MB');
+        return { url: '' };
+      }
     
       const formData = new FormData();
       formData.append('file', file);
       try {
-       const result = await axios.post('https://api.loudy.in/api/projects/images', formData,
+       const result = await axios.post('https://api.loudy.in/api/projects/files', formData,
         {
           headers: {
             Authorization: `Bearer ${access_token}`
@@ -146,6 +153,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      {contextHolder}
       <div className="bg-[white] p-12 w-5/6 h-[90%] rounded-lg relative overflow-auto ">
         <BlockNoteView theme={"light"} editor={editor}
           onChange={() => {
