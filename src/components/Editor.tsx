@@ -156,7 +156,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
     try {
       const response = await axios({
         method: 'post',
-        url: 'http://api.loudy.in/api/projects/docx',
+        url: 'https://api.loudy.in/api/projects/docx',
         data: {
           html: content
         },
