@@ -12,17 +12,15 @@ import PasswordRecoveryPage from './pages/PasswordRecoveryPage'
 import bg from '/bg.svg'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <div className="relative h-screen w-screen" style={{ backgroundImage: `url(${bg})` }}>
+  <div
+    className="relative h-screen w-screen bg-cover"
+    style={{ backgroundImage: `url(${bg})` }}
+  >
     <GoogleOAuthProvider clientId={clientId}>
       <HashRouter>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
-            <Route
-              index
-              element={
-                <App />
-              }
-            />
+            <Route index element={<App />} />
             <Route path="forgetPwd" element={<PasswordRecoveryPage />} />
           </Route>
           <Route path="/search" element={<SelectPage />} />
