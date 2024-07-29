@@ -15,6 +15,7 @@ interface Project {
   name: string
   description: string
   imagePath: string
+  created_at: string
 }
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
@@ -57,6 +58,14 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
     setEditable(false)
   };
 
+  const isNewProject = (createdAt: string) => {
+    const projectDate = new Date(createdAt)
+    const currentDate = new Date()
+    const diffTime = Math.abs(currentDate.getTime() - projectDate.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays <= 3
+  }
+
   const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     project.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,7 +103,11 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
               <div className="card-body">
                 <h2 className="card-title font-sans">
                   {project.name}
-                  <div className="badge badge-secondary">NEW</div>
+                  {isNewProject(project.created_at) && (
+                  <span className="bg-[#6CA579] badge text-white">
+                    NEW
+                  </span>
+                )}
                 </h2>
                 <p className="font-sans">{project.description}</p>
               </div>
