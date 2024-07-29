@@ -32,7 +32,8 @@ const NavDrawer = () => {
 
   const [isProjectWallOpen, setIsProjectWallOpen] = useState(false)
   const [projects, setProjects] = useState([])
-  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } = useEditor()
+  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
+    useEditor()
 
   const {
     isOpenBrainStormContent,
@@ -40,27 +41,29 @@ const NavDrawer = () => {
     setIsOpenBrainStormContent,
     setIsOpenGalleryContent,
     setIsOpenSettingModal,
-    setIsOpenTallyPopup,
+    setIsOpenTallyPopup
   } = useTopMenu()
 
   const { selectedNode, setStartProjectStatus } = useStartProject()
 
   const handleProjectDelete = async (projectId: string | number) => {
-    const access_token = localStorage.getItem('access_token');
-    if (!access_token) return;
-    if (confirm('確定刪除該專案嗎？') === false) return;
+    const access_token = localStorage.getItem('access_token')
+    if (!access_token) return
+    if (confirm('確定刪除該專案嗎？') === false) return
 
     try {
       await axios.delete(`https://api.loudy.in/api/projects/${projectId}`, {
         headers: { Authorization: `Bearer ${access_token}` }
-      });
-      setProjects(projects.filter((project: Project) => project.id !== projectId));
-      messageApi.success('專案刪除成功！');
+      })
+      setProjects(
+        projects.filter((project: Project) => project.id !== projectId)
+      )
+      messageApi.success('專案刪除成功！')
     } catch (error) {
-      console.error('Error deleting project:', error);
-      messageApi.error('專案刪除失敗，請稍後再試。');
+      console.error('Error deleting project:', error)
+      messageApi.error('專案刪除失敗，請稍後再試。')
     }
-  };
+  }
 
   const handlerChange2BrainStorm = () => {
     if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
@@ -86,13 +89,19 @@ const NavDrawer = () => {
   }
 
   const handlerTallyStartProject = () => {
-    if (!selectedNode || selectedNode.data.level !== 3) return messageApi.warning('請先選擇一個方形泡泡哦！')
+    if (!selectedNode || selectedNode.data.level !== 3)
+      return messageApi.warning('請先選擇一個方形泡泡哦！')
     setStartProjectStatus(true)
-
   }
   useEffect(() => {
     getProjects()
   }, [])
+
+  useEffect(() => {
+    if (!isOpen) {
+      getProjects()
+    }
+  }, [isOpen])
 
   const getProjects = useCallback(async () => {
     const access_token = localStorage.getItem('access_token')
@@ -155,7 +164,10 @@ const NavDrawer = () => {
       label: '開始計畫',
       prompt: '請選擇一個專案主題開始',
       onClick: handlerTallyStartProject,
-      disabled: !selectedNode || selectedNode.data.level !== 3
+      disabled:
+        !selectedNode ||
+        selectedNode.data.is_launched ||
+        selectedNode.data.level !== 3
     },
     {
       icon: <img src={dashboard} alt="" />,
@@ -179,12 +191,9 @@ const NavDrawer = () => {
     onDelete: () => handleProjectDelete(project.id)
   }))
 
-
-
   return (
     <>
       {contextHolder}
-
 
       <ViewOtherUserFrame
         isExpanded={isExpanded}
@@ -208,9 +217,7 @@ const NavDrawer = () => {
         onMouseLeave={() => setIsExpanded(false)}
       >
         <div className="flex-grow p-4">
-          <div
-            className='group mb-4 pl-2 flex cursor-pointer items-center'
-          >
+          <div className="group mb-4 flex cursor-pointer items-center pl-2">
             <img src={main_logo} alt="Groundi" className="h-8 w-8" />
             <img
               src={text_logo}
@@ -226,7 +233,7 @@ const NavDrawer = () => {
           {menuItems.map((item, index) => (
             <div
               key={index}
-              className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+              className={`group mb-4 ml-3 flex cursor-pointer items-center justify-between ${
                 !isExpanded ? 'justify-center' : 'w-full pr-2'
               }`}
             >
@@ -255,7 +262,7 @@ const NavDrawer = () => {
           {actionItems.map((item, index) => (
             <div
               key={index}
-              className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+              className={`group mb-4 ml-3 flex cursor-pointer items-center justify-between ${
                 !isExpanded ? 'justify-center' : 'w-full pr-2'
               }`}
             >
@@ -268,10 +275,11 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm ${item.disabled
+                  className={`ml-3 flex items-center font-sans text-sm ${
+                    item.disabled
                       ? 'text-gray-300'
                       : 'text-gray-600 group-hover:text-[#6CA579]'
-                    } ${isExpanded ? 'block' : 'hidden'}`}
+                  } ${isExpanded ? 'block' : 'hidden'}`}
                 >
                   {item.label}
                 </span>
@@ -286,42 +294,40 @@ const NavDrawer = () => {
           </div>
           {projectItems.map((item, index) => (
             <div
-            key={index}
-            className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
-              !isExpanded ? 'justify-center' : 'w-full pr-2'
-            }`}
-          >
-            <div
-              className="tooltip tooltip-right flex items-center font-sans"
-              data-tip={item.prompt}
-              onClick={item.onClick}
+              key={index}
+              className={`group mb-4 ml-3 flex cursor-pointer items-center justify-between ${
+                !isExpanded ? 'justify-center' : 'w-full pr-2'
+              }`}
             >
-              <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
-                {item.icon}
-              </span>
-              {isExpanded && (
-                <span
-                  className="ml-3 font-sans text-sm text-gray-600 group-hover:text-[#6CA579] max-w-[110px] truncate"
-                >
-                  {item.label}
+              <div
+                className="tooltip tooltip-right flex items-center font-sans"
+                data-tip={item.prompt}
+                onClick={item.onClick}
+              >
+                <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
+                  {item.icon}
                 </span>
+                {isExpanded && (
+                  <span className="ml-3 max-w-[110px] truncate font-sans text-sm text-gray-600 group-hover:text-[#6CA579]">
+                    {item.label}
+                  </span>
+                )}
+              </div>
+              {isExpanded && (
+                <img
+                  src={delete_project}
+                  alt="Delete"
+                  className="h-4 w-4 flex-shrink-0 transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer"
+                  onClick={item.onDelete}
+                />
               )}
             </div>
-            {isExpanded && (
-              <img 
-                src={delete_project} 
-                alt="Delete" 
-                className="h-4 w-4 flex-shrink-0  transition-transform duration-200 ease-in-out hover:scale-125 hover:cursor-pointer"
-                onClick={item.onDelete}
-              />
-            )}
-          </div>
           ))}
         </div>
 
         <div className={`p-4 ${isExpanded ? 'pl-4' : 'text-center'}`}>
           <div
-            className={`group ml-3 mb-4 flex cursor-pointer items-center justify-between ${
+            className={`group mb-4 ml-3 flex cursor-pointer items-center justify-between ${
               !isExpanded ? 'justify-center' : 'w-full pr-2'
             }`}
           >
