@@ -144,7 +144,10 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex gap-1">
-          <div className="flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center text-base tooltip tooltip-bottom font-sans" data-tip={action_bubble?.description}>
+          <div
+            className="tooltip tooltip-bottom flex h-[100px] w-[100px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] p-4 text-center font-sans text-base"
+            data-tip={action_bubble?.description}
+          >
             <div className="font-sans">{action_bubble?.name}</div>
           </div>
           <img
@@ -171,7 +174,7 @@ const Thinking = ({ action_type }: props) => {
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
-        {renderSelectBubble()}
+          {renderSelectBubble()}
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex gap-1">
@@ -194,7 +197,7 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-4 text-center text-base">
-        {renderSelectBubble()}
+          {renderSelectBubble()}
         </div>
         <img src={icon_plus} alt="" />
         <div className="flex gap-[6px]">
@@ -214,15 +217,15 @@ const Thinking = ({ action_type }: props) => {
   })
 
   const handler_refresh_api = useCallback(async () => {
-    if (!access_token) return;
-  
-    let result;
+    if (!access_token) return
+
+    let result
     if (action_type === 3) {
       const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data)
     } else {
-      const endpoint = action_type === 1 ? 'celebrities' : 'scenarios';
+      const endpoint = action_type === 1 ? 'celebrities' : 'scenarios'
       try {
         result = await axios.get(
           `https://api.loudy.in/api/interactions/${endpoint}`,
@@ -355,7 +358,7 @@ const BrainStormContent = memo(() => {
     <div className="absolute bottom-10 left-[calc(50%-400px)] z-20 mb-12 flex h-[240px] w-[800px] flex-col rounded-2xl border-2 border-[#7B7C7B] p-4 backdrop-blur-lg">
       <button
         onClick={() => handlerCloseContent()}
-        className="absolute -right-[14px] -top-[14px] flex h-6 w-6 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40"
+        className="absolute right-[8px] top-[8px] flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 text-sm backdrop-blur-3xl hover:bg-[#7B7C7B]/30"
       >
         <img src={close_btn} alt="" />
       </button>
@@ -386,13 +389,20 @@ const BrainStormContent = memo(() => {
             瘋狂乘法
           </button>
         </div>
-        <div className="flex items-center justify-center gap-2 font-sans">
+        <div className="mr-6 flex items-center justify-center gap-2 font-sans">
           <div className="text-sm text-[#EF6E52]">2分鐘內寫出5個點子</div>
           <div className="flex w-auto justify-center gap-1 rounded-lg border border-[#EF6E52]/20 bg-[#EF6E52]/20 p-1 text-[#EF6E52]">
             <img src={icon_clock} alt="" />
             <span className="countdown pt-px font-mono text-base">
-              <span style={{"--value": Math.floor(times / 60)} as React.CSSProperties}></span>:
-              <span style={{"--value": times % 60} as React.CSSProperties}></span>
+              <span
+                style={
+                  { '--value': Math.floor(times / 60) } as React.CSSProperties
+                }
+              ></span>
+              :
+              <span
+                style={{ '--value': times % 60 } as React.CSSProperties}
+              ></span>
             </span>
           </div>
         </div>
