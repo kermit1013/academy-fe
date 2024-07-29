@@ -13,7 +13,7 @@ declare global {
 const TallyStartProject: React.FC = () => {
   const navigate = useNavigate()
   const [messageApi] = message.useMessage()
-  const { selectedNode , setStartProjectStatus } = useStartProject()
+  const { selectedNode, setStartProjectStatus } = useStartProject()
 
   useEffect(() => {
     console.log(selectedNode)
@@ -22,7 +22,9 @@ const TallyStartProject: React.FC = () => {
     script.onload = () => {
       if (window.Tally) {
         window.Tally.openPopup('wLdoZz', {
+          layout: 'modal',
           overlay: true,
+          width: 400,
           onSubmit: async (payload: any) => {
             const access_token = localStorage.getItem('access_token')
             if (access_token == null) {
@@ -43,7 +45,7 @@ const TallyStartProject: React.FC = () => {
                   }
                 }
               )
-              
+
               if (receivedResult.status === 200) {
                 messageApi.info(
                   '已收到你的專案提案，我們將儘快生成你的專案計畫表，並邀請你加入 Groundi Discord 🚀'
