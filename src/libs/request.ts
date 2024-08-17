@@ -1,8 +1,7 @@
 import axios, { AxiosError } from 'axios'
 
 const request = axios.create({
-  // TODO: 到時使用 env 變數替換掉
-  baseURL: 'https://api.loudy.in/api/'
+  baseURL: import.meta.env.VITE_API_URL as string
 })
 
 request.interceptors.request.use((config) => {
