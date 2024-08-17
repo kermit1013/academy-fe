@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import useStartProject from '../hooks/useStartProject'
 import message from 'antd/es/message'
+import { CreateProjectPlan } from '../libs/api/tally'
 
 declare global {
   interface Window {
@@ -33,28 +33,16 @@ const TallyStartProject: React.FC = () => {
             }
             const data = JSON.stringify(payload)
             let encoded = encodeURI(data)
-            try {
-              const receivedResult = await axios.post(
-                `https://api.loudy.in/api/projects/received/nodes/${selectedNode?.data.id}`,
-                {
-                  data: encoded
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${access_token}`
-                  }
-                }
-              )
-
-              if (receivedResult.status === 200) {
+            CreateProjectPlan(selectedNode?.data.id, encoded)
+              .then(() => {
                 messageApi.info(
                   '已收到你的專案提案，我們將儘快生成你的專案計畫表，並邀請你加入 Groundi Discord 🚀'
                 )
                 console.log('do is_launched = true')
-              }
-            } catch (error) {
-              console.error('Error submitting proposal:', error)
-            }
+              })
+              .catch((error) => {
+                console.error('Error fetching data:', error)
+              })
           },
           onClose: () => {
             setStartProjectStatus(false)

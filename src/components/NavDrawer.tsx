@@ -15,10 +15,11 @@ import { message } from 'antd'
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor'
-import axios from 'axios'
 import ProjectWall from './ProjectWall'
 import useStartProject from '../hooks/useStartProject'
 import useEditor from '../hooks/useEditor'
+import { useReactFlow, useStoreApi } from 'reactflow'
+import { DeleteProject, GetMyProject } from '../libs/api/project'
 
 interface Project {
   id: string | number
@@ -29,12 +30,12 @@ interface Project {
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
-
+  const { getNodes } = useReactFlow()
   const [isProjectWallOpen, setIsProjectWallOpen] = useState(false)
   const [projects, setProjects] = useState([])
   const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
     useEditor()
-
+  const store = useStoreApi()
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -51,27 +52,32 @@ const NavDrawer = () => {
     if (!access_token) return
     if (confirm('確定刪除該專案嗎？') === false) return
 
-    try {
-      await axios.delete(`https://api.loudy.in/api/projects/${projectId}`, {
-        headers: { Authorization: `Bearer ${access_token}` }
+    DeleteProject(projectId)
+      .then(() => {
+        setProjects(
+          projects.filter((project: Project) => project.id !== projectId)
+        )
+        messageApi.success('專案刪除成功！')
       })
-      setProjects(
-        projects.filter((project: Project) => project.id !== projectId)
-      )
-      messageApi.success('專案刪除成功！')
-    } catch (error) {
-      console.error('Error deleting project:', error)
-      messageApi.error('專案刪除失敗，請稍後再試。')
-    }
+      .catch((error: any) => {
+        console.error('Error deleting project:', error)
+        messageApi.error('專案刪除失敗，請稍後再試。')
+      })
   }
 
-  const handlerChange2BrainStorm = () => {
-    if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步')
+  const handlerChange2BrainStorm = useCallback(() => {
+    if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步！')
+
+    const { getNodes } = store.getState()
+    if (getNodes().filter((node) => node.data.level == 2).length === 0) {
+      return messageApi.warning('請先新增第三層的心智圖泡泡！')
+    }
+
     setIsOpenBrainStormContent(true)
-  }
+  }, [store])
 
   const handlerChange2Gallery = () => {
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
 
     setIsOpenGalleryContent(true)
   }
@@ -89,10 +95,21 @@ const NavDrawer = () => {
   }
 
   const handlerTallyStartProject = () => {
+    console.log(selectedNode)
+    if (!selectedNode) return messageApi.warning('請先選擇泡泡哦！')
+    if (!hasLevel3Bubble) {
+      return messageApi.warning(
+        '請先透過「探索問卷」產生心智圖，或自行新增心智圖泡泡！'
+      )
+    }
+    if (!selectedNode || selectedNode.data.label === '') {
+      return messageApi.warning('請填寫內容後在開始計劃！')
+    }
     if (!selectedNode || selectedNode.data.level !== 3)
       return messageApi.warning('請先選擇一個方形泡泡哦！')
     setStartProjectStatus(true)
   }
+
   useEffect(() => {
     getProjects()
   }, [])
@@ -108,17 +125,13 @@ const NavDrawer = () => {
     if (!access_token) {
       return
     }
-    const url = 'https://api.loudy.in/api/projects/me'
-    try {
-      const result = await axios.get(url, {
-        headers: { Authorization: `Bearer ${access_token}` }
-      })
-      if (result.status === 200) {
+    GetMyProject()
+      .then((result) => {
         setProjects(result.data)
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error)
+      })
   }, [])
   const handleProjectClick = (projectId: string) => {
     if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
@@ -136,8 +149,15 @@ const NavDrawer = () => {
   }
 
   const [isExpanded, setIsExpanded] = useState(false)
+  const [hasLevel2Bubble, setHasLevel2Bubble] = useState(
+    getNodes().filter((node) => node.data.level == 2).length > 0 ? true : false
+  )
+  console.log(hasLevel2Bubble)
+  const [hasLevel3Bubble, setHasLevel3Bubble] = useState(
+    getNodes().filter((node) => node.data.level == 3).length > 0 ? true : false
+  )
 
-  const menuItems = [
+  const [menuItems, setMenuItems] = useState([
     {
       icon: <img src={wavingHand} alt="" />,
       label: '探索問卷',
@@ -148,7 +168,8 @@ const NavDrawer = () => {
       icon: <img src={jamJar} alt="" />,
       label: '靈感果醬',
       prompt: '透過即興遊戲生成專案主題',
-      onClick: handlerChange2BrainStorm
+      onClick: handlerChange2BrainStorm,
+      disabled: hasLevel2Bubble
     },
     {
       icon: <img src={idea} alt="" />,
@@ -156,9 +177,9 @@ const NavDrawer = () => {
       prompt: '逛逛他人的心智圖',
       onClick: handlerChange2Gallery
     }
-  ]
+  ])
 
-  const actionItems = [
+  const [actionItems, setActionItems] = useState([
     {
       icon: <img src={rocket} alt="" />,
       label: '開始計畫',
@@ -167,7 +188,8 @@ const NavDrawer = () => {
       disabled:
         !selectedNode ||
         selectedNode.data.is_launched ||
-        selectedNode.data.level !== 3
+        selectedNode.data.level !== 3 ||
+        hasLevel3Bubble
     },
     {
       icon: <img src={dashboard} alt="" />,
@@ -181,7 +203,70 @@ const NavDrawer = () => {
       prompt: '在 Discord 中提問、交流',
       onClick: handlerAheadDiscordStatus
     }
-  ]
+  ])
+
+  useEffect(() => {
+    console.log('update')
+    const { getNodes } = store.getState()
+    const level_2_result =
+      getNodes().filter((node) => node.data.level === 2).length > 0
+        ? true
+        : false
+    const level_3_result =
+      getNodes().filter((node) => node.data.level === 3).length > 0
+        ? true
+        : false
+    console.log(level_2_result)
+    console.log(level_3_result)
+    setHasLevel2Bubble(level_2_result)
+    setHasLevel3Bubble(level_3_result)
+    setMenuItems([
+      {
+        icon: <img src={wavingHand} alt="" />,
+        label: '探索問卷',
+        prompt: '透過問卷生成心智圖',
+        onClick: handlerTallyPopup
+      },
+      {
+        icon: <img src={jamJar} alt="" />,
+        label: '靈感果醬',
+        prompt: '透過即興遊戲生成專案主題',
+        onClick: handlerChange2BrainStorm,
+        disabled: level_2_result
+      },
+      {
+        icon: <img src={idea} alt="" />,
+        label: '點子畫廊',
+        prompt: '逛逛他人的心智圖',
+        onClick: handlerChange2Gallery
+      }
+    ])
+    setActionItems([
+      {
+        icon: <img src={rocket} alt="" />,
+        label: '開始計畫',
+        prompt: '請選擇一個專案主題開始',
+        onClick: handlerTallyStartProject,
+        disabled:
+          !selectedNode ||
+          selectedNode.data.is_launched ||
+          selectedNode.data.level !== 3 ||
+          level_3_result
+      },
+      {
+        icon: <img src={dashboard} alt="" />,
+        label: '專案畫廊',
+        prompt: '逛逛他人的專案',
+        onClick: handlerOpenProjectWall
+      },
+      {
+        icon: <img src={icon_discord} alt="" />,
+        label: '社群互動',
+        prompt: '在 Discord 中提問、交流',
+        onClick: handlerAheadDiscordStatus
+      }
+    ])
+  }, [store])
 
   const projectItems = projects.map((project: Project) => ({
     icon: <img src={file} alt="" />,
@@ -238,7 +323,7 @@ const NavDrawer = () => {
               }`}
             >
               <div
-                className="tooltip tooltip-right flex font-sans"
+                className={`tooltip tooltip-right flex font-sans ${item.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 data-tip={item.prompt}
                 onClick={item.onClick}
               >
@@ -246,7 +331,11 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm text-gray-600 group-hover:text-[#6CA579] ${isExpanded ? 'block' : 'hidden'}`}
+                  className={`ml-3 flex items-center font-sans text-sm ${
+                    item.disabled
+                      ? 'text-gray-300'
+                      : 'text-gray-600 group-hover:text-[#6CA579]'
+                  } ${isExpanded ? 'block' : 'hidden'}`}
                 >
                   {item.label}
                 </span>
