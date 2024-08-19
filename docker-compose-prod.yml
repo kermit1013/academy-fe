@@ -3,5 +3,6 @@ services:
   myservice: # 服务名称可以自定义
     image: frontend # 使用与 docker build -t myimage . 相同的镜像
     build: ./Dockerfile.prod # 从当前目录的 Dockerfile 构建镜像
-    ports: 3000:80
+    ports:
+      - '3000:80'
     container_name: loudy_v3 # 容器名称
