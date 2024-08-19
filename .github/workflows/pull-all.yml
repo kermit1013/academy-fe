@@ -56,12 +56,11 @@ jobs:
             cd ~/academy-fe
             git checkout dev
             git pull
-            echo "yes" 
-            echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}"  >> .env
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" > .env
             # Build the images first
             if sudo docker-compose -f docker-compose-dev.yml build; then
               # If build succeeds, stop old containers but keep the images
-              sudo docker-compose -f docker-compose-dev.yml down
+              sudo docker-compose -f docker-compose-dev.yml down --remove-orphans
               # Start new containers
               if sudo docker-compose up -d; then
                 echo "New version deployed successfully."
