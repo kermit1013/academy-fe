@@ -1,8 +1,8 @@
 version: '3.8' # 使用 3.8 版本的 compose 文件格式
 services:
-  myservice: # 服务名称可以自定义
-    image: frontend # 使用与 docker build -t myimage . 相同的镜像
+  frontend-dev: # 服务名称可以自定义
+    image: frontend-dev # 使用与 docker build -t myimage . 相同的镜像
     build: ./Dockerfile.dev # 从当前目录的 Dockerfile 构建镜像
     ports:
       - '3001:80'
-    container_name: loudy_v3 # 容器名称
+    container_name: frontend-dev # 容器名称
