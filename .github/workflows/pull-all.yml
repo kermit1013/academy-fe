@@ -24,14 +24,13 @@ jobs:
             cd ~/academy-fe
             git checkout prod
             git pull
-            echo "yes"         
-            echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}"  >> .env.production
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" > .env
             # Build the images first
             if sudo docker-compose -f docker-compose-prod.yml build; then
               # If build succeeds, stop old containers but keep the images
-              sudo docker-compose -f docker-compose-prod.yml down
+              sudo docker-compose -f docker-compose-prod.yml down --remove-orphans
               # Start new containers
-              if sudo docker-compose up -d; then
+              if sudo docker-compose -f docker-compose-prod.yml up -d; then
                 echo "New version deployed successfully."
                 # Clean up old images
                 sudo docker image prune -af
@@ -62,7 +61,7 @@ jobs:
               # If build succeeds, stop old containers but keep the images
               sudo docker-compose -f docker-compose-dev.yml down --remove-orphans
               # Start new containers
-              if sudo docker-compose up -d; then
+              if sudo docker-compose -f docker-compose-dev.yml up -d; then
                 echo "New version deployed successfully."
                 # Clean up old images
                 sudo docker image prune -af
