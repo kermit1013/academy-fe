@@ -3,7 +3,7 @@ import request from '../request'
 export const SelectRandomContext = async (endpoint: string): Promise<any> => {
   try {
     const result = await request.get(`/interactions/${endpoint}`)
-    if (result.status === 2000) {
+    if (result.status === 200) {
       return result.data
     }
   } catch (error: any) {

@@ -127,7 +127,7 @@ const NavDrawer = () => {
     }
     GetMyProject()
       .then((result) => {
-        setProjects(result.data)
+        setProjects(result)
       })
       .catch((error) => {
         console.error('Error fetching data:', error)

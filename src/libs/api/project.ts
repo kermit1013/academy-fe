@@ -20,7 +20,7 @@ export const GetProject = async (
     const result = await request.get(
       nodeId ? `/projects/nodes/${nodeId}` : `/projects/${projectId}`
     )
-    if (result.status === 2000) {
+    if (result.status === 200) {
       return result.data
     }
   } catch (error: any) {

@@ -128,18 +128,18 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
       GetUserInfo(action_type, user_id)
         .then((result) => {
-          updateUserIdList(action_type, result.data.id)
+          updateUserIdList(action_type, result.id)
           if (action_type === 0) {
-            setIsOpenTallyPopup(!result.data.has_submitted_tally)
+            setIsOpenTallyPopup(!result.has_submitted_tally)
           }
 
           const nodeList = mapNodesToReactFlow(
-            result.data.nodes,
-            result.data.username
+            result.nodes,
+            result.username
           )
-          const edgeList = mapEdgesToReactFlow(result.data.edges)
+          const edgeList = mapEdgesToReactFlow(result.edges)
 
-          updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
+          updateStateAndStorage(result.id, nodeList, edgeList, action_type)
         })
         .catch((error) => {
           console.error('Error fetching data:', error)

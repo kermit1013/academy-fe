@@ -40,8 +40,8 @@ const LoginColumns = () => {
     setIsLoggingIn(true)
     TokenPair(user_name, passwd)
       .then((result) => {
-        localStorage.setItem('access_token', result.data.data.access)
-        localStorage.setItem('refresh_token', result.data.data.refresh)
+        localStorage.setItem('access_token', result.data.access)
+        localStorage.setItem('refresh_token', result.data.refresh)
         messageApi.success(`歡迎${user_name}`)
         setTimeout(() => {
           navigate('/search')

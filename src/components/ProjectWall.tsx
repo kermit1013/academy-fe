@@ -34,7 +34,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
     }
     GetProjectList()
       .then((result) => {
-        const projectsWithImages = result.data.map((project: Project) => ({
+        const projectsWithImages = result.map((project: Project) => ({
           ...project,
           imagePath: `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
         }))

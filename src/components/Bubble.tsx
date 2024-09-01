@@ -122,11 +122,11 @@ const Bubble = ({ data }: props) => {
         }
 
         RenderNewBubble(data.id, {
-          id: result.data.id,
+          id: result.id,
           label: '',
           category: '',
           isVisible: true,
-          level: result.data.level,
+          level: result.level,
           is_launched: false,
           reference: null
         })

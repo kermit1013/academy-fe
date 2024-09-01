@@ -36,13 +36,13 @@ const Thinking = ({ action_type }: props) => {
     NewBubble(data.id, modifyText, '', action_bubble.name)
       .then((result) => {
         RenderNewBubble(data.id, {
-          id: result.data.id,
-          label: result.data.label,
-          category: result.data.category,
-          level: result.data.level,
+          id: result.id,
+          label: result.label,
+          category: result.category,
+          level: result.level,
           is_launched: false,
           isVisible: false,
-          reference: result.data.reference
+          reference: result.reference
         })
       })
       .catch((error) => {

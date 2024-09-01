@@ -47,7 +47,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
       formData.append('file', file)
       const result = await NewBlockNote(formData)
       if (result.status === 200) {
-        return { url: result.data.url }
+        return { url: result.url }
       } else {
         return { url: '' }
       }
@@ -72,8 +72,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
 
     GetProject(nodeId, projectId)
       .then((result) => {
-        editor.replaceBlocks(editor.document, result.data.content)
-        setBlocks(result.data.content)
+        editor.replaceBlocks(editor.document, result.content)
+        setBlocks(result.content)
       })
       .catch((error) => {
         console.error('Error fetching data:', error)
@@ -133,7 +133,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
     setIsExporting(true)
     ExportProject(content)
       .then((result) => {
-        saveAs(result.data, 'exported_project.docx')
+        saveAs(result, 'exported_project.docx')
         console.log('Project exported successfully!')
       })
       .catch((error) => {
