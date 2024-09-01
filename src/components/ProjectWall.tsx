@@ -16,6 +16,7 @@ interface Project {
   description: string
   imagePath: string
   created_at: string
+  view_count: number
 }
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
@@ -109,7 +110,9 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                     <span className="badge bg-[#6CA579] text-white">NEW</span>
                   )}
                 </h2>
-                <p className="font-sans">{project.description}</p>
+                <p className="text-right font-sans text-xs">
+                  {project.view_count} 瀏覽
+                </p>
               </div>
             </div>
           ))}
