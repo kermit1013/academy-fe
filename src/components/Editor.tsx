@@ -155,7 +155,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
           theme={'light'}
           editor={editor}
           onChange={() => {
-            console.log(editor.document)
+            console.log(blocks)
             debouncedSave(editor.document)
             setBlocks(editor.document)
           }}

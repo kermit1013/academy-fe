@@ -1,6 +1,5 @@
 import { KeyboardEvent, useCallback, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
-import styles from '../styles.module.css'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import { message } from 'antd'
@@ -12,7 +11,6 @@ import useStartProject from '../hooks/useStartProject'
 import useTopMenu from '../hooks/useTopMenu'
 import useEditor from '../hooks/useEditor'
 import { DeleteBubble, EditBubble, NewBubble } from '../libs/api/bubble'
-import { getNodeClassName } from '../funcs/utils'
 interface props {
   data: {
     id: string
