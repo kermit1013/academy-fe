@@ -152,7 +152,6 @@ const NavDrawer = () => {
   const [hasLevel2Bubble, setHasLevel2Bubble] = useState(
     getNodes().filter((node) => node.data.level == 2).length > 0 ? true : false
   )
-  console.log(hasLevel2Bubble)
   const [hasLevel3Bubble, setHasLevel3Bubble] = useState(
     getNodes().filter((node) => node.data.level == 3).length > 0 ? true : false
   )
@@ -206,7 +205,6 @@ const NavDrawer = () => {
   ])
 
   useEffect(() => {
-    console.log('update')
     const { getNodes } = store.getState()
     const level_2_result =
       getNodes().filter((node) => node.data.level === 2).length > 0
@@ -216,8 +214,6 @@ const NavDrawer = () => {
       getNodes().filter((node) => node.data.level === 3).length > 0
         ? true
         : false
-    console.log(level_2_result)
-    console.log(level_3_result)
     setHasLevel2Bubble(level_2_result)
     setHasLevel3Bubble(level_3_result)
     setMenuItems([

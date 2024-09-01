@@ -11,20 +11,12 @@ import useStartProject from '../hooks/useStartProject'
 import useTopMenu from '../hooks/useTopMenu'
 import useEditor from '../hooks/useEditor'
 import { DeleteBubble, EditBubble, NewBubble } from '../libs/api/bubble'
-interface props {
-  data: {
-    id: string
-    label: string
-    category: string
-    isVisible: boolean
-    level: number
-    is_launched: boolean
-  }
-}
+import { BubbleProps, createNewBubbleNode } from '../libs/bubble'
+import { getNodeClassName } from '../funcs/utils'
 
-const Bubble = ({ data }: props) => {
+const Bubble = ({ data }: BubbleProps) => {
   const { getNodes, getEdges } = useReactFlow()
-  const { setSelectBubble, RenderNewBubble } = useBubble()
+  const { setSelectBubble } = useBubble()
   const { setStartProjectStatus } = useStartProject()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -116,20 +108,21 @@ const Bubble = ({ data }: props) => {
   const handlerNewBubble = useCallback(async () => {
     NewBubble(data.id, '', '', '')
       .then((result) => {
-        const user_id = localStorage.getItem('user_id')
-        if (user_id == null) {
-          messageApi.warning('取不到使用者id')
-        }
-
-        RenderNewBubble(data.id, {
-          id: result.id,
-          label: '',
-          category: '',
-          isVisible: true,
-          level: result.level,
-          is_launched: false,
-          reference: null
+        const { node: childNode, edge: childEdge } = createNewBubbleNode(
+          result,
+          data.id
+        )
+        const nodesList = getNodes().map((node) => {
+          if (node.id === data.id) {
+            return { ...node, data: { ...node.data, isVisible: false } }
+          }
+          return node
         })
+
+        const newNodeList = nodesList.concat(childNode)
+        setNodes(newNodeList)
+        setEdges((eds) => [...eds, childEdge])
+
         setModifyData('')
 
         messageApi.info('已新增')
@@ -149,55 +142,6 @@ const Bubble = ({ data }: props) => {
         console.error('Error fetching data:', error)
       })
   }
-
-  // const RenderNewBubble = (result: any) => {
-  //   const new_bubble = result.data
-
-  //   const childNode = {
-  //     id: `${new_bubble.id}`,
-  //     type: 'bubble',
-  //     position: {
-  //       x: 0,
-  //       y: 0
-  //     },
-  //     data: {
-  //       id: `${new_bubble.id}`,
-  //       label: '',
-  //       category: null,
-  //       isVisible: true,
-  //       level: new_bubble.level,
-  //       is_launched: false
-  //     },
-  //     className: getNodeClassName({
-  //       level: result.data.level,
-  //       is_launched: false,
-  //       is_visible: false
-  //     })
-  //   }
-  //   const childEdge = {
-  //     id: `${data.id}->${new_bubble.id}`,
-  //     source: `${data.id}`,
-  //     target: `${new_bubble.id}`,
-  //     type: 'straight'
-  //   }
-  //   const nodesList = getNodes().map((node) => {
-  //     if (node.id === data.id) {
-  //       const newNode = { ...node }
-  //       newNode.data = { ...node.data, isVisible: false }
-
-  //       return newNode
-  //     }
-  //     return node
-  //   })
-
-  //   const newNodeList = nodesList.concat(childNode)
-  //   setNodes(newNodeList)
-  //   setEdges((eds) => [...eds, childEdge])
-  //   setEditBubbleId(new_bubble.id)
-  //   setModifyData('')
-
-  //   messageApi.info('已新增')
-  // }
 
   const RenderDeleteBubble = () => {
     const nodes = getNodes()

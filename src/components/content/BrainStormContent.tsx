@@ -9,8 +9,11 @@ import icon_enter from '/icons/icon_enter.svg'
 import close_btn from '/close_btn.svg'
 import icon_plus from '/icons/icon_plus.svg'
 import { NewBubble } from '../../libs/api/bubble'
-import useBubble from '../../hooks/useBubble'
 import { SelectRandomContext } from '../../libs/api/brain_storm'
+import { BubbleProps, createNewBubbleNode } from '../../libs/bubble'
+import useNodesStateSynced from '../../hooks/useNodesStateSynced'
+import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
 }
@@ -29,25 +32,41 @@ const Thinking = ({ action_type }: props) => {
   const { setSelectedNode, selectedNode } = useStartProject()
   const [modifyText, setModifyText] = useState('')
   const [isComposing, setIsComposing] = useState(false)
-  const { RenderNewBubble } = useBubble()
 
+  const setNodes = useNodesStateSynced()[1]
+  const setEdges = useEdgesStateSynced()[1]
   const handlerNewBubble = useCallback(async () => {
     const data = selectedNode?.data
-    NewBubble(data.id, modifyText, '', action_bubble.name)
-      .then((result) => {
-        RenderNewBubble(data.id, {
-          id: result.id,
-          label: result.label,
-          category: result.category,
-          level: result.level,
-          is_launched: false,
-          isVisible: false,
-          reference: result.reference
-        })
+    if (data == null) {
+      messageApi.warning('請選擇一顆泡泡後再送出資料!')
+      return
+    }
+
+    const result = await NewBubble(data.id, modifyText, '', action_bubble.name)
+    if (result != null) {
+      // const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
+
+      const { node: childNode, edge: childEdge } = createNewBubbleNode(
+        result,
+        data.id
+      )
+
+      const nodesList = getNodes().map((node) => {
+        if (node.id === data.id) {
+          const newNode = { ...node }
+          newNode.data = { ...node.data, isVisible: false }
+
+          return newNode
+        }
+        return node
       })
-      .catch((error) => {
-        console.error(error)
-      })
+
+      const newNodeList = nodesList.concat(childNode)
+      setNodes(newNodeList)
+      setEdges((eds) => [...eds, childEdge])
+      setModifyText('')
+      messageApi.info('已新增')
+    }
   }, [selectedNode, modifyText])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

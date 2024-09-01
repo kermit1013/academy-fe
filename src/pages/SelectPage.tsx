@@ -114,7 +114,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   const getPersonData = useCallback(
     async (action_type: number) => {
-      console.log(actionType)
       let user_id: number | undefined
 
       if (action_type === -1) {
@@ -133,10 +132,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             setIsOpenTallyPopup(!result.has_submitted_tally)
           }
 
-          const nodeList = mapNodesToReactFlow(
-            result.nodes,
-            result.username
-          )
+          const nodeList = mapNodesToReactFlow(result.nodes, result.username)
           const edgeList = mapEdgesToReactFlow(result.edges)
 
           updateStateAndStorage(result.id, nodeList, edgeList, action_type)
