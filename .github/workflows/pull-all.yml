@@ -21,7 +21,7 @@ jobs:
           port: 22
           script: |
             set -e
-            cd ~/academy-fe
+            cd ~/app.groundi.io/prod
             git checkout prod
             git pull
             echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" > .env
@@ -52,7 +52,7 @@ jobs:
           port: 22
           script: |
             set -e
-            cd ~/academy-fe
+            cd ~/app.groundi.io/dev
             git checkout dev
             git pull
             echo "VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}" > .env
