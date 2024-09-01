@@ -12,7 +12,6 @@ import useTopMenu from '../hooks/useTopMenu'
 import useEditor from '../hooks/useEditor'
 import { DeleteBubble, EditBubble, NewBubble } from '../libs/api/bubble'
 import { BubbleProps, createNewBubbleNode } from '../libs/bubble'
-import { getNodeClassName } from '../funcs/utils'
 
 const Bubble = ({ data }: BubbleProps) => {
   const { getNodes, getEdges } = useReactFlow()

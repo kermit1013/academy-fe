@@ -10,10 +10,9 @@ import close_btn from '/close_btn.svg'
 import icon_plus from '/icons/icon_plus.svg'
 import { NewBubble } from '../../libs/api/bubble'
 import { SelectRandomContext } from '../../libs/api/brain_storm'
-import { BubbleProps, createNewBubbleNode } from '../../libs/bubble'
+import { createNewBubbleNode } from '../../libs/bubble'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
-import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
 }

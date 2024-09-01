@@ -115,6 +115,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const getPersonData = useCallback(
     async (action_type: number) => {
       let user_id: number | undefined
+      console.log(actionType)
 
       if (action_type === -1) {
         if (userIdListRef.current.length > 1) {
