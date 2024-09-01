@@ -1,17 +1,16 @@
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useReactFlow } from 'reactflow'
 import { message } from 'antd'
-import axios from 'axios'
 import useTopMenu from '../../hooks/useTopMenu'
-import useNodesStateSynced from '../../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 import useStartProject from '../../hooks/useStartProject'
 import icon_clock from '/clock.svg'
 import icon_change from '/change.svg'
 import icon_enter from '/icons/icon_enter.svg'
 import close_btn from '/close_btn.svg'
 import icon_plus from '/icons/icon_plus.svg'
-import { getNodeClassName } from '../../funcs/utils'
+import { NewBubble } from '../../libs/api/bubble'
+import useBubble from '../../hooks/useBubble'
+import { SelectRandomContext } from '../../libs/api/brain_storm'
 type props = {
   action_type: number
 }
@@ -30,76 +29,25 @@ const Thinking = ({ action_type }: props) => {
   const { setSelectedNode, selectedNode } = useStartProject()
   const [modifyText, setModifyText] = useState('')
   const [isComposing, setIsComposing] = useState(false)
+  const { RenderNewBubble } = useBubble()
 
-  const setNodes = useNodesStateSynced()[1]
-  const setEdges = useEdgesStateSynced()[1]
   const handlerNewBubble = useCallback(async () => {
     const data = selectedNode?.data
-    const access_token = localStorage.getItem('access_token')
-
-    const result = await axios.post(
-      'https://api.loudy.in/api/graphs/nodes',
-      {
-        source: data.id,
-        label: modifyText,
-        category: '',
-        reference: action_bubble.name
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }
-    )
-    if (result.status === 200) {
-      // const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
-      const user_id = localStorage.getItem('user_id')
-      if (user_id == null) {
-        messageApi.warning('取不到使用者id')
-        return
-      }
-
-      const childNode = {
-        id: `${result.data.id}`,
-        type: 'bubble',
-        position: { x: 0, y: 0 },
-        data: {
-          id: `${result.data.id}`,
+    NewBubble(data.id, modifyText, '', action_bubble.name)
+      .then((result) => {
+        RenderNewBubble(data.id, {
+          id: result.data.id,
           label: result.data.label,
           category: result.data.category,
           level: result.data.level,
           is_launched: false,
+          isVisible: false,
           reference: result.data.reference
-        },
-        className: getNodeClassName({
-          level: result.data.level,
-          is_launched: false,
-          is_visible: false
         })
-      }
-      const childEdge = {
-        id: `${data.id}->${result.data.id}`,
-        source: `${data.id}`,
-        target: `${result.data.id}`,
-        type: 'straight'
-      }
-
-      const nodesList = getNodes().map((node) => {
-        if (node.id === data.id) {
-          const newNode = { ...node }
-          newNode.data = { ...node.data, isVisible: false }
-
-          return newNode
-        }
-        return node
       })
-
-      const newNodeList = nodesList.concat(childNode)
-      setNodes(newNodeList)
-      setEdges((eds) => [...eds, childEdge])
-      setModifyText('')
-      messageApi.info('已新增')
-    }
+      .catch((error) => {
+        console.error(error)
+      })
   }, [selectedNode, modifyText])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,26 +167,19 @@ const Thinking = ({ action_type }: props) => {
   const handler_refresh_api = useCallback(async () => {
     if (!access_token) return
 
-    let result
     if (action_type === 3) {
       const node = getNodes().filter((node) => node.data.level === 2)
       const select_random_bubble = node[Math.floor(Math.random() * node.length)]
       setActionBubble(select_random_bubble.data)
     } else {
       const endpoint = action_type === 1 ? 'celebrities' : 'scenarios'
-      try {
-        result = await axios.get(
-          `https://api.loudy.in/api/interactions/${endpoint}`,
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`
-            }
-          }
-        )
-        setActionBubble(result.data)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
+      SelectRandomContext(endpoint)
+        .then((result) => {
+          setActionBubble(result)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   }, [action_type, access_token, getNodes])
 

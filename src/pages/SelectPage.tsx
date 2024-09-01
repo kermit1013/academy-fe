@@ -13,7 +13,6 @@ import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 
 import { message } from 'antd'
 import Bubble from '../components/Bubble'
-import axios from 'axios'
 import useCursorStateSynced from '../hooks/useCursorStateSynced'
 import Cursors from '../components/Cursors'
 import { useNavigate } from 'react-router-dom'
@@ -31,6 +30,7 @@ import GalleryContent from '../components/content/GalleryContent'
 // import CustomZoom from '../components/CustomZoom'
 import NavDrawer from '../components/NavDrawer'
 import { getNodeClassName } from '../funcs/utils'
+import { GetUserInfo } from '../libs/api/user'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -85,9 +85,19 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
   const [actionType, setActionType] = useState(0)
-  const { isOpenBrainStormContent, isOpenGalleryContent, isOpenSettingModal, isOpenTallyPopup, setIsOpenTallyPopup } =
-    useTopMenu()
-  const [tooltipData, setTooltipData] = useState({ show: false, content: '', x: 0, y: 0 });
+  const {
+    isOpenBrainStormContent,
+    isOpenGalleryContent,
+    isOpenSettingModal,
+    isOpenTallyPopup,
+    setIsOpenTallyPopup
+  } = useTopMenu()
+  const [tooltipData, setTooltipData] = useState({
+    show: false,
+    content: '',
+    x: 0,
+    y: 0
+  })
 
   useEffect(() => {
     getPersonData(0)
@@ -104,54 +114,36 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   const getPersonData = useCallback(
     async (action_type: number) => {
-      console.log(actionType)
-      const access_token = localStorage.getItem('access_token')
-      if (!access_token) {
-        navigate('/')
-        return
-      }
-
       let user_id: number | undefined
 
       if (action_type === -1) {
         if (userIdListRef.current.length > 1) {
           user_id = userIdListRef.current[userIdListRef.current.length - 2]
-          console.log(user_id)
         } else {
           messageApi.warning('已經沒有上一位用戶了哦！')
-          console.log('userIdList is empty')
           return
         }
       }
-      const baseUrl = 'https://api.loudy.in/api/users/me'
-      const url =
-        action_type === -1
-          ? `${baseUrl}?user_id=${user_id}`
-          : action_type === 1
-            ? `${baseUrl}?user_id=0`
-            : baseUrl
 
-      try {
-        const result = await axios.get(url, {
-          headers: { Authorization: `Bearer ${access_token}` }
+      GetUserInfo(action_type, user_id)
+        .then((result) => {
+          updateUserIdList(action_type, result.data.id)
+          if (action_type === 0) {
+            setIsOpenTallyPopup(!result.data.has_submitted_tally)
+          }
+
+          const nodeList = mapNodesToReactFlow(
+            result.data.nodes,
+            result.data.username
+          )
+          const edgeList = mapEdgesToReactFlow(result.data.edges)
+
+          updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
         })
-
-        updateUserIdList(action_type, result.data.id)
-        if (action_type === 0) {
-          setIsOpenTallyPopup(!result.data.has_submitted_tally)
-        }
-
-        const nodeList = mapNodesToReactFlow(
-          result.data.nodes,
-          result.data.username
-        )
-        const edgeList = mapEdgesToReactFlow(result.data.edges)
-
-        updateStateAndStorage(result.data.id, nodeList, edgeList, action_type)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        navigate('/')
-      }
+        .catch((error) => {
+          console.error('Error fetching data:', error)
+          navigate('/')
+        })
     },
     [navigate, setUserIdList, setUserId, setNodes, setEdges]
   )
@@ -211,38 +203,31 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
 
   useForceLayout({ strength, distance, setIsLoading, userId })
 
-  const onNodeMouseEnter: NodeMouseHandler = useCallback(
-    (event, node) => {
-      const { clientX, clientY } = event as React.MouseEvent;
-      if (!node.data.reference) return 
-      if (node.data.level === 3) {
-        setTooltipData({
-          show: true,
-          content: node.data.reference || 'unknown',
-          x: clientX,
-          y: clientY
-        });
-      }
-    },
-    []
-  );
+  const onNodeMouseEnter: NodeMouseHandler = useCallback((event, node) => {
+    const { clientX, clientY } = event as React.MouseEvent
+    if (!node.data.reference) return
+    if (node.data.level === 3) {
+      setTooltipData({
+        show: true,
+        content: node.data.reference || 'unknown',
+        x: clientX,
+        y: clientY
+      })
+    }
+  }, [])
 
-
-  const onNodeMouseLeave: NodeMouseHandler = useCallback(
-    () => {
-      setTooltipData(prev => ({ ...prev, show: false }));
-    },
-    []
-  );
+  const onNodeMouseLeave: NodeMouseHandler = useCallback(() => {
+    setTooltipData((prev) => ({ ...prev, show: false }))
+  }, [])
 
   const Tooltip = ({ content, x, y }: referenceTooltipProps) => (
-    <div 
-      className="absolute z-10 p-2 border border-[#7B7C7B]/10 bg-white/20 font-sans text-[13px] text-[#7B7C7B] rounded shadow-md"
+    <div
+      className="absolute z-10 rounded border border-[#7B7C7B]/10 bg-white/20 p-2 font-sans text-[13px] text-[#7B7C7B] shadow-md"
       style={{ left: x, top: y }}
     >
       {content}
     </div>
-  );
+  )
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
@@ -311,13 +296,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           <NavDrawer />
         </Panel>
         <Panel position="bottom-center">
-        {isOpenBrainStormContent && <BrainStormContent />}
-        {isOpenGalleryContent && (
-          <GalleryContent
-            getPersonData={getPersonData}
-            setActionType={setActionType}
-          />
-        )}
+          {isOpenBrainStormContent && <BrainStormContent />}
+          {isOpenGalleryContent && (
+            <GalleryContent
+              getPersonData={getPersonData}
+              setActionType={setActionType}
+            />
+          )}
         </Panel>
         <Cursors cursors={cursors} />
       </ReactFlow>
@@ -327,12 +312,12 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       />
       {isOpenSettingModal && <SettingModal />}
       {tooltipData.show && (
-      <Tooltip 
-        content={tooltipData.content} 
-        x={tooltipData.x} 
-        y={tooltipData.y} 
-      />
-    )}
+        <Tooltip
+          content={tooltipData.content}
+          x={tooltipData.x}
+          y={tooltipData.y}
+        />
+      )}
     </>
   )
 }

@@ -1,7 +1,6 @@
 import { KeyboardEvent, useCallback, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import styles from '../styles.module.css'
-import axios from 'axios'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import { message } from 'antd'
@@ -12,6 +11,8 @@ import icon_project from '../../public/icon_project.svg'
 import useStartProject from '../hooks/useStartProject'
 import useTopMenu from '../hooks/useTopMenu'
 import useEditor from '../hooks/useEditor'
+import { DeleteBubble, EditBubble, NewBubble } from '../libs/api/bubble'
+import { getNodeClassName } from '../funcs/utils'
 interface props {
   data: {
     id: string
@@ -25,7 +26,7 @@ interface props {
 
 const Bubble = ({ data }: props) => {
   const { getNodes, getEdges } = useReactFlow()
-  const { setSelectBubble } = useBubble()
+  const { setSelectBubble, RenderNewBubble } = useBubble()
   const { setStartProjectStatus } = useStartProject()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
@@ -105,133 +106,126 @@ const Bubble = ({ data }: props) => {
       return
     }
     if (confirm('確定要刪除嗎?')) {
-      const origin_id = data.id
-      const access_token = localStorage.getItem('access_token')
-      const result = await axios.delete(
-        `https://api.loudy.in/api/graphs/nodes/${origin_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        }
-      )
-      if (result.status === 204) {
-        const nodes = getNodes()
-        const edges = getEdges()
-        const nodeList = nodes.filter((node) => node.id !== data.id)
-        const edgeList = edges.filter((edge) => edge.target !== data.id)
-        setNodes(nodeList)
-        setEdges(edgeList)
-        messageApi.info('已刪除')
-      }
+      DeleteBubble(data.id)
+        .then(() => {
+          RenderDeleteBubble()
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error)
+        })
     }
   }
-
   const handlerNewBubble = useCallback(async () => {
-    const access_token = localStorage.getItem('access_token')
-
-    const result = await axios.post(
-      'https://api.loudy.in/api/graphs/nodes',
-      {
-        source: parseInt(data.id),
-        label: '',
-        category: ''
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`
+    NewBubble(data.id, '', '', '')
+      .then((result) => {
+        const user_id = localStorage.getItem('user_id')
+        if (user_id == null) {
+          messageApi.warning('取不到使用者id')
         }
-      }
-    )
-    if (result.status === 200) {
-      const user_id = localStorage.getItem('user_id')
-      if (user_id == null) {
-        messageApi.warning('取不到使用者id')
-      }
 
-      const new_bubble = result.data
-      const class_name =
-        new_bubble.level === 0
-          ? styles.node1_center
-          : new_bubble.level === 1
-            ? styles.node1_level1_node
-            : new_bubble.level === 2
-              ? styles.node1_level2_node
-              : styles.node1_level3_node
-      const childNode = {
-        id: `${new_bubble.id}`,
-        type: 'bubble',
-        position: {
-          x: 0,
-          y: 0
-        },
-        data: {
-          id: `${new_bubble.id}`,
+        RenderNewBubble(data.id, {
+          id: result.data.id,
           label: '',
-          category: null,
+          category: '',
           isVisible: true,
-          level: new_bubble.level,
-          is_launched: false
-        },
-        className: class_name
-      }
-      const childEdge = {
-        id: `${data.id}->${new_bubble.id}`,
-        source: `${data.id}`,
-        target: `${new_bubble.id}`,
-        type: 'straight'
-      }
-      const nodesList = getNodes().map((node) => {
-        if (node.id === data.id) {
-          const newNode = { ...node }
-          newNode.data = { ...node.data, isVisible: false }
+          level: result.data.level,
+          is_launched: false,
+          reference: null
+        })
+        setModifyData('')
 
-          return newNode
-        }
-        return node
+        messageApi.info('已新增')
       })
-
-      const newNodeList = nodesList.concat(childNode)
-      setNodes(newNodeList)
-      setEdges((eds) => [...eds, childEdge])
-      setEditBubbleId(new_bubble.id)
-      setModifyData('')
-      messageApi.info('已新增')
-    }
+      .catch((error) => {
+        console.error('Error fetching data:', error)
+      })
   }, [])
 
   const handlerEditBubble = async () => {
     setEditBubbleId('')
-
-    const access_token = localStorage.getItem('access_token')
-    const result = await axios.put(
-      `https://api.loudy.in/api/graphs/nodes/${data.id}`,
-      {
-        label: modifyData
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }
-    )
-
-    if (result.status === 200) {
-      const nodes = getNodes()
-      const newNodeList = nodes.map((node) => {
-        if (node.id === data.id) {
-          let newNode = { ...node }
-          let newNode_data = node.data
-          newNode_data.label = modifyData
-          newNode.data = newNode_data
-          return newNode
-        }
-        return node
+    EditBubble(data.id, modifyData)
+      .then(() => {
+        RenderEditBubble(data.id)
       })
-      setNodes(newNodeList)
-      setModifyData('')
-      messageApi.info('已編輯')
-    }
+      .catch((error) => {
+        console.error('Error fetching data:', error)
+      })
+  }
+
+  // const RenderNewBubble = (result: any) => {
+  //   const new_bubble = result.data
+
+  //   const childNode = {
+  //     id: `${new_bubble.id}`,
+  //     type: 'bubble',
+  //     position: {
+  //       x: 0,
+  //       y: 0
+  //     },
+  //     data: {
+  //       id: `${new_bubble.id}`,
+  //       label: '',
+  //       category: null,
+  //       isVisible: true,
+  //       level: new_bubble.level,
+  //       is_launched: false
+  //     },
+  //     className: getNodeClassName({
+  //       level: result.data.level,
+  //       is_launched: false,
+  //       is_visible: false
+  //     })
+  //   }
+  //   const childEdge = {
+  //     id: `${data.id}->${new_bubble.id}`,
+  //     source: `${data.id}`,
+  //     target: `${new_bubble.id}`,
+  //     type: 'straight'
+  //   }
+  //   const nodesList = getNodes().map((node) => {
+  //     if (node.id === data.id) {
+  //       const newNode = { ...node }
+  //       newNode.data = { ...node.data, isVisible: false }
+
+  //       return newNode
+  //     }
+  //     return node
+  //   })
+
+  //   const newNodeList = nodesList.concat(childNode)
+  //   setNodes(newNodeList)
+  //   setEdges((eds) => [...eds, childEdge])
+  //   setEditBubbleId(new_bubble.id)
+  //   setModifyData('')
+
+  //   messageApi.info('已新增')
+  // }
+
+  const RenderDeleteBubble = () => {
+    const nodes = getNodes()
+    const edges = getEdges()
+    const nodeList = nodes.filter((node) => node.id !== data.id)
+    const edgeList = edges.filter((edge) => edge.target !== data.id)
+    setNodes(nodeList)
+    setEdges(edgeList)
+    messageApi.info('已刪除')
+  }
+
+  const RenderEditBubble = (data_id: string) => {
+    const nodes = getNodes()
+    const newNodeList = nodes.map((node) => {
+      if (node.id === data_id) {
+        let newNode = { ...node }
+        let newNode_data = node.data
+        newNode_data.label = modifyData
+        newNode.data = newNode_data
+        return newNode
+      }
+      return node
+    })
+    setNodes(newNodeList)
+    setModifyData('')
+    messageApi.info('已編輯')
   }
 
   const handlerKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -255,13 +249,13 @@ const Bubble = ({ data }: props) => {
       messageApi.warning('超過字數限制!')
     }
   }
-   const handleOpenProjectEditor= () => {
+  const handleOpenProjectEditor = () => {
     setIsOpen(true)
     setEditable(false)
     setNodeId(data.id)
   }
 
-  function renderAddButton() {
+  const renderAddButton = () => {
     if (!isOpenGalleryContent && data.level !== 3) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
@@ -277,7 +271,7 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  function renderDeleteButton() {
+  const renderDeleteButton = () => {
     if (
       !isOpenGalleryContent &&
       ((data.level === 1 && data.category === null) ||
@@ -298,7 +292,7 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  function renderDiscordButton() {
+  const renderDiscordButton = () => {
     if (data.level === 3 && data.is_launched === true) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
@@ -314,7 +308,7 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  function renderStartProjectButton() {
+  const renderStartProjectButton = () => {
     if (
       !isOpenGalleryContent &&
       data.level === 3 &&
@@ -335,7 +329,7 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  function renderContent() {
+  const renderContent = () => {
     const shouldRenderTextarea =
       !isOpenGalleryContent &&
       ((data.level === 1 && data.category === null) ||
@@ -358,7 +352,7 @@ const Bubble = ({ data }: props) => {
     }
   }
 
-  function renderProjectThemeInput() {
+  const renderProjectThemeInput = () => {
     return (
       <textarea
         className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent px-4 pt-4 text-center font-sans text-base text-[#6ca579] focus:outline-none"
@@ -373,7 +367,7 @@ const Bubble = ({ data }: props) => {
     )
   }
 
-  function renderThoughtInput() {
+  const renderThoughtInput = () => {
     return (
       <textarea
         className="flex h-full w-full resize-none items-center justify-center rounded-full bg-transparent px-4 pt-2 text-center font-sans text-base text-[#6ca579] focus:outline-none"
