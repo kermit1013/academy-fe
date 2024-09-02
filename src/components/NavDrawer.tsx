@@ -58,6 +58,7 @@ const NavDrawer = () => {
           projects.filter((project: Project) => project.id !== projectId)
         )
         messageApi.success('專案刪除成功！')
+        window.location.reload()
       })
       .catch((error: any) => {
         console.error('Error deleting project:', error)

@@ -31,6 +31,7 @@ import GalleryContent from '../components/content/GalleryContent'
 import NavDrawer from '../components/NavDrawer'
 import { getNodeClassName } from '../funcs/utils'
 import { GetUserInfo } from '../libs/api/user'
+import useLogin from '../hooks/useLogin'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -85,6 +86,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
   const [actionType, setActionType] = useState(0)
+  const { setUser } = useLogin()
+  
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -130,6 +133,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         .then((result) => {
           updateUserIdList(action_type, result.id)
           if (action_type === 0) {
+            setUser(result)
             setIsOpenTallyPopup(!result.has_submitted_tally)
           }
 

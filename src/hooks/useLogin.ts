@@ -1,3 +1,4 @@
+import { any } from 'zod'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
@@ -6,6 +7,7 @@ type State = {
   email: string
   passwd: string
   user_name: string
+  user: any
 }
 
 type Actions = {
@@ -13,6 +15,7 @@ type Actions = {
   setEmail: (email: string) => void
   setPasswd: (passwd: string) => void
   setUserName: (user_name: string) => void
+  setUser: (user: any) => void
 }
 
 const useLogin = create<State & Actions>()(
@@ -21,6 +24,7 @@ const useLogin = create<State & Actions>()(
     email: '',
     passwd: '',
     user_name: '',
+    user: any,
     setIsRegister: (status: boolean) =>
       set((state) => {
         return { ...state, isRegister: status }
@@ -36,6 +40,10 @@ const useLogin = create<State & Actions>()(
     setUserName: (user_name: string) =>
       set((state) => {
         return { ...state, user_name: user_name }
+      }),
+    setUser: (user: any) =>
+      set((state) => {
+        return { ...state, user: user }
       }),
   }))
 )

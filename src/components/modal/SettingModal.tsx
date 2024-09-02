@@ -20,6 +20,7 @@ import icon_instagram from '/icons/icon_instagram.svg'
 import icon_logout from '/icons/icon_logout.svg'
 import icon_user from '/icons/icon_user.svg'
 import icon_edit from '/icons/icon_edit.svg'
+import useLogin from '../../hooks/useLogin'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
 
@@ -39,6 +40,7 @@ const SettingModal = () => {
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const navigate = useNavigate()
+  const { user, setUser } = useLogin()
 
   const ref = useRef<HTMLDialogElement>(null)
 
@@ -50,7 +52,6 @@ const SettingModal = () => {
     is_public: true
   })
 
-  const [isFetch, setIsFetch] = useState(false)
   const [isSubmit, setIsSubmit] = useState(false)
 
   const reset = () => {
@@ -70,7 +71,9 @@ const SettingModal = () => {
     setEditedUsername(userData.username)
   }
 
-  const handleUsernameChange = (e: { target: { value: SetStateAction<string> } }) => {
+  const handleUsernameChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => {
     setEditedUsername(e.target.value)
   }
 
@@ -80,8 +83,9 @@ const SettingModal = () => {
       return
     }
     try {
-      // 這裡需要添加一個 API 調用來更新用戶名
-      const res = await request.put(`/users/${userData?.id}/username`, { username: editedUsername })
+      const res = await request.put(`/users/${userData?.id}/username`, {
+        username: editedUsername
+      })
       if (res.status === 200) {
         setUserData({ ...userData, username: editedUsername })
         setIsEditingUsername(false)
@@ -102,23 +106,7 @@ const SettingModal = () => {
     localStorage.removeItem('user_name')
     localStorage.removeItem('roomName')
     localStorage.removeItem('gallery_user_id')
-  }
-
-  // 取得個人資訊
-  const fetchGetUserInfo = async () => {
-    if (isFetch) return
-    setIsFetch(true)
-    try {
-      const res = await request.get('/users/me')
-      if (!res.data) throw new Error('取得使用者資訊失敗')
-
-      const data = res.data as IUserInfo
-      setUserData(data)
-    } catch (error: any) {
-      messageApi.error(error.response.data.detail)
-    } finally {
-      setIsFetch(false)
-    }
+    setIsOpenSettingModal(false)
   }
 
   // 儲存個人資訊
@@ -127,7 +115,13 @@ const SettingModal = () => {
     setIsSubmit(true)
     try {
       const res = await request.put(`/users/${userData?.id}`, formValue)
-      if (res.status === 200) messageApi.success('儲存成功')
+      if (res.status === 200) {
+        messageApi.success('儲存成功')
+        setUser({
+          ...user,
+          ...formValue
+        })
+      }
     } catch (error: any) {
       messageApi.error(error.response.data.detail)
     } finally {
@@ -149,7 +143,9 @@ const SettingModal = () => {
 
   useEffect(() => {
     ref.current?.showModal()
-    fetchGetUserInfo()
+    // 取得個人資訊
+    const data = user as IUserInfo
+    setUserData(data)
   }, [])
 
   const handlerOnClose = () => {
@@ -168,15 +164,18 @@ const SettingModal = () => {
 
       <header className="px-4">
         <h3 className="flex items-center justify-between pb-2 text-xl font-medium">
-        {isEditingUsername ? (
+          {isEditingUsername ? (
             <div className="flex items-center">
               <input
                 type="text"
                 value={editedUsername}
                 onChange={handleUsernameChange}
-                className="mr-2 rounded border px-1 max-w-40"
+                className="mr-2 max-w-40 rounded border px-1"
               />
-              <button onClick={handleUsernameSubmit} className="text-sm text-blue-500">
+              <button
+                onClick={handleUsernameSubmit}
+                className="text-sm text-blue-500"
+              >
                 保存
               </button>
             </div>
@@ -198,7 +197,7 @@ const SettingModal = () => {
             onClick={() => handlerOnClose()}
           />
         </h3>
-        <span className="text-[#A1A1AA] text-sm">{userData.email}</span>
+        <span className="text-sm text-[#A1A1AA]">{userData.email}</span>
       </header>
 
       <hr className="my-2" />
@@ -274,10 +273,13 @@ const SettingModal = () => {
           </div>
         </div>
 
-        <div className="flex items-right gap-2 tooltip tooltip-bottom" data-tip="允許他人於漫步中看見你">
+        <div
+          className="items-right tooltip tooltip-bottom flex gap-2"
+          data-tip="允許他人於漫步中看見你"
+        >
           <img src={icon_eye} alt="icon" className="h-5 w-5" />
           <p className="flex-1">公開你的心智圖與專案</p>
-          <Switch 
+          <Switch
             checked={formValue.is_public}
             onChange={(e) => {
               setFormValue((prev) => {
@@ -327,7 +329,9 @@ const SettingModal = () => {
           <img src={icon_logout} alt="icon" className="h-5 w-5" />
           <p>Log out</p>
         </div>
-        <p className="text-[#A1A1AA] text-xs font-thin flex justify-end">© 2024 Return Inn x Groundi</p>
+        <p className="flex justify-end text-xs font-thin text-[#A1A1AA]">
+          © 2024 Return Inn x Groundi
+        </p>
       </footer>
     </dialog>,
     document.body
