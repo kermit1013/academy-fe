@@ -81,7 +81,7 @@ export const DeleteProject = async (
 
 export const ExportProject = async (content: string): Promise<any> => {
   try {
-    const result = await request.post('/projects/export', { content: content })
+    const result = await request.post('/projects/docx', { html: content }, { responseType: 'blob' })
     if (result.status === 200) {
       return result.data
     }

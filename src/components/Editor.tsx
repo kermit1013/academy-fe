@@ -95,6 +95,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
 
   const saveContent = useCallback(
     async (content: Block[]) => {
+      if (!editable) return
       UpdateProject(content, projectId)
         .then(() => {
           console.log('project saved!')
@@ -103,7 +104,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
           console.error('Error saving data:', error)
         })
     },
-    [projectId]
+    [projectId, editable]
   )
 
   const debouncedSave = useCallback(
@@ -161,17 +162,20 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
           }}
           editable={editable}
         />
-        <button
-          onClick={handlerExport}
-          disabled={isExporting}
-          className={`fixed right-[calc(10%+2rem)] top-[calc(10%-2rem)] flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] ${
-            isExporting
-              ? 'cursor-not-allowed bg-[#7B7C7B]/10'
-              : 'bg-[#7B7C7B]/20 hover:bg-[#7B7C7B]/40'
-          } z-10 text-sm`}
-        >
-          <img src={icon_doc} alt="" />
-        </button>
+        {editable && (
+          <button
+            onClick={handlerExport}
+            disabled={isExporting}
+            className={`fixed right-[calc(10%+2rem)] top-[calc(10%-2rem)] flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] ${
+              isExporting
+                ? 'cursor-not-allowed bg-[#7B7C7B]/10'
+                : 'bg-[#7B7C7B]/20 hover:bg-[#7B7C7B]/40'
+            } z-10 text-sm`}
+          >
+            <img src={icon_doc} alt="" />
+          </button>
+        )}
+
         <button
           onClick={handlerCloseEditor}
           className="fixed right-[calc(10%-1rem)] top-[calc(10%-2rem)] z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40"
