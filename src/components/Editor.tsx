@@ -30,35 +30,34 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
   const { setIsOpen, setProjectId, setNodeId, editable } = useEditor()
   const [isExporting, setIsExporting] = useState(false)
 
-  const editor = useCreateBlockNote({
-    uploadFile: async (file: File) => {
-      const access_token = localStorage.getItem('access_token')
-      if (!access_token) {
-        return { url: '' }
-      }
-      console.log('Uploading file:', file)
-      if (file.size > 1 * 1024 * 1024) {
-        // 1MB in bytes
-        messageApi.warning('檔案上傳大小上限為1MB')
-        return { url: '' }
-      }
+  const editor = useCreateBlockNote(
+    {
+      uploadFile: async (file: File) => {
+        const access_token = localStorage.getItem('access_token')
+        if (!access_token) {
+          return { url: '' }
+        }
+        console.log('Uploading file:', file)
+        if (file.size > 1 * 1024 * 1024) {
+          // 1MB in bytes
+          messageApi.warning('檔案上傳大小上限為1MB')
+          return { url: '' }
+        }
 
-      const formData = new FormData()
-      formData.append('file', file)
-      const result = await NewBlockNote(formData)
-      if (result.status === 200) {
-        return { url: result.url }
-      } else {
-        return { url: '' }
-      }
+        const formData = new FormData()
+        formData.append('file', file)
+        const result = await NewBlockNote(projectId, formData)
+        return result.url
+      },
+      initialContent: [
+        {
+          type: 'paragraph',
+          content: '內容正在載入中...'
+        }
+      ]
     },
-    initialContent: [
-      {
-        type: 'paragraph',
-        content: 'Loading content...'
-      }
-    ]
-  })
+    [projectId]
+  )
 
   const getProject = useCallback(async () => {
     if (!projectId && !nodeId) {
@@ -139,7 +138,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
       })
       .catch((error) => {
         console.error('Error exporting project:', error)
-        messageApi.error('Export failed. Please try again.')
+        messageApi.error('專案匯出錯誤，請稍後重試')
       })
       .finally(() => {
         setIsExporting(false)

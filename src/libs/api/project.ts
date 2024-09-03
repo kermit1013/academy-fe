@@ -1,9 +1,9 @@
 import request from '../request'
 import { Block } from '@blocknote/core'
 
-export const NewBlockNote = async (formData: FormData): Promise<any> => {
+export const NewBlockNote = async (projectId: string, formData: FormData): Promise<any> => {
   try {
-    const result = await request.post('/projects/files', formData)
+    const result = await request.post(`/projects/${projectId}/files`, formData)
     if (result.status === 200) {
       return result.data
     }

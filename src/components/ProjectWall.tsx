@@ -17,6 +17,7 @@ interface Project {
   imagePath: string
   created_at: string
   view_count: number
+  thumbnail: string
 }
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
@@ -37,7 +38,9 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
       .then((result) => {
         const projectsWithImages = result.map((project: Project) => ({
           ...project,
-          imagePath: `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
+          imagePath: project.thumbnail
+            ? project.thumbnail
+            : `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
         }))
         setProjects(projectsWithImages)
       })
