@@ -38,6 +38,7 @@ const PasswordRecoveryPage = () => {
     renderFields: () => JSX.Element
   }[] = useMemo(() => {
     return [
+      // 忘記密碼
       {
         title: '忘記密碼',
         desc: '請輸入您的電子郵件以重設密碼',
@@ -59,6 +60,7 @@ const PasswordRecoveryPage = () => {
           )
         }
       },
+      // 查看你的電子郵件
       {
         title: '查看你的電子郵件',
         desc: '我們發送了一個重設連結到至您的電子郵件，請輸入電子郵件中提到的 5 位數代碼。',
@@ -94,6 +96,7 @@ const PasswordRecoveryPage = () => {
           )
         }
       },
+      // 重設密碼
       {
         title: '重設密碼',
         desc: '建立一個新密碼。請確保它與以前的密碼不同。',
@@ -155,12 +158,13 @@ const PasswordRecoveryPage = () => {
           )
         }
       },
+      // 密碼已成功更新！
       {
         title: '密碼已成功更新！',
         desc: '',
         buttonText: '重新登入',
         onClick: () => {
-          navigate('/')
+          navigate('/', { replace: true })
         },
         renderFields: () => {
           return <></>
@@ -241,7 +245,7 @@ const PasswordRecoveryPage = () => {
           className="h-10 w-10 rounded-xl border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20"
           onClick={() => {
             if (step === 0) {
-              navigate('/')
+              navigate('/', { replace: true })
               return
             }
             setStep(step - 1)

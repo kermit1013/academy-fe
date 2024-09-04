@@ -17,15 +17,24 @@ request.interceptors.response.use(
     return response
   },
   (error: AxiosError) => {
-    if (error?.response?.status === 401) {
-      console.error('Unauthorized request:', error)
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      localStorage.removeItem('user_id')
-      localStorage.removeItem('user_name')
-      localStorage.removeItem('roomName')
-      window.location.href = '/login'
+    switch (error?.response?.status) {
+      case 401:
+        console.error('Unauthorized request:', error)
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        localStorage.removeItem('user_id')
+        localStorage.removeItem('user_name')
+        localStorage.removeItem('roomName')
+
+        if (window.location.pathname !== '/') {
+          window.location.href = '/'
+        }
+        break
+
+      default:
+        break
     }
+
     return Promise.reject(error)
   }
 )

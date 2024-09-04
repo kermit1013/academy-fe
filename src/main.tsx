@@ -1,15 +1,22 @@
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import ReactDOM from 'react-dom/client'
 import { HashRouter, Route, Routes } from 'react-router-dom'
-import App from './App'
 
 import './index.css'
+
+// Layout
+import AuthLayout from './layouts/AuthLayout'
+
+// Pages
+import App from './App'
+import PasswordRecoveryPage from './pages/PasswordRecoveryPage'
+import RegisterPage from './pages/RegisterPage'
 import SelectPage from './pages/SelectPage'
-import { GoogleOAuthProvider } from '@react-oauth/google'
+
+import bg from '/bg.svg'
+
 const clientId =
   '507786572152-529vtt7jtknh7d1l4512remb9estavpv.apps.googleusercontent.com'
-import AuthLayout from './layouts/AuthLayout'
-import PasswordRecoveryPage from './pages/PasswordRecoveryPage'
-import bg from '/bg.svg'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <div
@@ -21,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<App />} />
+            <Route path="register" element={<RegisterPage />} />
             <Route path="forgetPwd" element={<PasswordRecoveryPage />} />
           </Route>
           <Route path="/search" element={<SelectPage />} />
