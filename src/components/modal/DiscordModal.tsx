@@ -53,7 +53,7 @@ const DiscordModal = ({ isOpen, onClose }: DiscordModalProps) => {
             className="flex h-7 w-[169px] items-center justify-center gap-1 rounded-md bg-[#5865F2] px-2 py-1"
           >
             <img src={icon_discord} alt="" />
-            <p className="text-[13px] text-white">前往 Groundi Discord</p>
+            <p className="text-[12px] text-white">前往 Groundi Discord</p>
           </a>
         </div>
       </section>
