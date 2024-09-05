@@ -17,7 +17,7 @@ const App = () => {
   const { user_name, setUserName, passwd, setPasswd } = useLogin()
 
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isMobile = /iPhone|iPod|Android/i.test(navigator.userAgent)
     if (isMobile) {
       alert('為了更好的使用體驗，建議您使用桌面版進行操作。')
     }
@@ -46,12 +46,15 @@ const App = () => {
           navigate('/search')
         }, 1000)
       })
-      .catch(() => {
+      .catch((e) => {
         setIsLoggingIn(false)
-        messageApi.warning('登入失敗，帳號或密碼錯誤')
+        messageApi.warning(`登入失敗，帳號或密碼錯誤${e}`)
+        messageApi.warning(`${user_name}, ${passwd}`)
       })
   }
-
+  const go2Register = () => {
+    navigate('/register')
+  }
   // const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   //   if (e.code === 'Enter') {
   //     handlerLogin()
@@ -129,7 +132,7 @@ const App = () => {
         <div className="flex justify-center">
           <button
             className="mt-2 text-center text-base font-thin text-[#7B7C7B] underline hover:cursor-pointer"
-            onClick={() => navigate('/register', { replace: true })}
+            onClick={() => go2Register()}
           >
             還沒有帳號?註冊
           </button>

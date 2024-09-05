@@ -7,6 +7,7 @@ import ReactFlow, {
   NodeMouseHandler
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import styles from '../styles.module.css'
 import useForceLayout from '../hooks/useForceLayout'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
@@ -87,7 +88,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [messageApi, contextHolder] = message.useMessage()
   const [actionType, setActionType] = useState(0)
   const { setUser } = useLogin()
-  
+
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
@@ -174,7 +175,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       className: getNodeClassName({
         level: item.data.level,
         is_launched: item.data.is_launched,
-        is_visible: false
+        is_visible: false,
+        isOpenBrainStormContent: false
       })
     }))
   }
@@ -241,7 +243,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           newNode.className = getNodeClassName({
             level: node.data.level,
             is_launched: node.data.is_launched,
-            is_visible: true
+            is_visible: true,
+            isOpenBrainStormContent
           })
           return newNode
         } else {
@@ -250,7 +253,8 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           newNode.className = getNodeClassName({
             level: newNode.data.level,
             is_launched: newNode.data.is_launched,
-            is_visible: false
+            is_visible: false,
+            isOpenBrainStormContent
           })
 
           return newNode
@@ -258,7 +262,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
       })
       setNodes(newNodeList)
     },
-    [nodes, edges]
+    [nodes, edges, isOpenBrainStormContent]
   )
 
   return (
