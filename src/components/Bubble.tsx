@@ -22,7 +22,7 @@ const Bubble = ({ data }: BubbleProps) => {
   const [modifyData, setModifyData] = useState(data.label)
   const [messageApi, contextHolder] = message.useMessage()
   const { edit_bubble_id, setEditBubbleId } = useBubble()
-  const { isOpenGalleryContent } = useTopMenu()
+  const { isOpenGalleryContent, isOpenBrainStormContent } = useTopMenu()
   const [isComposing, setIsComposing] = useState(false)
   const { setIsOpen, setEditable, setNodeId } = useEditor()
 
@@ -42,6 +42,9 @@ const Bubble = ({ data }: BubbleProps) => {
   }
 
   const handlerEdit = () => {
+    if (isOpenBrainStormContent) {
+      return
+    }
     if (data.category != null && data.category !== 'ABOUT') {
       const node_list = getNodes()
       const edge_list = getEdges()
@@ -197,7 +200,7 @@ const Bubble = ({ data }: BubbleProps) => {
   }
 
   const renderAddButton = () => {
-    if (!isOpenGalleryContent && data.level !== 3) {
+    if (!isOpenGalleryContent && data.level !== 3 && !isOpenBrainStormContent) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button
@@ -215,6 +218,7 @@ const Bubble = ({ data }: BubbleProps) => {
   const renderDeleteButton = () => {
     if (
       !isOpenGalleryContent &&
+      !isOpenBrainStormContent &&
       ((data.level === 1 && data.category === null) ||
         data.level === 2 ||
         (data.level === 3 && data.is_launched === false))
@@ -252,6 +256,7 @@ const Bubble = ({ data }: BubbleProps) => {
   const renderStartProjectButton = () => {
     if (
       !isOpenGalleryContent &&
+      !isOpenBrainStormContent &&
       data.level === 3 &&
       data.is_launched === false &&
       data.label !== ''
@@ -273,6 +278,7 @@ const Bubble = ({ data }: BubbleProps) => {
   const renderContent = () => {
     const shouldRenderTextarea =
       !isOpenGalleryContent &&
+      !isOpenBrainStormContent &&
       ((data.level === 1 && data.category === null) ||
         data.level === 2 ||
         data.level === 3) &&
@@ -327,6 +333,7 @@ const Bubble = ({ data }: BubbleProps) => {
     <div
       className="relative flex h-full w-full items-center justify-center text-center"
       onClick={selectBubble}
+      onTouchStart={selectBubble}
       onDoubleClick={handlerEdit}
       onBlur={handlerFinishEdit}
       key={data.id}

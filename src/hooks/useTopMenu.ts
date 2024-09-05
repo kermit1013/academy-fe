@@ -5,6 +5,7 @@ type State = {
   isOpenSettingModal: boolean
   isOpenGalleryContent: boolean
   isOpenBrainStormContent: boolean
+  isOpenProjectWall: boolean
   isOpenTallyPopup: boolean
 }
 
@@ -14,6 +15,7 @@ type Actions = {
   setIsOpenGalleryContent: (status: boolean) => void
   setIsOpenBrainStormContent: (status: boolean) => void
   setIsOpenTallyPopup: (status: boolean) => void
+  setIsOpenProjectWall: (status: boolean) => void
 }
 
 const useTopMenu = create<State & Actions>()(
@@ -23,6 +25,7 @@ const useTopMenu = create<State & Actions>()(
     isOpenGalleryContent: false,
     isOpenBrainStormContent: false,
     isOpenTallyPopup: false,
+    isOpenProjectWall: false,
     setActionMenu: (action: number) =>
       set((state) => {
         return { ...state, action_menu: action }
@@ -43,6 +46,10 @@ const useTopMenu = create<State & Actions>()(
       set((state) => {
         return { ...state, isOpenTallyPopup: status }
       }),
+    setIsOpenProjectWall: (status: boolean) =>
+      set((state) => {
+        return { ...state, isOpenProjectWall: status }
+      })
   }))
 )
 
