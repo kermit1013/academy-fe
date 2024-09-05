@@ -11,7 +11,7 @@ import dashboard from '/nav_icons/dashboard.svg'
 import file from '/nav_icons/file.svg'
 import delete_project from '/nav_icons/delete.svg'
 import { message } from 'antd'
-
+import styles from '../styles.module.css'
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor'
@@ -21,6 +21,7 @@ import useEditor from '../hooks/useEditor'
 import { useReactFlow, useStoreApi } from 'reactflow'
 import { DeleteProject, GetMyProject } from '../libs/api/project'
 
+import useNodesStateSynced from '../hooks/useNodesStateSynced'
 interface Project {
   id: string | number
   name: string
@@ -31,7 +32,7 @@ const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
   const { getNodes } = useReactFlow()
-  const [isProjectWallOpen, setIsProjectWallOpen] = useState(false)
+  const setNodes = useNodesStateSynced()[1]
   const [projects, setProjects] = useState([])
   const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
     useEditor()
@@ -39,8 +40,11 @@ const NavDrawer = () => {
   const {
     isOpenBrainStormContent,
     isOpenGalleryContent,
+    isOpenProjectWall,
+    isOpenTallyPopup,
     setIsOpenBrainStormContent,
     setIsOpenGalleryContent,
+    setIsOpenProjectWall,
     setIsOpenSettingModal,
     setIsOpenTallyPopup
   } = useTopMenu()
@@ -66,22 +70,69 @@ const NavDrawer = () => {
       })
   }
 
+  const handlerTallyPopup = useCallback(() => {
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
+    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
+
+    setIsOpenTallyPopup(true)
+  }, [
+    isOpenGalleryContent,
+    isOpenBrainStormContent,
+    isOpenProjectWall,
+    isOpenTallyPopup
+  ])
   const handlerChange2BrainStorm = useCallback(() => {
-    if (isOpenGalleryContent) return messageApi.warning('請先離開畫廊漫步！')
+    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
+    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
 
     const { getNodes } = store.getState()
     if (getNodes().filter((node) => node.data.level == 2).length === 0) {
       return messageApi.warning('請先新增第三層的心智圖泡泡！')
     }
 
+    const RenderNewBubbleList = getNodes().map((node) => {
+      if (node.data.level === 2) {
+        const newNode = { ...node }
+        newNode.className = styles.node1_level2_node_alert
+        return newNode
+      }
+      return node
+    })
+    setNodes(RenderNewBubbleList)
+
     setIsOpenBrainStormContent(true)
-  }, [store])
+  }, [
+    isOpenGalleryContent,
+    isOpenBrainStormContent,
+    isOpenProjectWall,
+    isOpenTallyPopup
+  ])
 
-  const handlerChange2Gallery = () => {
+  const handlerChange2Gallery = useCallback(() => {
+    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
     if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
-
+    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
     setIsOpenGalleryContent(true)
-  }
+  }, [
+    isOpenBrainStormContent,
+    isOpenGalleryContent,
+    isOpenProjectWall,
+    isOpenTallyPopup
+  ])
+
+  const handlerOpenProjectWall = useCallback(() => {
+    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
+    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
+    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
+    setIsOpenProjectWall(true)
+  }, [
+    isOpenGalleryContent,
+    isOpenBrainStormContent,
+    isOpenProjectWall,
+    isOpenTallyPopup
+  ])
 
   const handlerSetting = () => {
     setIsOpenSettingModal(true)
@@ -91,12 +142,7 @@ const NavDrawer = () => {
     setAheadDiscordStatus(true)
   }
 
-  const handlerTallyPopup = () => {
-    setIsOpenTallyPopup(true)
-  }
-
   const handlerTallyStartProject = () => {
-    console.log(selectedNode)
     if (!selectedNode) return messageApi.warning('請先選擇泡泡哦！')
     if (!hasLevel3Bubble) {
       return messageApi.warning(
@@ -110,6 +156,23 @@ const NavDrawer = () => {
       return messageApi.warning('請先選擇一個方形泡泡哦！')
     setStartProjectStatus(true)
   }
+
+  const handleProjectClick = useCallback(
+    (projectId: string) => {
+      if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
+      if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
+      console.log(projectId)
+      setProjectId(projectId)
+      setIsOpen(true)
+      setEditable(true)
+    },
+    [
+      isOpenGalleryContent,
+      isOpenBrainStormContent,
+      isOpenProjectWall,
+      isOpenTallyPopup
+    ]
+  )
 
   useEffect(() => {
     getProjects()
@@ -134,20 +197,6 @@ const NavDrawer = () => {
         console.error('Error fetching data:', error)
       })
   }, [])
-  const handleProjectClick = (projectId: string) => {
-    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
-    console.log(projectId)
-    setProjectId(projectId)
-    setIsOpen(true)
-    setEditable(true)
-  }
-
-  const handlerOpenProjectWall = () => {
-    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
-    setIsProjectWallOpen(true)
-  }
 
   const [isExpanded, setIsExpanded] = useState(false)
   const [hasLevel2Bubble, setHasLevel2Bubble] = useState(
@@ -222,20 +271,22 @@ const NavDrawer = () => {
         icon: <img src={wavingHand} alt="" />,
         label: '探索問卷',
         prompt: '透過問卷生成心智圖',
-        onClick: handlerTallyPopup
+        onClick: handlerTallyPopup,
+        disabled: isOpenTallyPopup
       },
       {
         icon: <img src={jamJar} alt="" />,
         label: '靈感果醬',
         prompt: '透過即興遊戲生成專案主題',
         onClick: handlerChange2BrainStorm,
-        disabled: level_2_result
+        disabled: isOpenBrainStormContent
       },
       {
         icon: <img src={idea} alt="" />,
         label: '點子畫廊',
         prompt: '逛逛他人的心智圖',
-        onClick: handlerChange2Gallery
+        onClick: handlerChange2Gallery,
+        disabled: isOpenGalleryContent
       }
     ])
     setActionItems([
@@ -254,7 +305,8 @@ const NavDrawer = () => {
         icon: <img src={dashboard} alt="" />,
         label: '專案畫廊',
         prompt: '逛逛他人的專案',
-        onClick: handlerOpenProjectWall
+        onClick: handlerOpenProjectWall,
+        disabled: isOpenProjectWall
       },
       {
         icon: <img src={icon_discord} alt="" />,
@@ -263,7 +315,7 @@ const NavDrawer = () => {
         onClick: handlerAheadDiscordStatus
       }
     ])
-  }, [store])
+  }, [store, isOpenGalleryContent, isOpenBrainStormContent])
 
   const projectItems = projects.map((project: Project) => ({
     icon: <img src={file} alt="" />,
@@ -282,8 +334,8 @@ const NavDrawer = () => {
         isOpenGalleryContent={isOpenGalleryContent}
       ></ViewOtherUserFrame>
       <ProjectWall
-        isWallOpen={isProjectWallOpen}
-        onClose={() => setIsProjectWallOpen(false)}
+        isWallOpen={isOpenProjectWall}
+        onClose={() => setIsOpenProjectWall(false)}
       />
       <Editor
         isOpen={isOpen}
@@ -292,7 +344,7 @@ const NavDrawer = () => {
         nodeId={nodeId}
       />
       <div
-        className={`fixed left-0 top-0 flex h-full flex-col border-r border-gray-200 bg-gray-50 bg-opacity-30 shadow-lg transition-all duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 flex h-full flex-col border-r border-gray-200 bg-gray-50 bg-opacity-30 shadow-lg backdrop-blur-sm transition-all duration-300 ease-in-out ${
           isExpanded ? 'w-52' : 'w-22'
         }`}
         onMouseEnter={() => setIsExpanded(true)}
@@ -323,6 +375,7 @@ const NavDrawer = () => {
                 className={`tooltip tooltip-right flex font-sans ${item.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 data-tip={item.prompt}
                 onClick={item.onClick}
+                onTouchStart={item.onClick}
               >
                 <span className="text-2xl text-gray-400 group-hover:text-[#6CA579]">
                   {item.icon}
@@ -445,13 +498,13 @@ const ViewOtherUserFrame = ({
     isOpenGalleryContent && (
       <>
         <div
-          className={`${isExpanded ? 'left-[177px] w-[calc(100vw-177px)]' : 'left-[65px] w-[calc(100vw-65px)]'} absolute -top-[15px] -z-50 h-2 bg-[#EF6E52]`}
+          className={`${isExpanded ? 'left-[194px] w-[calc(100vw-194px)]' : 'left-[67px] w-[calc(100vw-67px)]'} absolute -top-[15px] -z-50 h-2 bg-[#EF6E52]`}
         ></div>
         <div
-          className={`${isExpanded ? 'left-[177px]' : 'left-[65px]'} absolute -top-[15px] -z-50 h-screen w-2 bg-[#EF6E52]`}
+          className={`${isExpanded ? 'left-[194px]' : 'left-[67px]'} absolute -top-[15px] -z-50 h-screen w-2 bg-[#EF6E52]`}
         ></div>
         <div
-          className={`${isExpanded ? 'left-[177px] w-[calc(100vw-177px)]' : 'left-[65px] w-[calc(100vw-65px)]'} absolute -bottom-[calc(100vh-15px)] -z-50 h-2 bg-[#EF6E52]`}
+          className={`${isExpanded ? 'left-[194px] w-[calc(100vw-194px)]' : 'left-[67px] w-[calc(100vw-67px)]'} absolute -bottom-[calc(100vh-15px)] -z-50 h-2 bg-[#EF6E52]`}
         ></div>
         <div className="absolute -top-[15px] right-[calc(-100vw+15px)] -z-50 h-screen w-2 bg-[#EF6E52]"></div>{' '}
       </>
