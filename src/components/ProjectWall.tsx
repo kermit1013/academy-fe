@@ -106,16 +106,23 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                   className="h-full w-full object-cover"
                 />
               </figure>
-              <div className="card-body">
-                <h2 className="card-title font-sans">
-                  {project.name}
-                  {isNewProject(project.created_at) && (
+              <div className="flex h-40 flex-col items-center justify-between p-4">
+                <div className="flex h-full flex-col items-center justify-center">
+                  <h2 className="font-sans text-xl font-bold">
+                    {project.name}
+                  </h2>
+                </div>
+                <div className="flex w-full justify-end gap-2">
+                  {/* {isNewProject(project.created_at) && (
                     <span className="badge bg-[#6CA579] text-white">NEW</span>
-                  )}
-                </h2>
-                <p className="text-right font-sans text-xs">
-                  {project.view_count} 瀏覽
-                </p>
+                  )} */}
+                  <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
+                    NEW
+                  </p>
+                  <p className="w-16 rounded-2xl bg-[#735E5E] p-2 text-center font-sans text-xs text-white">
+                    {project.view_count} 瀏覽
+                  </p>
+                </div>
               </div>
             </div>
           ))}
