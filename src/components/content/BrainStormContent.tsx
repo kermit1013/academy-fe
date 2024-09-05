@@ -8,6 +8,7 @@ import icon_change from '/change.svg'
 import icon_enter from '/icons/icon_enter.svg'
 import close_btn from '/close_btn.svg'
 import icon_plus from '/icons/icon_plus.svg'
+import styles from '../../styles.module.css'
 import { NewBubble } from '../../libs/api/bubble'
 import { SelectRandomContext } from '../../libs/api/brain_storm'
 import { createNewBubbleNode } from '../../libs/bubble'
@@ -271,6 +272,7 @@ const BrainStormContent = memo(() => {
   const { getNodes } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
   const [showThinkDone, setShowThinkDone] = useState(false)
+  const setNodes = useNodesStateSynced()[1]
   useEffect(() => {
     setSelectedNode(null)
   }, [])
@@ -310,11 +312,19 @@ const BrainStormContent = memo(() => {
     setTimes(120)
   }, [action_type])
   const handlerCloseContent = () => {
-    console.log('close')
+    const RenderNewBubbleList = getNodes().map((node) => {
+      if (node.data.level === 2) {
+        const newNode = { ...node }
+        newNode.className = styles.node1_level2_node
+        return newNode
+      }
+      return node
+    })
+    setNodes(RenderNewBubbleList)
     setIsOpenBrainStormContent(false)
   }
   return (
-    <div className="absolute bottom-10 left-[calc(50%-400px)] z-20 mb-12 flex h-[240px] w-[800px] flex-col rounded-2xl border-2 border-[#7B7C7B] p-4 backdrop-blur-lg">
+    <div className="absolute bottom-10 left-[calc(50%-412px)] z-20 mb-12 flex h-[240px] w-[800px] flex-col rounded-2xl border-2 border-[#7B7C7B] p-4 backdrop-blur-lg xl:left-[calc(50%-400px)]">
       <button
         onClick={() => handlerCloseContent()}
         className="absolute right-[8px] top-[8px] flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 text-sm backdrop-blur-3xl hover:bg-[#7B7C7B]/30"
