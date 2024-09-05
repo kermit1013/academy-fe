@@ -50,7 +50,6 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
   }, [])
 
   const handleProjectClick = (project: Project) => {
-    console.log(project)
     setProjectId(project.id.toString())
     setIsOpen(true)
     setEditable(false)
@@ -77,7 +76,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
       <div className="relative h-[90%] w-5/6 overflow-auto rounded-lg bg-[#F9F6F5] p-12">
         <button
           onClick={onClose}
-          className="fixed right-[calc(10%-1rem)] top-[calc(10%-2rem)] z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40"
+          className="fixed right-[calc(10%-8px)] top-[calc(10%-2rem)] z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#7B7C7B] bg-[#7B7C7B]/20 text-sm hover:bg-[#7B7C7B]/40"
         >
           <img src={close_btn} alt="" />
         </button>
@@ -92,7 +91,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
           {filteredProjects.map((project: Project, index) => (
             <div
               key={index}
@@ -101,6 +100,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
             >
               <figure className="h-48 overflow-hidden">
                 <img
+                  draggable={false}
                   src={project.imagePath}
                   alt={project.name}
                   className="h-full w-full object-cover"
