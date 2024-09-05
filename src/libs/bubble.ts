@@ -34,7 +34,8 @@ export const createNewBubbleNode = (
     className: getNodeClassName({
       level: result.level,
       is_launched: false,
-      is_visible: false
+      is_visible: false,
+      isOpenBrainStormContent: false
     })
   }
 

@@ -1,6 +1,5 @@
 import styles from '../styles.module.css'
 
-
 export function stringToColor(str: string) {
   let colour = '#'
   let hash = 0
@@ -27,6 +26,7 @@ export const getNodeClassName = (data: {
   level: number
   is_launched: boolean
   is_visible: boolean
+  isOpenBrainStormContent: boolean
 }) => {
   if (data.level === 0) {
     if (data.is_visible) return styles.node1_center_hover
@@ -37,8 +37,14 @@ export const getNodeClassName = (data: {
     return styles.node1_level1_node
   }
   if (data.level === 2) {
-    if (data.is_visible) return styles.node1_level2_node_hover
-    return styles.node1_level2_node
+    if (data.is_visible) {
+      if (data.isOpenBrainStormContent)
+        return styles.node1_level2_node_hover_alert
+      return styles.node1_level2_node_hover
+    } else {
+      if (data.isOpenBrainStormContent) return styles.node1_level2_node_alert
+      return styles.node1_level2_node
+    }
   }
   if (data.level === 3) {
     if (data.is_launched) return styles.node1_level3_node_is_launched

@@ -49,5 +49,5 @@ body,
 
 .react-flow__node.selectable:focus {
   background-color: rgba(108, 165, 121, 0.3) !important;
-  outline: 3px solid #6ca579 !important;
+  outline: 8px solid #6ca579 !important;
 }
