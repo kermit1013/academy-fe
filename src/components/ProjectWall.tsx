@@ -113,12 +113,11 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                   </h2>
                 </div>
                 <div className="flex w-full justify-end gap-2">
-                  {/* {isNewProject(project.created_at) && (
-                    <span className="badge bg-[#6CA579] text-white">NEW</span>
-                  )} */}
-                  <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
+                  {isNewProject(project.created_at) && (
+                     <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
                     NEW
                   </p>
+                  )}
                   <p className="w-16 rounded-2xl bg-[#735E5E] p-2 text-center font-sans text-xs text-white">
                     {project.view_count} 瀏覽
                   </p>
