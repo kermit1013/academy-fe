@@ -106,7 +106,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                   className="h-full w-full object-cover"
                 />
               </figure>
-              <div className="flex h-40 flex-col items-center justify-between p-4">
+              <div className="flex h-40 flex-col items-start  p-4 pl-8">
                 <div className="flex h-full flex-col items-center justify-center">
                   <h2 className="font-sans text-xl font-bold">
                     {project.name}
