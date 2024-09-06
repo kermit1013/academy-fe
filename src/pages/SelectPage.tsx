@@ -7,7 +7,6 @@ import ReactFlow, {
   NodeMouseHandler
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import styles from '../styles.module.css'
 import useForceLayout from '../hooks/useForceLayout'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
