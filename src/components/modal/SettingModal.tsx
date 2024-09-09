@@ -20,6 +20,7 @@ import icon_instagram from '/icons/icon_instagram.svg'
 import icon_logout from '/icons/icon_logout.svg'
 import icon_user from '/icons/icon_user.svg'
 import icon_edit from '/icons/icon_edit.svg'
+import icon_question from '/icons/icon_question.svg'
 import useLogin from '../../hooks/useLogin'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
@@ -315,6 +316,13 @@ const SettingModal = () => {
           <img src={icon_discord} alt="Discord" className="h-5 w-5" />
           <a href="https://discord.com/invite/A3esveNmBu" target="_blank">
             Discord
+          </a>
+        </div>
+
+        <div className="flex cursor-pointer items-center gap-2">
+          <img src={icon_question} alt="Discord" className="h-5 w-5" />
+          <a href="https://www.surveycake.com/s/Ygnmy" target="_blank">
+            回饋問卷
           </a>
         </div>
       </section>

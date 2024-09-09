@@ -154,6 +154,9 @@ const NavDrawer = () => {
     }
     if (!selectedNode || selectedNode.data.level !== 3)
       return messageApi.warning('請先選擇一個方形泡泡哦！')
+    if (!selectedNode || selectedNode.data.is_launched === true) {
+      return messageApi.warning('該方形泡泡已經與專案綁定！')
+    }
     setStartProjectStatus(true)
   }
 
@@ -237,8 +240,7 @@ const NavDrawer = () => {
       disabled:
         !selectedNode ||
         selectedNode.data.is_launched ||
-        selectedNode.data.level !== 3 ||
-        hasLevel3Bubble
+        selectedNode.data.level !== 3 
     },
     {
       icon: <img src={dashboard} alt="" />,
@@ -298,8 +300,7 @@ const NavDrawer = () => {
         disabled:
           !selectedNode ||
           selectedNode.data.is_launched ||
-          selectedNode.data.level !== 3 ||
-          level_3_result
+          selectedNode.data.level !== 3 
       },
       {
         icon: <img src={dashboard} alt="" />,
@@ -315,7 +316,13 @@ const NavDrawer = () => {
         onClick: handlerAheadDiscordStatus
       }
     ])
-  }, [store, isOpenGalleryContent, isOpenBrainStormContent])
+  }, [
+    store,
+    isOpenGalleryContent,
+    isOpenBrainStormContent,
+    selectedNode,
+    hasLevel3Bubble
+  ])
 
   const projectItems = projects.map((project: Project) => ({
     icon: <img src={file} alt="" />,
