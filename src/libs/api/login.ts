@@ -22,7 +22,6 @@ export const RegisterUser = async (
   email: string,
   passwd: string
 ): Promise<any> => {
-  try {
     const result = await request.post('/users', {
       username: username,
       gender: '',
@@ -34,7 +33,4 @@ export const RegisterUser = async (
     if (result.status == 200) {
       return result.data
     }
-  } catch (error: any) {
-    throw error
-  }
 }
