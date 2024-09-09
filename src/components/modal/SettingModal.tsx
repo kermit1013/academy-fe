@@ -103,7 +103,7 @@ const SettingModal = () => {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     localStorage.removeItem('user_id')
-    localStorage.removeItem('user_name')
+    localStorage.removeItem('username')
     localStorage.removeItem('roomName')
     localStorage.removeItem('gallery_user_id')
     setIsOpenSettingModal(false)

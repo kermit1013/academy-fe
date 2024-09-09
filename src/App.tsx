@@ -14,7 +14,7 @@ const App = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const [passwdType, setPasswdType] = useState('password')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const { user_name, setUserName, passwd, setPasswd } = useLogin()
+  const { username, setUserName, passwd, setPasswd } = useLogin()
 
   useEffect(() => {
     const isMobile = /iPhone|iPod|Android/i.test(navigator.userAgent)
@@ -32,16 +32,16 @@ const App = () => {
   }
   const navigate = useNavigate()
   const handlerLogin = async () => {
-    if (user_name === '' || passwd === '') {
+    if (username === '' || passwd === '') {
       messageApi.warning('請輸入帳號、密碼')
       return
     }
     setIsLoggingIn(true)
-    TokenPair(user_name, passwd)
+    TokenPair(username, passwd)
       .then((result) => {
         localStorage.setItem('access_token', result.data.access)
         localStorage.setItem('refresh_token', result.data.refresh)
-        messageApi.success(`歡迎${user_name}`)
+        messageApi.success(`歡迎 ${username}`)
         setTimeout(() => {
           navigate('/search')
         }, 1000)
@@ -49,7 +49,7 @@ const App = () => {
       .catch((e) => {
         setIsLoggingIn(false)
         messageApi.warning(`登入失敗，帳號或密碼錯誤${e}`)
-        messageApi.warning(`${user_name}, ${passwd}`)
+        messageApi.warning(`${username}, ${passwd}`)
       })
   }
   const go2Register = () => {
@@ -73,7 +73,7 @@ const App = () => {
           <input
             className="mt-1 block h-11 w-full rounded-xl border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 pl-3 text-[#7B7C7B] shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20 focus:outline-none"
             type="text"
-            value={user_name}
+            value={username}
             onChange={(e) => {
               setUserName(e.target.value)
             }}

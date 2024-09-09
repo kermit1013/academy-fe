@@ -1,12 +1,12 @@
 import request from '../request'
 
 export const TokenPair = async (
-  user_name: string,
+  username: string,
   passwd: string
 ): Promise<any> => {
   try {
     const result = await request.post('/token/pair', {
-      username: user_name,
+      username: username,
       password: passwd
     })
     if (result.status == 200) {
@@ -18,23 +18,23 @@ export const TokenPair = async (
 }
 
 export const RegisterUser = async (
-  user_name: string,
+  username: string,
   email: string,
   passwd: string
 ): Promise<any> => {
   try {
     const result = await request.post('/users', {
-      username: user_name,
+      username: username,
       gender: '',
       email: email,
       school: '',
       grade: '',
       password: passwd
     })
-    if (result.status == 201) {
+    if (result.status == 200) {
       return result.data
     }
   } catch (error: any) {
-    return error.response.data.detail
+    throw error
   }
 }

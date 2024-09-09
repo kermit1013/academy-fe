@@ -23,7 +23,7 @@ request.interceptors.response.use(
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         localStorage.removeItem('user_id')
-        localStorage.removeItem('user_name')
+        localStorage.removeItem('username')
         localStorage.removeItem('roomName')
 
         if (window.location.pathname !== '/') {

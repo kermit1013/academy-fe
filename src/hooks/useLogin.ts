@@ -5,14 +5,14 @@ import { immer } from 'zustand/middleware/immer'
 type State = {
   email: string
   passwd: string
-  user_name: string
+  username: string
   user: any
 }
 
 type Actions = {
   setEmail: (email: string) => void
   setPasswd: (passwd: string) => void
-  setUserName: (user_name: string) => void
+  setUserName: (username: string) => void
   setUser: (user: any) => void
 }
 
@@ -20,7 +20,7 @@ const useLogin = create<State & Actions>()(
   immer((set) => ({
     email: '',
     passwd: '',
-    user_name: '',
+    username: '',
     user: any,
     setEmail: (email: string) =>
       set((state) => {
@@ -30,9 +30,9 @@ const useLogin = create<State & Actions>()(
       set((state) => {
         return { ...state, passwd: passwd }
       }),
-    setUserName: (user_name: string) =>
+    setUserName: (username: string) =>
       set((state) => {
-        return { ...state, user_name: user_name }
+        return { ...state, username: username }
       }),
     setUser: (user: any) =>
       set((state) => {

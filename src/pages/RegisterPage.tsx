@@ -14,7 +14,7 @@ const RegisterPage = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const navigate = useNavigate()
 
-  const { email, setEmail, passwd, setPasswd, user_name, setUserName } =
+  const { email, setEmail, passwd, setPasswd, username, setUserName } =
     useLogin()
 
   const [passwdType, setPasswdType] = useState('password')
@@ -31,7 +31,7 @@ const RegisterPage = () => {
       messageApi.warning('信箱格式有誤!')
       return
     }
-    RegisterUser(user_name, passwd, email)
+    RegisterUser(username, email, passwd)
       .then(() => {
         messageApi.success('註冊成功')
         setTimeout(() => {
@@ -70,7 +70,7 @@ const RegisterPage = () => {
           <input
             className="mt-1 block h-11 w-full rounded-xl border-2 border-[#7B7C7B] bg-[#7B7C7B]/10 pl-3 text-[#7B7C7B] shadow-lg hover:bg-[#735E5E]/20 focus:bg-[#735E5E]/20 focus:outline-none"
             type="text"
-            value={user_name}
+            value={username}
             onChange={(e) => {
               setUserName(e.target.value)
             }}
