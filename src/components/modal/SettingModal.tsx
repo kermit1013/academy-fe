@@ -83,6 +83,10 @@ const SettingModal = () => {
       setIsEditingUsername(false)
       return
     }
+    if (!editedUsername.trim()) {
+      messageApi.error('用戶名不能為空白')
+      return
+    }
     try {
       const res = await request.put(`/users/${userData?.id}/username`, {
         username: editedUsername
