@@ -277,6 +277,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         onEdgesChange={onEdgesChange}
         onPointerMove={onMouseMove}
         onNodeClick={onNodeClick}
+        nodesConnectable={false}
         proOptions={proOptions}
         selectNodesOnDrag={false}
         nodeOrigin={nodeOrigin}
