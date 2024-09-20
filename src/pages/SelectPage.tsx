@@ -4,7 +4,8 @@ import ReactFlow, {
   ProOptions,
   ReactFlowProvider,
   NodeOrigin,
-  NodeMouseHandler
+  NodeMouseHandler,
+  MiniMap,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import useForceLayout from '../hooks/useForceLayout'
@@ -311,6 +312,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           )}
         </Panel>
         <Cursors cursors={cursors} />
+        <MiniMap />
       </ReactFlow>
       <DiscordModal
         isOpen={is_ahead_discord}
