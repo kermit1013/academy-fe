@@ -5,7 +5,7 @@ import ReactFlow, {
   ReactFlowProvider,
   NodeOrigin,
   NodeMouseHandler,
-  MiniMap,
+  MiniMap
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import useForceLayout from '../hooks/useForceLayout'

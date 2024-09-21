@@ -8,12 +8,13 @@ import icon_change from '/change.svg'
 import icon_enter from '/icons/icon_enter.svg'
 import close_btn from '/close_btn.svg'
 import icon_plus from '/icons/icon_plus.svg'
-import styles from '../../styles.module.css'
+import styles from '../../styles.module.scss'
 import { NewBubble } from '../../libs/api/bubble'
 import { SelectRandomContext } from '../../libs/api/brain_storm'
 import { createNewBubbleNode } from '../../libs/bubble'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import { getNodeClassName } from '../../funcs/utils'
 type props = {
   action_type: number
 }
@@ -269,10 +270,11 @@ const BrainStormContent = memo(() => {
 
   const { setSelectedNode, selectedNode } = useStartProject()
   const { setIsOpenBrainStormContent } = useTopMenu()
-  const { getNodes } = useReactFlow()
+  const { getNodes, getEdges } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
   const [showThinkDone, setShowThinkDone] = useState(false)
   const setNodes = useNodesStateSynced()[1]
+  const setEdges = useEdgesStateSynced()[1]
   useEffect(() => {
     setSelectedNode(null)
   }, [])
@@ -313,14 +315,22 @@ const BrainStormContent = memo(() => {
   }, [action_type])
   const handlerCloseContent = () => {
     const RenderNewBubbleList = getNodes().map((node) => {
-      if (node.data.level === 2) {
-        const newNode = { ...node }
-        newNode.className = styles.node1_level2_node
-        return newNode
-      }
-      return node
+      const newNode = { ...node }
+      newNode.className = getNodeClassName({
+        level: newNode.data.level,
+        is_launched: newNode.data.is_launched,
+        is_visible: false,
+        isOpenBrainStormContent: false
+      })
+      return newNode
     })
     setNodes(RenderNewBubbleList)
+    const RenderNewEdgeList = getEdges().map((edge) => {
+      const newEdge = { ...edge }
+      newEdge.style = { stroke: '#7B7C7B', strokeWidth: 2 }
+      return newEdge
+    })
+    setEdges(RenderNewEdgeList)
     setIsOpenBrainStormContent(false)
   }
   return (

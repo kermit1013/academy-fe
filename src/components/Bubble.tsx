@@ -238,7 +238,12 @@ const Bubble = ({ data }: BubbleProps) => {
   }
 
   const renderDiscordButton = () => {
-    if (data.level === 3 && data.is_launched === true) {
+    if (
+      !isOpenGalleryContent &&
+      !isOpenBrainStormContent &&
+      data.level === 3 &&
+      data.is_launched === true
+    ) {
       return (
         <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
           <button

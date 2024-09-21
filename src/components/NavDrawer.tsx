@@ -11,7 +11,7 @@ import dashboard from '/nav_icons/dashboard.svg'
 import file from '/nav_icons/file.svg'
 import delete_project from '/nav_icons/delete.svg'
 import { message } from 'antd'
-import styles from '../styles.module.css'
+import styles from '../styles.module.scss'
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor'
@@ -22,6 +22,8 @@ import { useReactFlow, useStoreApi } from 'reactflow'
 import { DeleteProject, GetMyProject } from '../libs/api/project'
 
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
+import { getNodeClassName } from '../funcs/utils'
+import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 interface Project {
   id: string | number
   name: string
@@ -31,8 +33,9 @@ interface Project {
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
-  const { getNodes } = useReactFlow()
+  const { getNodes, getEdges } = useReactFlow()
   const setNodes = useNodesStateSynced()[1]
+  const setEdges = useEdgesStateSynced()[1]
   const [projects, setProjects] = useState([])
   const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
     useEditor()
@@ -93,15 +96,23 @@ const NavDrawer = () => {
     }
 
     const RenderNewBubbleList = getNodes().map((node) => {
-      if (node.data.level === 2) {
-        const newNode = { ...node }
-        newNode.className = styles.node1_level2_node_alert
-        return newNode
-      }
-      return node
+      const newNode = { ...node }
+      newNode.className = getNodeClassName({
+        level: node.data.level,
+        is_launched: node.data.is_launched,
+        is_visible: node.data.is_visible,
+        isOpenBrainStormContent: true
+      })
+      return newNode
     })
     setNodes(RenderNewBubbleList)
 
+    const RenderNewEdgeList = getEdges().map((edge) => {
+      const newEdge = { ...edge }
+      newEdge.style = { stroke: '#c4c4c4', strokeWidth: 2 }
+      return newEdge
+    })
+    setEdges(RenderNewEdgeList)
     setIsOpenBrainStormContent(true)
   }, [
     isOpenGalleryContent,
@@ -240,7 +251,7 @@ const NavDrawer = () => {
       disabled:
         !selectedNode ||
         selectedNode.data.is_launched ||
-        selectedNode.data.level !== 3 
+        selectedNode.data.level !== 3
     },
     {
       icon: <img src={dashboard} alt="" />,
@@ -300,7 +311,7 @@ const NavDrawer = () => {
         disabled:
           !selectedNode ||
           selectedNode.data.is_launched ||
-          selectedNode.data.level !== 3 
+          selectedNode.data.level !== 3
       },
       {
         icon: <img src={dashboard} alt="" />,
