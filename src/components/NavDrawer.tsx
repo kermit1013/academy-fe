@@ -89,7 +89,7 @@ const NavDrawer: React.FC<TallyPopupProps> = ({
     setIsOpenProjectWall(false);
     setIsOpenSettingModal(false);
     setIsOpenTallyPopup(false);
-    if (prevContents==='gallery' &&localStorage.getItem('gallery_user_id')) {
+    if (prevContents==='gallery' && localStorage.getItem('gallery_user_id')) {
       getPersonData(0)
       setPrevContents('')
     }
