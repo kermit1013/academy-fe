@@ -11,7 +11,6 @@ import dashboard from '/nav_icons/dashboard.svg'
 import file from '/nav_icons/file.svg'
 import delete_project from '/nav_icons/delete.svg'
 import { message } from 'antd'
-import styles from '../styles.module.scss'
 import useTopMenu from '../hooks/useTopMenu'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import Editor from './Editor'
@@ -30,15 +29,21 @@ interface Project {
   description: string
 }
 
-const NavDrawer = () => {
+interface TallyPopupProps {
+  getPersonData: (type: number) => Promise<void>
+}
+
+
+const NavDrawer: React.FC<TallyPopupProps> = ({
+  getPersonData,
+}) => {
   const [messageApi, contextHolder] = message.useMessage()
   const { setAheadDiscordStatus } = useAheadDiscord()
   const { getNodes, getEdges } = useReactFlow()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const [projects, setProjects] = useState([])
-  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
-    useEditor()
+  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } = useEditor()
   const store = useStoreApi()
   const {
     isOpenBrainStormContent,
@@ -51,12 +56,17 @@ const NavDrawer = () => {
     setIsOpenSettingModal,
     setIsOpenTallyPopup
   } = useTopMenu()
-
+  
   const { selectedNode, setStartProjectStatus } = useStartProject()
 
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [prevContents, setPrevContents] = useState('')
+
+  const [hasLevel3Bubble, setHasLevel3Bubble] = useState(
+    getNodes().filter((node) => node.data.level == 3).length > 0 ? true : false
+  )
+
   const handleProjectDelete = async (projectId: string | number) => {
-    const access_token = localStorage.getItem('access_token')
-    if (!access_token) return
     if (confirm('確定刪除該專案嗎？') === false) return
 
     DeleteProject(projectId)
@@ -73,25 +83,28 @@ const NavDrawer = () => {
       })
   }
 
-  const handlerTallyPopup = useCallback(() => {
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
-    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
-    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
+  const initializeOpenContents = () => {
+    setIsOpenBrainStormContent(false);
+    setIsOpenGalleryContent(false);
+    setIsOpenProjectWall(false);
+    setIsOpenSettingModal(false);
+    setIsOpenTallyPopup(false);
+    if (prevContents==='gallery' &&localStorage.getItem('gallery_user_id')) {
+      getPersonData(0)
+      setPrevContents('')
+    }
+  }
 
-    setIsOpenTallyPopup(true)
-  }, [
-    isOpenGalleryContent,
-    isOpenBrainStormContent,
-    isOpenProjectWall,
-    isOpenTallyPopup
-  ])
+  const handlerTallyPopup = () => {
+    initializeOpenContents();
+    setIsOpenTallyPopup(true);
+  }
   const handlerChange2BrainStorm = useCallback(() => {
-    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
-    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
-    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
+    initializeOpenContents();
+    setIsOpenBrainStormContent(true);
 
     const { getNodes } = store.getState()
-    if (getNodes().filter((node) => node.data.level == 2).length === 0) {
+    if (getNodes().filter((node) => node.data.level === 2).length === 0) {
       return messageApi.warning('請先新增第三層的心智圖泡泡！')
     }
 
@@ -113,7 +126,6 @@ const NavDrawer = () => {
       return newEdge
     })
     setEdges(RenderNewEdgeList)
-    setIsOpenBrainStormContent(true)
   }, [
     isOpenGalleryContent,
     isOpenBrainStormContent,
@@ -121,29 +133,17 @@ const NavDrawer = () => {
     isOpenTallyPopup
   ])
 
-  const handlerChange2Gallery = useCallback(() => {
-    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
-    if (isOpenProjectWall) return messageApi.warning('請先離開專案畫廊！')
+
+  const handlerChange2Gallery = () => {
+    initializeOpenContents();
     setIsOpenGalleryContent(true)
-  }, [
-    isOpenBrainStormContent,
-    isOpenGalleryContent,
-    isOpenProjectWall,
-    isOpenTallyPopup
-  ])
+    setPrevContents('gallery')
+  }
 
-  const handlerOpenProjectWall = useCallback(() => {
-    if (isOpenTallyPopup) return messageApi.warning('請先離開探索問卷！')
-    if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬！')
-    if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊！')
+  const handlerOpenProjectWall = () => {
+    initializeOpenContents();
     setIsOpenProjectWall(true)
-  }, [
-    isOpenGalleryContent,
-    isOpenBrainStormContent,
-    isOpenProjectWall,
-    isOpenTallyPopup
-  ])
+  }
 
   const handlerSetting = () => {
     setIsOpenSettingModal(true)
@@ -171,22 +171,13 @@ const NavDrawer = () => {
     setStartProjectStatus(true)
   }
 
-  const handleProjectClick = useCallback(
+  const handleProjectClick = 
     (projectId: string) => {
-      if (isOpenGalleryContent) return messageApi.warning('請先離開點子畫廊')
-      if (isOpenBrainStormContent) return messageApi.warning('請先離開靈感果醬')
-      console.log(projectId)
+      initializeOpenContents()
       setProjectId(projectId)
       setIsOpen(true)
       setEditable(true)
-    },
-    [
-      isOpenGalleryContent,
-      isOpenBrainStormContent,
-      isOpenProjectWall,
-      isOpenTallyPopup
-    ]
-  )
+    }
 
   useEffect(() => {
     getProjects()
@@ -212,15 +203,8 @@ const NavDrawer = () => {
       })
   }, [])
 
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [hasLevel2Bubble, setHasLevel2Bubble] = useState(
-    getNodes().filter((node) => node.data.level == 2).length > 0 ? true : false
-  )
-  const [hasLevel3Bubble, setHasLevel3Bubble] = useState(
-    getNodes().filter((node) => node.data.level == 3).length > 0 ? true : false
-  )
 
-  const [menuItems, setMenuItems] = useState([
+  const menuItemsList = [
     {
       icon: <img src={wavingHand} alt="" />,
       label: '探索問卷',
@@ -232,7 +216,6 @@ const NavDrawer = () => {
       label: '靈感果醬',
       prompt: '透過即興遊戲生成專案主題',
       onClick: handlerChange2BrainStorm,
-      disabled: hasLevel2Bubble
     },
     {
       icon: <img src={idea} alt="" />,
@@ -240,9 +223,8 @@ const NavDrawer = () => {
       prompt: '逛逛他人的心智圖',
       onClick: handlerChange2Gallery
     }
-  ])
-
-  const [actionItems, setActionItems] = useState([
+  ]
+  const actionItemList =[
     {
       icon: <img src={rocket} alt="" />,
       label: '開始計畫',
@@ -265,68 +247,25 @@ const NavDrawer = () => {
       prompt: '在 Discord 中提問、交流',
       onClick: handlerAheadDiscordStatus
     }
-  ])
+  ]
+
+  const [menuItems, setMenuItems] = useState(menuItemsList)
+  const [actionItems, setActionItems] = useState(actionItemList)
 
   useEffect(() => {
     const { getNodes } = store.getState()
-    const level_2_result =
-      getNodes().filter((node) => node.data.level === 2).length > 0
-        ? true
-        : false
+    // const level_2_result =
+    //   getNodes().filter((node) => node.data.level === 2).length > 0
+    //     ? true
+    //     : false
     const level_3_result =
       getNodes().filter((node) => node.data.level === 3).length > 0
         ? true
         : false
-    setHasLevel2Bubble(level_2_result)
+    // setHasLevel2Bubble(level_2_result)
     setHasLevel3Bubble(level_3_result)
-    setMenuItems([
-      {
-        icon: <img src={wavingHand} alt="" />,
-        label: '探索問卷',
-        prompt: '透過問卷生成心智圖',
-        onClick: handlerTallyPopup,
-        disabled: isOpenTallyPopup
-      },
-      {
-        icon: <img src={jamJar} alt="" />,
-        label: '靈感果醬',
-        prompt: '透過即興遊戲生成專案主題',
-        onClick: handlerChange2BrainStorm,
-        disabled: isOpenBrainStormContent
-      },
-      {
-        icon: <img src={idea} alt="" />,
-        label: '點子畫廊',
-        prompt: '逛逛他人的心智圖',
-        onClick: handlerChange2Gallery,
-        disabled: isOpenGalleryContent
-      }
-    ])
-    setActionItems([
-      {
-        icon: <img src={rocket} alt="" />,
-        label: '開始計畫',
-        prompt: '請選擇一個專案主題開始',
-        onClick: handlerTallyStartProject,
-        disabled:
-          !selectedNode ||
-          selectedNode.data.is_launched ||
-          selectedNode.data.level !== 3
-      },
-      {
-        icon: <img src={dashboard} alt="" />,
-        label: '專案畫廊',
-        prompt: '逛逛他人的專案',
-        onClick: handlerOpenProjectWall,
-        disabled: isOpenProjectWall
-      },
-      {
-        icon: <img src={icon_discord} alt="" />,
-        label: '社群互動',
-        prompt: '在 Discord 中提問、交流',
-        onClick: handlerAheadDiscordStatus
-      }
-    ])
+    setMenuItems(menuItemsList)
+    setActionItems(actionItemList)
   }, [
     store,
     isOpenGalleryContent,
@@ -390,7 +329,7 @@ const NavDrawer = () => {
               }`}
             >
               <div
-                className={`tooltip tooltip-right flex font-sans ${item.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`tooltip tooltip-right flex font-sans`}
                 data-tip={item.prompt}
                 onClick={item.onClick}
                 onTouchStart={item.onClick}
@@ -399,10 +338,7 @@ const NavDrawer = () => {
                   {item.icon}
                 </span>
                 <span
-                  className={`ml-3 flex items-center font-sans text-sm ${
-                    item.disabled
-                      ? 'text-gray-300'
-                      : 'text-gray-600 group-hover:text-[#6CA579]'
+                  className={`ml-3 flex items-center font-sans text-sm 
                   } ${isExpanded ? 'block' : 'hidden'}`}
                 >
                   {item.label}

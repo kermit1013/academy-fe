@@ -13,9 +13,7 @@ import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 
 import { message } from 'antd'
-import Bubble from '../components/Bubble'
-import useCursorStateSynced from '../hooks/useCursorStateSynced'
-import Cursors from '../components/Cursors'
+import Bubble from '../components/mindMap/Bubble'
 import { useNavigate } from 'react-router-dom'
 
 import BrainStormContent from '../components/content/BrainStormContent'
@@ -28,7 +26,6 @@ import useStartProject from '../hooks/useStartProject'
 import useAheadDiscord from '../hooks/useAheadDiscord'
 import DiscordModal from '../components/modal/DiscordModal'
 import GalleryContent from '../components/content/GalleryContent'
-// import CustomZoom from '../components/CustomZoom'
 import NavDrawer from '../components/NavDrawer'
 import { getNodeClassName } from '../funcs/utils'
 import { GetUserInfo } from '../libs/api/user'
@@ -81,7 +78,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
   const [userIdList, setUserIdList] = useState<number[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-  const [cursors, onMouseMove] = useCursorStateSynced()
   const { setSelectedNode, is_start_project } = useStartProject()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
   const [userId, setUserId] = useState(0)
@@ -276,7 +272,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onPointerMove={onMouseMove}
         onNodeClick={onNodeClick}
         nodesConnectable={false}
         proOptions={proOptions}
@@ -300,7 +295,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             <img className='w-4' src={main_logo} alt="" />
             <img className='w-16' src={text_logo} alt="" />
           </div> */}
-          <NavDrawer />
+          <NavDrawer getPersonData={getPersonData}/>
         </Panel>
         <Panel position="bottom-center">
           {isOpenBrainStormContent && <BrainStormContent />}
@@ -311,7 +306,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             />
           )}
         </Panel>
-        <Cursors cursors={cursors} />
         <MiniMap />
       </ReactFlow>
       <DiscordModal
