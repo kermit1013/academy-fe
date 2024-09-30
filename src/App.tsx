@@ -43,7 +43,7 @@ const App = () => {
         localStorage.setItem('refresh_token', result.data.refresh)
         messageApi.success(`歡迎 ${username}`)
         setTimeout(() => {
-          navigate('/search')
+          navigate('/dashboard')
         }, 1000)
       })
       .catch((e) => {
