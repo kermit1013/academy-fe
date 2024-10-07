@@ -28,48 +28,19 @@ export const getNodeClassName = (data: {
   is_visible: boolean
   isOpenBrainStormContent: boolean
 }) => {
-  if (data.level === 0) {
-    if (data.is_visible) {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_center_brain_storm_hover
-      return styles.node1_center_hover
-    } else {
-      if (data.isOpenBrainStormContent) return styles.node1_center_brain_storm
-      return styles.node1_center
-    }
+  const { level, is_launched, is_visible, isOpenBrainStormContent } = data
+
+  if (level === 3 && is_launched) {
+    return styles.node1_level3_node_is_launched
   }
-  if (data.level === 1) {
-    if (data.is_visible) {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level1_node_brain_storm_hover
-      return styles.node1_level1_node_hover
-    } else {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level1_node_brain_storm
-      return styles.node1_level1_node
-    }
-  }
-  if (data.level === 2) {
-    if (data.is_visible) {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level2_node_brain_storm_hover
-      return styles.node1_level2_node_hover
-    } else {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level2_node_brain_storm
-      return styles.node1_level2_node
-    }
-  }
-  if (data.level === 3) {
-    if (data.is_launched) return styles.node1_level3_node_is_launched
-    if (data.is_visible) {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level3_node_brain_storm_hover
-      return styles.node1_level3_node_hover
-    } else {
-      if (data.isOpenBrainStormContent)
-        return styles.node1_level3_node_brain_storm
-      return styles.node1_level3_node
-    }
-  }
+
+  const baseClass = level === 0 ? 'node1_center' : `node1_level${level}_node`
+
+  const classNames = [
+    baseClass,
+    isOpenBrainStormContent && 'brain_storm',
+    is_visible && 'hover'
+  ].filter(Boolean)
+
+  return styles[classNames.join('_')]
 }
