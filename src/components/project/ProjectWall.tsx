@@ -1,9 +1,9 @@
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import React, { useCallback, useEffect, useState } from 'react'
-import { GetProjectList } from '../libs/api/project'
-import useBubbleStore from '../stores/useEditorStore'
-import close_btn from '/public/close_btn.svg'
+import { GetProjectList } from '../../libs/api/project'
+import useBubbleStore from '../../stores/useEditorStore'
+import close_btn from '/close_btn.svg'
 
 interface ProjectWallProps {
   isWallOpen: boolean

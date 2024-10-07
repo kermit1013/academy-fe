@@ -11,10 +11,10 @@ import {
   GetProject,
   NewBlockNote,
   UpdateProject
-} from '../libs/api/project'
-import useBubbleStore from '../stores/useEditorStore'
-import close_btn from '/public/close_btn.svg'
-import icon_doc from '/public/icons/icon_doc.svg'
+} from '../../libs/api/project'
+import useBubbleStore from '../../stores/useEditorStore'
+import close_btn from '/close_btn.svg'
+import icon_doc from '/icons/icon_doc.svg'
 
 interface EditorProps {
   isOpen: boolean

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import useYDocStore from '../stores/useYDocStore'
+import useYDocStore from '../../stores/useYDocStore'
 
 const Modal = () => {
   const { setProvider, setVisible, setIsConnectProcess } = useYDocStore()

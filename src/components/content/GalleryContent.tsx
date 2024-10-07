@@ -1,6 +1,6 @@
-import disconnect from '/public/exit.svg'
-import prev_button from '/public/swipe-left.svg'
-import next_button from '/public/swipe-right.svg'
+import disconnect from '/exit.svg'
+import prev_button from '/swipe-left.svg'
+import next_button from '/swipe-right.svg'
 import useTopMenuStore from '../../stores/useTopMenuStore'
 
 interface GalleryContentProps {

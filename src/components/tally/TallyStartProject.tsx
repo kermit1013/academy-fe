@@ -1,8 +1,8 @@
 import message from 'antd/es/message'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CreateProjectPlan } from '../libs/api/tally'
-import useStartProjectStore from '../stores/useStartProjectStore'
+import { CreateProjectPlan } from '../../libs/api/tally'
+import useStartProjectStore from '../../stores/useStartProjectStore'
 
 declare global {
   interface Window {

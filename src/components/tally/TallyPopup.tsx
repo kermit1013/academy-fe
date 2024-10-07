@@ -1,8 +1,8 @@
 import message from 'antd/es/message'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CreateThought } from '../libs/api/tally'
-import useTopMenuStore from '../stores/useTopMenuStore'
+import { CreateThought } from '../../libs/api/tally'
+import useTopMenuStore from '../../stores/useTopMenuStore'
 
 declare global {
   interface Window {
