@@ -15,7 +15,7 @@ type Actions = {
   setEditable: (editable: boolean) => void
 }
 
-const useEditor = create<State & Actions>()(
+const useEditorStore = create<State & Actions>()(
   immer((set) => ({
     isOpen: false,
     projectId: '',
@@ -41,4 +41,4 @@ const useEditor = create<State & Actions>()(
   }))
 )
 
-export default useEditor
+export default useEditorStore

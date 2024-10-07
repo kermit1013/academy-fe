@@ -6,6 +6,7 @@ import './index.css'
 
 // Layout
 import AuthLayout from './layouts/AuthLayout'
+import BaseLayout from './layouts/BaseLayout'
 
 // Pages
 import App from './App'
@@ -15,7 +16,6 @@ import SelectPage from './pages/SelectPage'
 // import Dashboard from './pages/Dashboard'
 
 import bg from '/bg.svg'
-import DashboardLayout from './layouts/DashboardLayout'
 
 const clientId =
   '507786572152-529vtt7jtknh7d1l4512remb9estavpv.apps.googleusercontent.com'
@@ -33,8 +33,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="register" element={<RegisterPage />} />
             <Route path="forgetPwd" element={<PasswordRecoveryPage />} />
           </Route>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index  element={<SelectPage />} />
+          <Route path="/dashboard" element={<BaseLayout />}>
+            <Route index element={<SelectPage />} />
           </Route>
         </Routes>
       </HashRouter>

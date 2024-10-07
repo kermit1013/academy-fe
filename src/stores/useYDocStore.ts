@@ -28,7 +28,7 @@ const generateRandomRoomName = (): string => {
   }
   return result
 }
-const useYDoc = create<State & Actions>()(
+const useYDocStore = create<State & Actions>()(
   immer((set) => ({
     provider: null,
     ydoc: new Doc(),
@@ -101,4 +101,4 @@ const useYDoc = create<State & Actions>()(
   }))
 )
 
-export default useYDoc
+export default useYDocStore

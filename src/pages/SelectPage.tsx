@@ -1,35 +1,35 @@
-import { useCallback, useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import ReactFlow, {
+  MiniMap,
+  NodeMouseHandler,
+  NodeOrigin,
   Panel,
   ProOptions,
-  ReactFlowProvider,
-  NodeOrigin,
-  NodeMouseHandler,
-  MiniMap
+  ReactFlowProvider
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import useForceLayout from '../hooks/useForceLayout'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 
 import { message } from 'antd'
-import Bubble from '../components/mindMap/Bubble'
 import { useNavigate } from 'react-router-dom'
+import Bubble from '../components/mindMap/Bubble'
 
 import BrainStormContent from '../components/content/BrainStormContent'
-import useTopMenu from '../hooks/useTopMenu'
+import GalleryContent from '../components/content/GalleryContent'
+import Loading from '../components/Loading'
+import DiscordModal from '../components/modal/DiscordModal'
+import SettingModal from '../components/modal/SettingModal'
+import NavDrawer from '../components/NavDrawer'
 import TallyPopup from '../components/TallyPopup'
 import TallyStartProject from '../components/TallyStartProject'
-import SettingModal from '../components/modal/SettingModal'
-import Loading from '../components/Loading'
-import useStartProject from '../hooks/useStartProject'
-import useAheadDiscord from '../hooks/useAheadDiscord'
-import DiscordModal from '../components/modal/DiscordModal'
-import GalleryContent from '../components/content/GalleryContent'
-import NavDrawer from '../components/NavDrawer'
 import { getNodeClassName } from '../funcs/utils'
 import { GetUserInfo } from '../libs/api/user'
-import useLogin from '../hooks/useLogin'
+import useAheadDiscordStore from '../stores/useAheadDiscordStore'
+import useLoginStore from '../stores/useLoginStore'
+import useStartProjectStore from '../stores/useStartProjectStore'
+import useTopMenuStore from '../stores/useTopMenuStore'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 type ExampleProps = {
@@ -74,16 +74,17 @@ declare global {
 }
 
 function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
-  const [isLoading, setIsLoading] = useState(true)
-  const [userIdList, setUserIdList] = useState<number[]>([])
+  const { setUser } = useLoginStore()
+  const { setSelectedNode, is_start_project } = useStartProjectStore()
+  const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscordStore()
   const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
   const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
-  const { setSelectedNode, is_start_project } = useStartProject()
-  const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscord()
-  const [userId, setUserId] = useState(0)
   const [messageApi, contextHolder] = message.useMessage()
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [userIdList, setUserIdList] = useState<number[]>([])
+  const [userId, setUserId] = useState(0)
   const [actionType, setActionType] = useState(0)
-  const { setUser } = useLogin()
 
   const {
     isOpenBrainStormContent,
@@ -91,7 +92,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     isOpenSettingModal,
     isOpenTallyPopup,
     setIsOpenTallyPopup
-  } = useTopMenu()
+  } = useTopMenuStore()
   const [tooltipData, setTooltipData] = useState({
     show: false,
     content: '',
@@ -295,7 +296,7 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
             <img className='w-4' src={main_logo} alt="" />
             <img className='w-16' src={text_logo} alt="" />
           </div> */}
-          <NavDrawer getPersonData={getPersonData}/>
+          <NavDrawer />
         </Panel>
         <Panel position="bottom-center">
           {isOpenBrainStormContent && <BrainStormContent />}

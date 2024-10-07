@@ -1,30 +1,30 @@
+import { message } from 'antd'
 import { KeyboardEvent, useCallback, useState } from 'react'
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
-import useNodesStateSynced from '../../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
-import { message } from 'antd'
-import useBubble from '../../hooks/useBubble'
-import start_project from '../../../public/start_project.svg'
 import delete_bubble from '../../../public/delete_bubble.svg'
 import icon_project from '../../../public/icon_project.svg'
-import useStartProject from '../../hooks/useStartProject'
-import useTopMenu from '../../hooks/useTopMenu'
-import useEditor from '../../hooks/useEditor'
+import start_project from '../../../public/start_project.svg'
+import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import { DeleteBubble, EditBubble, NewBubble } from '../../libs/api/bubble'
 import { BubbleProps, createNewBubbleNode } from '../../libs/bubble'
+import useBubbleStore from '../../stores/useBubbleStore'
+import useEditorStore from '../../stores/useEditorStore'
+import useStartProjectStore from '../../stores/useStartProjectStore'
+import useTopMenuStore from '../../stores/useTopMenuStore'
 
 const Bubble = ({ data }: BubbleProps) => {
   const { getNodes, getEdges } = useReactFlow()
-  const { setSelectBubble } = useBubble()
-  const { setStartProjectStatus } = useStartProject()
+  const { setSelectBubble } = useBubbleStore()
+  const { setStartProjectStatus } = useStartProjectStore()
+  const { edit_bubble_id, setEditBubbleId } = useBubbleStore()
+  const { isOpenGalleryContent, isOpenBrainStormContent } = useTopMenuStore()
+  const { setIsOpen, setEditable, setNodeId } = useEditorStore()
+  const [messageApi, contextHolder] = message.useMessage()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const [modifyData, setModifyData] = useState(data.label)
-  const [messageApi, contextHolder] = message.useMessage()
-  const { edit_bubble_id, setEditBubbleId } = useBubble()
-  const { isOpenGalleryContent, isOpenBrainStormContent } = useTopMenu()
   const [isComposing, setIsComposing] = useState(false)
-  const { setIsOpen, setEditable, setNodeId } = useEditor()
 
   const handleCompositionStart = () => {
     setIsComposing(true)
@@ -159,8 +159,8 @@ const Bubble = ({ data }: BubbleProps) => {
     const nodes = getNodes()
     const newNodeList = nodes.map((node) => {
       if (node.id === data_id) {
-        let newNode = { ...node }
-        let newNode_data = node.data
+        const newNode = { ...node }
+        const newNode_data = node.data
         newNode_data.label = modifyData
         newNode.data = newNode_data
         return newNode

@@ -26,7 +26,7 @@ type Actions = {
   setSelectBubble: (bubble: Node | null) => void
 }
 
-const useBubble = create<State & Actions>()(
+const useBubbleStore = create<State & Actions>()(
   immer((set) => ({
     node_list: [],
     edge_list: [],
@@ -79,4 +79,4 @@ const useBubble = create<State & Actions>()(
   }))
 )
 
-export default useBubble
+export default useBubbleStore

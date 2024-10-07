@@ -1,7 +1,7 @@
 import disconnect from '/public/exit.svg'
 import prev_button from '/public/swipe-left.svg'
 import next_button from '/public/swipe-right.svg'
-import useTopMenu from '../../hooks/useTopMenu'
+import useTopMenuStore from '../../stores/useTopMenuStore'
 
 interface GalleryContentProps {
   getPersonData: (type: number) => Promise<void>
@@ -12,7 +12,7 @@ const GalleryContent: React.FC<GalleryContentProps> = ({
   getPersonData,
   setActionType
 }) => {
-  const { setIsOpenGalleryContent } = useTopMenu()
+  const { setIsOpenGalleryContent } = useTopMenuStore()
 
   const handlerMoveBtn = (action_type: number) => {
     setActionType(action_type)

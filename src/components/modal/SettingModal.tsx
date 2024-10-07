@@ -10,18 +10,19 @@ import Select from '../fieldItem/Select'
 
 import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 import useNodesStateSynced from '../../hooks/useNodesStateSynced'
-import useTopMenu from '../../hooks/useTopMenu'
+import useLoginStore from '../../stores/useLoginStore'
+import useTopMenuStore from '../../stores/useTopMenuStore'
+
 import close_btn from '/close_btn.svg'
 import icon_building from '/icons/icon_building.svg'
 import icon_discord from '/icons/icon_discord.svg'
+import icon_edit from '/icons/icon_edit.svg'
 import icon_eye from '/icons/icon_eye.svg'
 import icon_gender from '/icons/icon_gender.svg'
 import icon_instagram from '/icons/icon_instagram.svg'
 import icon_logout from '/icons/icon_logout.svg'
-import icon_user from '/icons/icon_user.svg'
-import icon_edit from '/icons/icon_edit.svg'
 import icon_question from '/icons/icon_question.svg'
-import useLogin from '../../hooks/useLogin'
+import icon_user from '/icons/icon_user.svg'
 
 // TODO: 取得使用者資料，可優化吃 Cache 或 localStorage，並在修改成功後更新 localStorage，避免重複取得個人資訊 API
 
@@ -36,12 +37,12 @@ interface IUserInfo {
 }
 
 const SettingModal = () => {
-  const { setIsOpenSettingModal } = useTopMenu()
+  const navigate = useNavigate()
+  const { setIsOpenSettingModal } = useTopMenuStore()
+  const { user, setUser } = useLoginStore()
   const [messageApi, contextHolder] = message.useMessage()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
-  const navigate = useNavigate()
-  const { user, setUser } = useLogin()
 
   const ref = useRef<HTMLDialogElement>(null)
 

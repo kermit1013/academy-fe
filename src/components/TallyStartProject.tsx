@@ -1,8 +1,8 @@
+import message from 'antd/es/message'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useStartProject from '../hooks/useStartProject'
-import message from 'antd/es/message'
 import { CreateProjectPlan } from '../libs/api/tally'
+import useStartProjectStore from '../stores/useStartProjectStore'
 
 declare global {
   interface Window {
@@ -13,7 +13,7 @@ declare global {
 const TallyStartProject: React.FC = () => {
   const navigate = useNavigate()
   const [messageApi] = message.useMessage()
-  const { selectedNode, setStartProjectStatus } = useStartProject()
+  const { selectedNode, setStartProjectStatus } = useStartProjectStore()
 
   useEffect(() => {
     console.log(selectedNode)
@@ -32,7 +32,7 @@ const TallyStartProject: React.FC = () => {
               return
             }
             const data = JSON.stringify(payload)
-            let encoded = encodeURI(data)
+            const encoded = encodeURI(data)
             CreateProjectPlan(selectedNode?.data.id, encoded)
               .then(() => {
                 messageApi.info(

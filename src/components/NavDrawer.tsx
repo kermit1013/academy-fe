@@ -1,15 +1,15 @@
 import { message } from 'antd'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useStoreApi } from 'reactflow'
 
 import { getNodeClassName } from '../funcs/utils'
-import useAheadDiscord from '../hooks/useAheadDiscord'
 import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
-import useEditor from '../hooks/useEditor'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
-import useStartProject from '../hooks/useStartProject'
-import useTopMenu from '../hooks/useTopMenu'
 import { DeleteProject, GetMyProject } from '../libs/api/project'
+import useAheadDiscordStore from '../stores/useAheadDiscordStore'
+import useBubbleStore from '../stores/useEditorStore'
+import useStartProjectStore from '../stores/useStartProjectStore'
+import useTopMenuStore from '../stores/useTopMenuStore'
 import Editor from './Editor'
 import ProjectWall from './ProjectWall'
 
@@ -38,13 +38,13 @@ interface Project {
 
 const NavDrawer = () => {
   const [messageApi, contextHolder] = message.useMessage()
-  const { setAheadDiscordStatus } = useAheadDiscord()
+  const store = useStoreApi()
+  const { setAheadDiscordStatus } = useAheadDiscordStore()
+  const { selectedNode, setStartProjectStatus } = useStartProjectStore()
+  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
+    useBubbleStore()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
-  const { selectedNode, setStartProjectStatus } = useStartProject()
-  const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
-    useEditor()
-  const store = useStoreApi()
   const {
     isOpenTallyPopup,
     isOpenBrainStormContent,
@@ -55,7 +55,7 @@ const NavDrawer = () => {
     setIsOpenGalleryContent,
     setIsOpenProjectWall,
     setIsOpenSettingModal
-  } = useTopMenu()
+  } = useTopMenuStore()
 
   const { getNodes, edges } = store.getState()
   const nodes = getNodes()
@@ -310,11 +310,10 @@ const NavDrawer = () => {
           </div>
 
           {Object.entries(renderItemType).map(([key, items], index) => (
-            <>
+            <Fragment key={`${key}-${index}`}>
               <section>
                 <div
                   className={`mb-4 font-sans text-xs font-medium text-[#6CA579] ${isExpanded ? 'block' : 'text-center'}`}
-                  key={`${key}-${index}`}
                 >
                   {titleByGroupType[key as keyof typeof titleByGroupType]}
                 </div>
@@ -350,7 +349,7 @@ const NavDrawer = () => {
               {index < Object.keys(renderItemType).length - 1 && (
                 <div className="my-4 border-t border-gray-200" />
               )}
-            </>
+            </Fragment>
           ))}
 
           <div className="my-4 border-t border-gray-200"></div>

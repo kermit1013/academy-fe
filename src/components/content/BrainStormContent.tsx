@@ -1,19 +1,22 @@
+import { message } from 'antd'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useReactFlow } from 'reactflow'
-import { message } from 'antd'
-import useTopMenu from '../../hooks/useTopMenu'
-import useStartProject from '../../hooks/useStartProject'
-import icon_clock from '/clock.svg'
-import icon_change from '/change.svg'
-import icon_enter from '/icons/icon_enter.svg'
-import close_btn from '/close_btn.svg'
-import icon_plus from '/icons/icon_plus.svg'
-import { NewBubble } from '../../libs/api/bubble'
-import { SelectRandomContext } from '../../libs/api/brain_storm'
-import { createNewBubbleNode } from '../../libs/bubble'
-import useNodesStateSynced from '../../hooks/useNodesStateSynced'
-import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
 import { getNodeClassName } from '../../funcs/utils'
+import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
+import useNodesStateSynced from '../../hooks/useNodesStateSynced'
+import { SelectRandomContext } from '../../libs/api/brain_storm'
+import { NewBubble } from '../../libs/api/bubble'
+import { createNewBubbleNode } from '../../libs/bubble'
+import useStartProjectStore from '../../stores/useStartProjectStore'
+import useTopMenuStore from '../../stores/useTopMenuStore'
+import icon_change from '/change.svg'
+import icon_clock from '/clock.svg'
+import close_btn from '/close_btn.svg'
+import icon_enter from '/icons/icon_enter.svg'
+import icon_plus from '/icons/icon_plus.svg'
+
+const SETTING_BUBBLE = '如果'
+
 type props = {
   action_type: number
 }
@@ -24,12 +27,12 @@ type actionBubble = {
 }
 
 const Thinking = ({ action_type }: props) => {
-  const setting_bubble = '如果'
-  const [action_bubble, setActionBubble] = useState({} as actionBubble)
-  const access_token = localStorage.getItem('access_token')
-  const { getNodes } = useReactFlow()
   const [messageApi, contextHolder] = message.useMessage()
-  const { setSelectedNode, selectedNode } = useStartProject()
+  const { getNodes } = useReactFlow()
+  const { setSelectedNode, selectedNode } = useStartProjectStore()
+  const access_token = localStorage.getItem('access_token')
+
+  const [action_bubble, setActionBubble] = useState({} as actionBubble)
   const [modifyText, setModifyText] = useState('')
   const [isComposing, setIsComposing] = useState(false)
 
@@ -137,7 +140,7 @@ const Thinking = ({ action_type }: props) => {
     return (
       <>
         <div className="flex h-[47px] w-[60px] items-center justify-center rounded-[12px] border-2 border-[#7B7C7B] text-center text-base">
-          <div className="font-sans">{setting_bubble}</div>
+          <div className="font-sans">{SETTING_BUBBLE}</div>
         </div>
         <div className="font-sans text-3xl font-normal">+</div>
         <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full border-2 border-[#7B7C7B] p-3 text-center text-base">
@@ -264,16 +267,17 @@ const ThinkDone = ({ bubbleCount }: think_done_props) => {
 }
 
 const BrainStormContent = memo(() => {
+  const { getNodes, getEdges } = useReactFlow()
+  const { setSelectedNode, selectedNode } = useStartProjectStore()
+  const { setIsOpenBrainStormContent } = useTopMenuStore()
+  const setNodes = useNodesStateSynced()[1]
+  const setEdges = useEdgesStateSynced()[1]
+
   const [action_type, setActionType] = useState(1)
   const [times, setTimes] = useState(120)
 
-  const { setSelectedNode, selectedNode } = useStartProject()
-  const { setIsOpenBrainStormContent } = useTopMenu()
-  const { getNodes, getEdges } = useReactFlow()
   const [bubbleCount, setBubbleCount] = useState(0)
   const [showThinkDone, setShowThinkDone] = useState(false)
-  const setNodes = useNodesStateSynced()[1]
-  const setEdges = useEdgesStateSynced()[1]
   useEffect(() => {
     setSelectedNode(null)
   }, [])

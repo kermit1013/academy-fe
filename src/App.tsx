@@ -2,19 +2,20 @@ import { message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import useLogin from './hooks/useLogin'
+import useLoginStore from './stores/useLoginStore'
 
 import GoogleLogin from './components/GoogleLogin'
 import { TokenPair } from './libs/api/login'
+import groundi_logo from '/groundi_logo.svg'
 import password_hide from '/password_hide.svg'
 import password_show from '/password_show.svg'
-import groundi_logo from '/groundi_logo.svg'
 
 const App = () => {
+  const { username, setUserName, passwd, setPasswd } = useLoginStore()
   const [messageApi, contextHolder] = message.useMessage()
+
   const [passwdType, setPasswdType] = useState('password')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const { username, setUserName, passwd, setPasswd } = useLogin()
 
   useEffect(() => {
     const isMobile = /iPhone|iPod|Android/i.test(navigator.userAgent)

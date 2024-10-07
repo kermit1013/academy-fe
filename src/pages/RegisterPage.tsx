@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import useLogin from '../hooks/useLogin'
+import useLoginStore from '../stores/useLoginStore'
 
 import GoogleLogin from '../components/GoogleLogin'
 import { RegisterUser } from '../libs/api/login'
@@ -15,7 +15,7 @@ const RegisterPage = () => {
   const navigate = useNavigate()
 
   const { email, setEmail, passwd, setPasswd, username, setUserName } =
-    useLogin()
+    useLoginStore()
 
   const [passwdType, setPasswdType] = useState('password')
   const handlerChangePasswdType = () => {

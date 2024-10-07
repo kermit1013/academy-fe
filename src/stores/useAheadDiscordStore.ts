@@ -9,7 +9,7 @@ type Actions = {
   setAheadDiscordStatus: (status: boolean) => void
 }
 
-const useAheadDiscord = create<State & Actions>()(
+const useAheadDiscordStore = create<State & Actions>()(
   immer((set) => ({
     is_ahead_discord: false,
     setAheadDiscordStatus: (status: boolean) =>
@@ -19,4 +19,4 @@ const useAheadDiscord = create<State & Actions>()(
   }))
 )
 
-export default useAheadDiscord
+export default useAheadDiscordStore

@@ -18,7 +18,7 @@ type Actions = {
   setIsOpenProjectWall: (status: boolean) => void
 }
 
-const useTopMenu = create<State & Actions>()(
+const useTopMenuStore = create<State & Actions>()(
   immer((set) => ({
     action_menu: -1,
     isOpenSettingModal: false,
@@ -53,4 +53,4 @@ const useTopMenu = create<State & Actions>()(
   }))
 )
 
-export default useTopMenu
+export default useTopMenuStore

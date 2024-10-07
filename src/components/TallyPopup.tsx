@@ -1,8 +1,8 @@
+import message from 'antd/es/message'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import message from 'antd/es/message'
-import useTopMenu from '../hooks/useTopMenu'
 import { CreateThought } from '../libs/api/tally'
+import useTopMenuStore from '../stores/useTopMenuStore'
 
 declare global {
   interface Window {
@@ -20,7 +20,7 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
 }) => {
   const navigate = useNavigate()
   const [messageApi] = message.useMessage()
-  const { setIsOpenTallyPopup } = useTopMenu()
+  const { setIsOpenTallyPopup } = useTopMenuStore()
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://tally.so/widgets/embed.js'
@@ -38,7 +38,7 @@ const TallyPopup: React.FC<TallyPopupProps> = ({
               navigate('/')
             }
             const data = JSON.stringify(payload)
-            let encoded = encodeURI(data)
+            const encoded = encodeURI(data)
             CreateThought(encoded)
               .then(() => {
                 messageApi.info('心智圖已更新 🎉')

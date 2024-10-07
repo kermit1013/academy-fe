@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import useYDoc from '../hooks/useYDoc'
+import useYDocStore from '../stores/useYDocStore'
 
 const Modal = () => {
+  const { setProvider, setVisible, setIsConnectProcess } = useYDocStore()
   const [connectText, SetConnectText] = useState('')
-  const { setProvider, setVisible, setIsConnectProcess } = useYDoc()
   const handlerKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handlerConnect()
@@ -22,11 +22,11 @@ const Modal = () => {
     setVisible(false)
   }
   return (
-    <div className=" absolute top-20 left-1/3 bg-white/50 rounded-lg w-1/3 h-12 border border-white z-20 flex pr-3">
+    <div className="absolute left-1/3 top-20 z-20 flex h-12 w-1/3 rounded-lg border border-white bg-white/50 pr-3">
       <div className="relative">
         <button
           onClick={handlerClose}
-          className=" absolute -top-4 -left-2 w-6 h-6 rounded-full backdrop-blur-md  border-2 text-xs text-white border-white "
+          className="absolute -left-2 -top-4 h-6 w-6 rounded-full border-2 border-white text-xs text-white backdrop-blur-md"
         >
           x
         </button>
@@ -37,11 +37,11 @@ const Modal = () => {
         value={connectText}
         onChange={(e) => SetConnectText(e.target.value)}
         onKeyDown={(e) => handlerKeyDown(e)}
-        className="pl-4 bg-transparent w-full h-full  outline-none text-white font-bold"
+        className="h-full w-full bg-transparent pl-4 font-bold text-white outline-none"
       />
       <button
         onClick={handlerConnect}
-        className="text-white border-l pl-2 border-white"
+        className="border-l border-white pl-2 text-white"
       >
         Connect
       </button>

@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
+// NOTE: 沒有使用到，可以刪除(?)
+
 type State = {
   isContentVisible: boolean
   timer: number | null
@@ -11,7 +13,7 @@ type Actions = {
   setTimer: (timer: number | null) => void
 }
 
-const useThinkContent = create<State & Actions>()(
+const useThinkContentStore = create<State & Actions>()(
   immer((set) => ({
     isContentVisible: false,
     timer: null,
@@ -27,4 +29,4 @@ const useThinkContent = create<State & Actions>()(
   }))
 )
 
-export default useThinkContent
+export default useThinkContentStore

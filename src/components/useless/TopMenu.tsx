@@ -3,7 +3,7 @@ import { message } from 'antd'
 import light_bulb from '../../public/light_bulb.svg'
 import setting from '../../public/setting.svg'
 import change_think from '../../public/change_think.svg'
-import useTopMenu from '../hooks/useTopMenu'
+import useTopMenuStore from '../../stores/useTopMenuStore'
 
 const TopMenu = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -14,7 +14,7 @@ const TopMenu = () => {
     setIsOpenBrainStormContent,
     setIsOpenGalleryContent,
     setIsOpenSettingModal
-  } = useTopMenu()
+  } = useTopMenuStore()
   const selectTypeInHoverIn = (index: number) => {
     setHoverIndex(index)
   }

@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import close_btn from '/public/close_btn.svg'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
-import useEditor from '../hooks/useEditor'
+import React, { useCallback, useEffect, useState } from 'react'
 import { GetProjectList } from '../libs/api/project'
+import useBubbleStore from '../stores/useEditorStore'
+import close_btn from '/public/close_btn.svg'
 
 interface ProjectWallProps {
   isWallOpen: boolean
@@ -21,9 +21,9 @@ interface Project {
 }
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
+  const { setIsOpen, setProjectId, setEditable } = useBubbleStore()
   const [projects, setProjects] = useState<Project[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const { setIsOpen, setProjectId, setEditable } = useEditor()
 
   useEffect(() => {
     getAllProjects()
@@ -106,7 +106,7 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                   className="h-full w-full object-cover"
                 />
               </figure>
-              <div className="flex h-40 flex-col items-start  p-4 pl-8">
+              <div className="flex h-40 flex-col items-start p-4 pl-8">
                 <div className="flex h-full flex-col items-center justify-center">
                   <h2 className="font-sans text-xl font-bold">
                     {project.name}
@@ -114,9 +114,9 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
                 </div>
                 <div className="flex w-full justify-end gap-2">
                   {isNewProject(project.created_at) && (
-                     <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
-                    NEW
-                  </p>
+                    <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
+                      NEW
+                    </p>
                   )}
                   <p className="w-16 rounded-2xl bg-[#735E5E] p-2 text-center font-sans text-xs text-white">
                     {project.view_count} 瀏覽

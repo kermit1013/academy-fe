@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
-import close_btn from '/public/close_btn.svg'
+import { Block } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
-import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
-import { Block } from '@blocknote/core'
-import useEditor from '../hooks/useEditor'
+import { useCreateBlockNote } from '@blocknote/react'
 import { message } from 'antd'
 import { saveAs } from 'file-saver'
-import icon_doc from '/public/icons/icon_doc.svg'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ExportProject,
   GetProject,
   NewBlockNote,
   UpdateProject
 } from '../libs/api/project'
+import useBubbleStore from '../stores/useEditorStore'
+import close_btn from '/public/close_btn.svg'
+import icon_doc from '/public/icons/icon_doc.svg'
 
 interface EditorProps {
   isOpen: boolean
@@ -24,10 +24,10 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
+  const { setIsOpen, setProjectId, setNodeId, editable } = useBubbleStore()
   const [messageApi, contextHolder] = message.useMessage()
-  const [blocks, setBlocks] = useState<Block[]>([])
   const saveTimeoutRef = useRef<number | null>(null)
-  const { setIsOpen, setProjectId, setNodeId, editable } = useEditor()
+  const [blocks, setBlocks] = useState<Block[]>([])
   const [isExporting, setIsExporting] = useState(false)
 
   const editor = useCreateBlockNote(

@@ -16,7 +16,7 @@ type Actions = {
   setUser: (user: any) => void
 }
 
-const useLogin = create<State & Actions>()(
+const useLoginStore = create<State & Actions>()(
   immer((set) => ({
     email: '',
     passwd: '',
@@ -41,4 +41,4 @@ const useLogin = create<State & Actions>()(
   }))
 )
 
-export default useLogin
+export default useLoginStore

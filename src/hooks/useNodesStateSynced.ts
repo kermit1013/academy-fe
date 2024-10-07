@@ -4,10 +4,10 @@ import {
   type OnNodesChange,
   applyNodeChanges,
   getConnectedEdges,
-  Edge,
+  Edge
 } from 'reactflow'
 
-import useYDoc from './useYDoc'
+import useYDocStore from '../stores/useYDocStore'
 
 // We are using nodesMap as the one source of truth for the nodes.
 // This means that we are doing all changes to the nodes in the map object.
@@ -18,11 +18,11 @@ function useNodesStateSynced(): [
   React.Dispatch<React.SetStateAction<Node[]>>,
   OnNodesChange
 ] {
-  const [nodes, setNodes] = useState<Node[]>([])
-
-  const { ydoc, provider } = useYDoc()
+  const { ydoc, provider } = useYDocStore()
   let nodesMap = ydoc!.getMap<Node>('nodes')
   let edgesMap = ydoc!.getMap<Edge>('edges')
+
+  const [nodes, setNodes] = useState<Node[]>([])
 
   useEffect(() => {
     nodesMap = ydoc!.getMap<Node>('nodes')

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { type Edge, type OnEdgesChange, applyEdgeChanges } from 'reactflow'
 
-import useYDoc from './useYDoc'
+import useYDocStore from '../stores/useYDocStore'
 
 function useEdgesStateSynced(): [
   Edge[],
@@ -9,7 +9,7 @@ function useEdgesStateSynced(): [
   OnEdgesChange
 ] {
   const [edges, setEdges] = useState<Edge[]>([])
-  const { ydoc, provider } = useYDoc()
+  const { ydoc, provider } = useYDocStore()
 
   // Please see the comments in useNodesStateSynced.ts.
   // This is the same thing but for edges.

@@ -12,7 +12,7 @@ type Actions = {
   setSelectedNode: (node: Node | null) => void
 }
 
-const useStartProject = create<State & Actions>()(
+const useStartProjectStore = create<State & Actions>()(
   immer((set) => ({
     is_start_project: false,
     selectedNode: null,
@@ -27,4 +27,4 @@ const useStartProject = create<State & Actions>()(
   }))
 )
 
-export default useStartProject
+export default useStartProjectStore

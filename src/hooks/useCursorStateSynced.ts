@@ -1,7 +1,7 @@
-import { stringToColor } from '../funcs/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useReactFlow } from 'reactflow'
-import useYDoc from './useYDoc'
+import { stringToColor } from '../funcs/utils'
+import useYDocStore from '../stores/useYDocStore'
 
 export type Cursor = {
   id: string
@@ -12,7 +12,7 @@ export type Cursor = {
 }
 
 export function useCursorStateSynced() {
-  const { ydoc, provider } = useYDoc()
+  const { ydoc, provider } = useYDocStore()
 
   let cursorsMap = ydoc!.getMap<Cursor>('cursors')
 
@@ -42,7 +42,7 @@ export function useCursorStateSynced() {
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       const position = screenToFlowPosition({
         x: event.clientX,
-        y: event.clientY,
+        y: event.clientY
       })
 
       cursorsMap.set(cursorId, {
@@ -50,7 +50,7 @@ export function useCursorStateSynced() {
         color: cursorColor,
         x: position.x,
         y: position.y,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       })
     },
     [screenToFlowPosition, ydoc, provider]
