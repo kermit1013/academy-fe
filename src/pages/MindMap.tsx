@@ -1,16 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useLayoutEffect } from 'react'
+import ELK from 'elkjs/lib/elk.bundled.js';
 import ReactFlow, {
   MiniMap,
   NodeMouseHandler,
   NodeOrigin,
   Panel,
   ProOptions,
-  ReactFlowProvider
+  ReactFlowProvider,
+  useReactFlow,
+  useNodesState,
+  useEdgesState,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
-import useForceLayout from '../hooks/useForceLayout'
-import useNodesStateSynced from '../hooks/useNodesStateSynced'
 
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +19,6 @@ import Bubble from '../components/mindMap/Bubble'
 
 import BrainStormContent from '../components/content/BrainStormContent'
 import GalleryContent from '../components/content/GalleryContent'
-import Loading from '../components/mindMap/Loading'
 import DiscordModal from '../components/modal/DiscordModal'
 import SettingModal from '../components/modal/SettingModal'
 import NavDrawer from '../components/NavDrawer'
@@ -32,10 +32,12 @@ import useStartProjectStore from '../stores/useStartProjectStore'
 import useTopMenuStore from '../stores/useTopMenuStore'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
-type ExampleProps = {
-  strength?: number
-  distance?: number
-}
+const elk = new ELK();
+const elkOptions = {
+  'elk.algorithm': 'radial',
+  'elk.radial.centerOnRoot': true,
+};
+
 const nodeTypes = {
   bubble: Bubble
 }
@@ -73,18 +75,41 @@ declare global {
   }
 }
 
-function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
+const getLayoutedElements = (nodes, edges, options = {}) => {
+  const graph = {
+    id: 'root',
+    layoutOptions: options,
+    children: nodes.map((node) => ({
+      ...node,
+      width: 192,
+      height: 58,
+    })),
+    edges: edges,
+  };
+  console.log(graph)
+  return elk
+    .layout(graph)
+    .then((layoutedGraph) => ({
+      nodes: layoutedGraph.children.map((node) => ({
+        ...node,
+        position: { x: node.x, y: node.y },
+      })),
+      edges: layoutedGraph.edges,
+    }))
+    .catch(console.error);
+};
+
+function ReactFlowPro() {
   const { setUser } = useLoginStore()
   const { setSelectedNode, is_start_project } = useStartProjectStore()
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscordStore()
-  const [nodes, setNodes, onNodesChange] = useNodesStateSynced()
-  const [edges, setEdges, onEdgesChange] = useEdgesStateSynced()
+  const [nodes, setNodes, onNodesChange] = useNodesState([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [messageApi, contextHolder] = message.useMessage()
-
-  const [isLoading, setIsLoading] = useState(true)
   const [userIdList, setUserIdList] = useState<number[]>([])
   const [userId, setUserId] = useState(0)
   const [actionType, setActionType] = useState(0)
+  const { fitView } = useReactFlow();
 
   const {
     isOpenBrainStormContent,
@@ -100,9 +125,11 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     y: 0
   })
 
+
   useEffect(() => {
     getPersonData(0)
   }, [])
+
 
   const userIdListRef = useRef<number[]>([])
 
@@ -202,7 +229,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     }
   }
 
-  useForceLayout({ strength, distance, setIsLoading, userId })
 
   const onNodeMouseEnter: NodeMouseHandler = useCallback((event, node) => {
     const { clientX, clientY } = event as React.MouseEvent
@@ -261,6 +287,26 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
     },
     [nodes, edges, isOpenBrainStormContent]
   )
+  const onLayout = useCallback(() => {
+      getLayoutedElements(nodes, edges, elkOptions).then(
+        ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          setNodes(layoutedNodes);
+          setEdges(layoutedEdges);
+
+          window.requestAnimationFrame(() => fitView());
+        },
+      );
+    },
+    [nodes, edges],
+  );
+
+  // Calculate the initial layout on mount.
+
+  useLayoutEffect(() => {
+    console.log('onLayout')
+    console.log(nodes, edges)
+    onLayout();
+  }, [userId]);
 
   return (
     <>
@@ -283,7 +329,6 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
         defaultEdgeOptions={defaultEdgeOptions}
         minZoom={0.3}
       >
-        {isLoading && <Loading />}
         {isOpenTallyPopup && (
           <TallyPopup
             getPersonData={() => getPersonData(0)}
@@ -308,11 +353,13 @@ function ReactFlowPro({ strength = -300, distance = 300 }: ExampleProps = {}) {
           )}
         </Panel>
         <Panel position="top-right">
-        <button  onClick={() => navigate('/dashboard/mind-map')} type="button" className="py-2 px-4  bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-sans shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
-        MindMap
-        </button>
-
-      </Panel>
+          <button  onClick={() => onLayout()} type="button" className="py-2 px-4  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-sans shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+          AutoLayout
+          </button>
+          <button  onClick={() => navigate('/dashboard')} type="button" className="py-2 px-4 mt-2 bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-sans shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+          Back
+          </button>
+        </Panel>
         <MiniMap />
       </ReactFlow>
       <DiscordModal

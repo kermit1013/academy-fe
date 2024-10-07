@@ -2,14 +2,13 @@
   --node-color: #7b7c7b;
   --node-hover-color: #6ca579;
   --node-hover-bg: rgba(108, 165, 121, 0.3);
-  --node-height: 160px;
-  --node-width: 160px;
-  --node-font-size: 24px;
+  --node-height: 58px;
+  --node-width: 192px;
+  --node-font-size: 20px;
   --node-background-color: rgba(108, 165, 121, 0.3);
 }
 
 %node-base {
-  border-radius: 50%;
   color: var(--node-color);
   outline: 2px solid var(--node-color);
   display: flex;
@@ -23,6 +22,7 @@
   font-size: var(--node-font-size);
   height: var(--node-height);
   width: var(--node-width);
+  border-radius: 12px;
 }
 
 .node1_center {
@@ -49,21 +49,17 @@
 
 .node1_level1_node {
   @extend %node-base;
-  --node-height: 120px;
-  --node-width: 120px;
+
 }
 
 .node1_level1_node_brain_storm {
   @extend %node-base;
-  --node-height: 120px;
-  --node-width: 120px;
+
   outline: 2px solid #c4c4c4 !important;
 }
 
 .node1_level1_node_brain_storm_hover {
   @extend %node-base;
-  --node-height: 120px;
-  --node-width: 120px;
 
   outline: 2px solid #c4c4c4 !important;
   background-color: var(--node-background-color) !important;
@@ -71,42 +67,31 @@
 
 .node1_level1_node_hover {
   @extend %node-base;
-  --node-height: 120px;
-  --node-width: 120px;
+
   background-color: var(--node-background-color) !important;
 }
 
 .node1_level2_node {
   @extend %node-base;
-  --node-height: 100px;
-  --node-width: 100px;
 }
 
 .node1_level2_node_brain_storm {
   @extend %node-base;
-  --node-height: 100px;
-  --node-width: 100px;
 }
 
 .node1_level2_node_hover {
   @extend %node-base;
-  --node-height: 100px;
-  --node-width: 100px;
 
   background-color: var(--node-background-color) !important;
 }
 
 .node1_level2_node_brain_storm_hover {
   @extend %node-base;
-  --node-height: 100px;
-  --node-width: 100px;
   background-color: var(--node-background-color) !important;
 }
 
 .node1_level3_node {
   @extend %node-base;
-  --node-height: 58px;
-  --node-width: 192px;
   border-radius: 12px;
   font-size: 20px !important;
   word-break: break-all;
@@ -116,8 +101,6 @@
 
 .node1_level3_node_brain_storm {
   @extend %node-base;
-  --node-height: 58px;
-  --node-width: 192px;
   border-radius: 12px;
   font-size: 20px !important;
   word-break: break-all;
@@ -128,8 +111,6 @@
 
 .node1_level3_node_brain_storm_hover {
   @extend %node-base;
-  --node-height: 58px;
-  --node-width: 192px;
   border-radius: 12px;
   font-size: 20px !important;
   word-break: break-all;
@@ -141,8 +122,6 @@
 
 .node1_level3_node_is_launched {
   @extend %node-base;
-  --node-height: 58px;
-  --node-width: 192px;
   border-radius: 12px;
   background-color: #ece0d0 !important;
   font-size: 20px !important;
