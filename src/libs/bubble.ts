@@ -17,12 +17,13 @@ export interface BubbleProps {
 
 export const createNewBubbleNode = (
   result: any,
-  parentId: string
+  parentId: string,
+  position: { x: number; y: number }
 ): { node: any; edge: Edge } => {
   const childNode = {
     id: `${result.id}`,
     type: 'bubble',
-    position: { x: 0, y: 0 },
+    position: position,
     data: {
       id: `${result.id}`,
       label: result.label,

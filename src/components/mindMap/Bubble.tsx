@@ -4,8 +4,6 @@ import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow'
 import delete_bubble from '/delete_bubble.svg'
 import icon_project from '/icon_project.svg'
 import start_project from '/start_project.svg'
-import useEdgesStateSynced from '../../hooks/useEdgesStateSynced'
-import useNodesStateSynced from '../../hooks/useNodesStateSynced'
 import { DeleteBubble, EditBubble, NewBubble } from '../../libs/api/bubble'
 import { BubbleProps, createNewBubbleNode } from '../../libs/bubble'
 import useBubbleStore from '../../stores/useBubbleStore'
@@ -13,17 +11,15 @@ import useEditorStore from '../../stores/useEditorStore'
 import useStartProjectStore from '../../stores/useStartProjectStore'
 import useTopMenuStore from '../../stores/useTopMenuStore'
 
-const Bubble = ({ data }: BubbleProps) => {
-  const { getNodes, getEdges } = useReactFlow()
+const Bubble = ({ data: targetNode }: BubbleProps) => {
+  const { getNodes, getEdges, setNodes, setEdges } = useReactFlow()
   const { setSelectBubble } = useBubbleStore()
   const { setStartProjectStatus } = useStartProjectStore()
   const { edit_bubble_id, setEditBubbleId } = useBubbleStore()
   const { isOpenGalleryContent, isOpenBrainStormContent } = useTopMenuStore()
   const { setIsOpen, setEditable, setNodeId } = useEditorStore()
   const [messageApi, contextHolder] = message.useMessage()
-  const setNodes = useNodesStateSynced()[1]
-  const setEdges = useEdgesStateSynced()[1]
-  const [modifyData, setModifyData] = useState(data.label)
+  const [modifyData, setModifyData] = useState(targetNode.label)
   const [isComposing, setIsComposing] = useState(false)
 
   const handleCompositionStart = () => {
@@ -35,7 +31,7 @@ const Bubble = ({ data }: BubbleProps) => {
   }
 
   const selectBubble = () => {
-    const node = getNodes().filter((node) => node.id === data.id)[0]
+    const node = getNodes().filter((node) => node.id === targetNode.id)[0]
     if (node.data.level === 2) {
       setSelectBubble(node)
     }
@@ -45,19 +41,19 @@ const Bubble = ({ data }: BubbleProps) => {
     if (isOpenBrainStormContent) {
       return
     }
-    if (data.category != null && data.category !== 'ABOUT') {
+    if (targetNode.category != null && targetNode.category !== 'ABOUT') {
       const node_list = getNodes()
       const edge_list = getEdges()
       const myNodes = node_list.map((node) => {
         return { ...node, selected: false }
       })
 
-      const child_edge_List = edge_list.filter((edge) => edge.source == data.id)
+      const child_edge_List = edge_list.filter((edge) => edge.source == targetNode.id)
       const myEdgeList = child_edge_List.map((edge) => edge.target)
       const selectedNodes = myNodes.map((node) => {
         if (myEdgeList.includes(node.id)) {
           return { ...node, selected: true }
-        } else if (node.id === data.id) {
+        } else if (node.id === targetNode.id) {
           return { ...node, selected: true }
         }
 
@@ -66,8 +62,8 @@ const Bubble = ({ data }: BubbleProps) => {
 
       setNodes(selectedNodes)
     } else {
-      setEditBubbleId(data.id)
-      setModifyData(data.label)
+      setEditBubbleId(targetNode.id)
+      setModifyData(targetNode.label)
     }
   }
 
@@ -79,7 +75,7 @@ const Bubble = ({ data }: BubbleProps) => {
 
     setEditBubbleId('')
 
-    if (data.label !== modifyData) {
+    if (targetNode.label !== modifyData) {
       handlerEditBubble()
     }
   }
@@ -88,7 +84,7 @@ const Bubble = ({ data }: BubbleProps) => {
     const edges = getEdges()
     let hasChild = false
     edges.forEach((edge) => {
-      if (edge.source === data.id) {
+      if (edge.source === targetNode.id) {
         hasChild = true
         return
       }
@@ -98,7 +94,7 @@ const Bubble = ({ data }: BubbleProps) => {
       return
     }
     if (confirm('確定要刪除嗎?')) {
-      DeleteBubble(data.id)
+      DeleteBubble(targetNode.id)
         .then(() => {
           RenderDeleteBubble()
         })
@@ -107,19 +103,33 @@ const Bubble = ({ data }: BubbleProps) => {
         })
     }
   }
+
   const handlerNewBubble = useCallback(async () => {
-    NewBubble(data.id, '', '', '')
+    NewBubble(targetNode.id, '', '', '')
       .then((result) => {
-        const { node: childNode, edge: childEdge } = createNewBubbleNode(
-          result,
-          data.id
-        )
+        console.log(getNodes())
+        let targetPosition = getNodes().filter((node) => node.id === targetNode.id)[0].position
         const nodesList = getNodes().map((node) => {
-          if (node.id === data.id) {
+          if (node.id === targetNode.id) {
             return { ...node, data: { ...node.data, isVisible: false } }
           }
           return node
         })
+        const randomOffset = {
+          x: (Math.random() - 0.5) * 400, 
+          y: (Math.random() - 0.5) * 400
+        }
+        
+        // Apply the offset to the target position
+        const newPosition = {
+          x: targetPosition.x + randomOffset.x,
+          y: targetPosition.y + randomOffset.y
+        }
+        const { node: childNode, edge: childEdge } = createNewBubbleNode(
+          result,
+          targetNode.id,
+          newPosition
+        )
 
         const newNodeList = nodesList.concat(childNode)
         setNodes(newNodeList)
@@ -136,9 +146,9 @@ const Bubble = ({ data }: BubbleProps) => {
 
   const handlerEditBubble = async () => {
     setEditBubbleId('')
-    EditBubble(data.id, modifyData)
+    EditBubble(targetNode.id, modifyData)
       .then(() => {
-        RenderEditBubble(data.id)
+        RenderEditBubble(targetNode.id)
       })
       .catch((error) => {
         console.error('Error fetching data:', error)
@@ -148,8 +158,8 @@ const Bubble = ({ data }: BubbleProps) => {
   const RenderDeleteBubble = () => {
     const nodes = getNodes()
     const edges = getEdges()
-    const nodeList = nodes.filter((node) => node.id !== data.id)
-    const edgeList = edges.filter((edge) => edge.target !== data.id)
+    const nodeList = nodes.filter((node) => node.id !== targetNode.id)
+    const edgeList = edges.filter((edge) => edge.target !== targetNode.id)
     setNodes(nodeList)
     setEdges(edgeList)
     messageApi.info('已刪除')
@@ -185,8 +195,8 @@ const Bubble = ({ data }: BubbleProps) => {
 
   const handlerModifyData = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (
-      (data.level === 2 && e.target.value.length <= 15) ||
-      (data.level === 3 && e.target.value.length <= 18)
+      (targetNode.level === 2 && e.target.value.length <= 15) ||
+      (targetNode.level === 3 && e.target.value.length <= 18)
     ) {
       setModifyData(e.target.value)
     } else {
@@ -196,13 +206,13 @@ const Bubble = ({ data }: BubbleProps) => {
   const handleOpenProjectEditor = () => {
     setIsOpen(true)
     setEditable(false)
-    setNodeId(data.id)
+    setNodeId(targetNode.id)
   }
 
   const renderAddButton = () => {
-    if (!isOpenGalleryContent && data.level !== 3 && !isOpenBrainStormContent) {
+    if (!isOpenGalleryContent && targetNode.level !== 3 && !isOpenBrainStormContent) {
       return (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+        <NodeToolbar isVisible={targetNode.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 h-6 w-6 rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
             onClick={handlerNewBubble}
@@ -219,12 +229,12 @@ const Bubble = ({ data }: BubbleProps) => {
     if (
       !isOpenGalleryContent &&
       !isOpenBrainStormContent &&
-      ((data.level === 1 && data.category === null) ||
-        data.level === 2 ||
-        (data.level === 3 && data.is_launched === false))
+      ((targetNode.level === 1 && targetNode.category === null) ||
+        targetNode.level === 2 ||
+        (targetNode.level === 3 && targetNode.is_launched === false))
     ) {
       return (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Left}>
+        <NodeToolbar isVisible={targetNode.isVisible} position={Position.Left}>
           <button
             className="absolute -left-5 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20"
             onClick={handlerRemoveBubble}
@@ -241,11 +251,11 @@ const Bubble = ({ data }: BubbleProps) => {
     if (
       !isOpenGalleryContent &&
       !isOpenBrainStormContent &&
-      data.level === 3 &&
-      data.is_launched === true
+      targetNode.level === 3 &&
+      targetNode.is_launched === true
     ) {
       return (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+        <NodeToolbar isVisible={targetNode.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
             title="打開專案"
@@ -262,12 +272,12 @@ const Bubble = ({ data }: BubbleProps) => {
     if (
       !isOpenGalleryContent &&
       !isOpenBrainStormContent &&
-      data.level === 3 &&
-      data.is_launched === false &&
-      data.label !== ''
+      targetNode.level === 3 &&
+      targetNode.is_launched === false &&
+      targetNode.label !== ''
     ) {
       return (
-        <NodeToolbar isVisible={data.isVisible} position={Position.Right}>
+        <NodeToolbar isVisible={targetNode.isVisible} position={Position.Right}>
           <button
             className="absolute -left-1 -top-3 flex h-6 w-6 items-center justify-center rounded-full border border-[#6CA579] bg-[#6CA579]/20 text-center text-[16px] text-[#6CA579]"
             title="開始計劃"
@@ -284,21 +294,21 @@ const Bubble = ({ data }: BubbleProps) => {
     const shouldRenderTextarea =
       !isOpenGalleryContent &&
       !isOpenBrainStormContent &&
-      ((data.level === 1 && data.category === null) ||
-        data.level === 2 ||
-        data.level === 3) &&
-      data.isVisible == true &&
-      edit_bubble_id == data.id
+      ((targetNode.level === 1 && targetNode.category === null) ||
+        targetNode.level === 2 ||
+        targetNode.level === 3) &&
+      targetNode.isVisible == true &&
+      edit_bubble_id == targetNode.id
 
     if (shouldRenderTextarea) {
-      return data.level === 3 ? renderProjectThemeInput() : renderThoughtInput()
+      return targetNode.level === 3 ? renderProjectThemeInput() : renderThoughtInput()
     } else {
       return (
         <p
-          title={data.label.length > 15 ? data.label : ''}
-          className={`${data.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}
+          title={targetNode.label.length > 15 ? targetNode.label : ''}
+          className={`${targetNode.isVisible ? 'text-[#6ca579]' : 'text-[#7B7C7B]'} font-sans`}
         >
-          {data.label}
+          {targetNode.label}
         </p>
       )
     }
@@ -341,7 +351,7 @@ const Bubble = ({ data }: BubbleProps) => {
       onTouchStart={selectBubble}
       onDoubleClick={handlerEdit}
       onBlur={handlerFinishEdit}
-      key={data.id}
+      key={targetNode.id}
     >
       {/* <>
       level0(center): 只能加 

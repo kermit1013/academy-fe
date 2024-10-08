@@ -75,7 +75,7 @@ declare global {
   }
 }
 
-const getLayoutedElements = (nodes, edges, options = {}) => {
+const getLayoutedElements = async (nodes, edges, options = {}) => {
   const graph = {
     id: 'root',
     layoutOptions: options,
@@ -300,11 +300,8 @@ function ReactFlowPro() {
     [nodes, edges],
   );
 
-  // Calculate the initial layout on mount.
-
+// 記錄座標後不需要
   useLayoutEffect(() => {
-    console.log('onLayout')
-    console.log(nodes, edges)
     onLayout();
   }, [userId]);
 
@@ -337,10 +334,6 @@ function ReactFlowPro() {
         )}
         {is_start_project && <TallyStartProject />}
         <Panel position="top-left">
-          {/* <div className="flex items-center gap-1">
-            <img className='w-4' src={main_logo} alt="" />
-            <img className='w-16' src={text_logo} alt="" />
-          </div> */}
           <NavDrawer />
         </Panel>
         <Panel position="bottom-center">
@@ -379,14 +372,11 @@ function ReactFlowPro() {
 }
 
 function ReactFlowWrapper() {
-  const levaProps = {
-    strength: -300,
-    distance: 300
-  }
+
 
   return (
     <ReactFlowProvider>
-      <ReactFlowPro {...levaProps} />
+      <ReactFlowPro />
     </ReactFlowProvider>
   )
 }
