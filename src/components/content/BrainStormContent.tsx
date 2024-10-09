@@ -28,7 +28,7 @@ type actionBubble = {
 
 const Thinking = ({ action_type }: props) => {
   const [messageApi, contextHolder] = message.useMessage()
-  const { getNodes } = useReactFlow()
+  const { getNodes, setNodes, setEdges } = useReactFlow()
   const { setSelectedNode, selectedNode } = useStartProjectStore()
   const access_token = localStorage.getItem('access_token')
 
@@ -36,22 +36,30 @@ const Thinking = ({ action_type }: props) => {
   const [modifyText, setModifyText] = useState('')
   const [isComposing, setIsComposing] = useState(false)
 
-  const setNodes = useNodesStateSynced()[1]
-  const setEdges = useEdgesStateSynced()[1]
   const handlerNewBubble = useCallback(async () => {
     const data = selectedNode?.data
     if (data == null) {
       messageApi.warning('請選擇一顆泡泡後再送出資料!')
       return
     }
-
+    // todo refactor: duplicated logic
     const result = await NewBubble(data.id, modifyText, '', action_bubble.name)
     if (result != null) {
-      // const this_bubble = getNodes().filter((node) => node.id === data.id)[0]
+      let targetPosition = getNodes().filter((node) => node.id === data.id)[0].position
 
+      const randomOffset = {
+        x: (Math.random() - 0.5) * 500, 
+        y: (Math.random() - 0.5) * 500
+      }
+        
+      const newPosition = {
+        x: targetPosition.x + randomOffset.x,
+        y: targetPosition.y + randomOffset.y
+      }
       const { node: childNode, edge: childEdge } = createNewBubbleNode(
         result,
-        data.id
+        data.id,
+        newPosition
       )
 
       const nodesList = getNodes().map((node) => {
