@@ -116,8 +116,8 @@ const Bubble = ({ data: targetNode }: BubbleProps) => {
           return node
         })
         const randomOffset = {
-          x: (Math.random() - 0.5) * 400, 
-          y: (Math.random() - 0.5) * 400
+          x: (Math.random() - 0.5) * 500, 
+          y: (Math.random() - 0.5) * 500
         }
         
         // Apply the offset to the target position

@@ -16,6 +16,7 @@ import 'reactflow/dist/style.css'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import Bubble from '../components/mindMap/Bubble'
+import magic from  '/magic.svg'
 
 import BrainStormContent from '../components/content/BrainStormContent'
 import GalleryContent from '../components/content/GalleryContent'
@@ -30,12 +31,14 @@ import useAheadDiscordStore from '../stores/useAheadDiscordStore'
 import useLoginStore from '../stores/useLoginStore'
 import useStartProjectStore from '../stores/useStartProjectStore'
 import useTopMenuStore from '../stores/useTopMenuStore'
+import { BatchUpdateBubbles } from '../libs/api/bubble';
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 const elk = new ELK();
 const elkOptions = {
   'elk.algorithm': 'radial',
   'elk.radial.centerOnRoot': true,
+  'elk.spacing.nodeNode': 10,
 };
 
 const nodeTypes = {
@@ -55,6 +58,7 @@ interface InputNode {
     is_launched: boolean
     level: number
     reference: string
+    position: { x: number; y: number }
   }
 }
 
@@ -187,7 +191,7 @@ function ReactFlowPro() {
     return nodes.map((item) => ({
       id: `${item.id}`,
       type: 'bubble',
-      position: { x: 0, y: 0 },
+      position: item.data.position,
       data: {
         id: `${item.id}`,
         label: item.data.level === 0 ? username : item.data.label,
@@ -290,6 +294,7 @@ function ReactFlowPro() {
   const onLayout = useCallback(() => {
       getLayoutedElements(nodes, edges, elkOptions).then(
         ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          BatchUpdateBubbles(layoutedNodes.map((node) => ({ id: node.id, position: node.position })))
           setNodes(layoutedNodes);
           setEdges(layoutedEdges);
 
@@ -300,10 +305,9 @@ function ReactFlowPro() {
     [nodes, edges],
   );
 
-// 記錄座標後不需要
-  useLayoutEffect(() => {
+  const handlerAutoLayout = () => {
     onLayout();
-  }, [userId]);
+  }
 
   return (
     <>
@@ -346,11 +350,12 @@ function ReactFlowPro() {
           )}
         </Panel>
         <Panel position="top-right">
-          <button  onClick={() => onLayout()} type="button" className="py-2 px-4  bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-sans shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
-          AutoLayout
-          </button>
-          <button  onClick={() => navigate('/dashboard')} type="button" className="py-2 px-4 mt-2 bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-sans shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
-          Back
+        <button
+            title="自動排列"
+            className={`relative flex h-10 w-10 e-in-out hover:-translate-x shadow-md transition duration-500 hover:scale-105 hover:shadow-inner  items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 hover:bg-[#7B7C7B]/10 `}
+            onClick={handlerAutoLayout}
+          >
+            <img src={magic} alt="" />
           </button>
         </Panel>
         <MiniMap />

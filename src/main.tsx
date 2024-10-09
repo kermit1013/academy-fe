@@ -12,7 +12,6 @@ import BaseLayout from './layouts/BaseLayout'
 import App from './App'
 import PasswordRecoveryPage from './pages/PasswordRecoveryPage'
 import RegisterPage from './pages/RegisterPage'
-import SelectPage from './pages/SelectPage'
 import MindMap from './pages/MindMap'
 // import Dashboard from './pages/Dashboard'
 
@@ -35,8 +34,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="forget-pwd" element={<PasswordRecoveryPage />} />
           </Route>
           <Route path="/dashboard" element={<BaseLayout />}>
-            <Route index element={<SelectPage />} />
-            <Route path="mind-map" element={<MindMap />} />
+            <Route index element={<MindMap  />} />
           </Route>
         </Routes>
       </HashRouter>

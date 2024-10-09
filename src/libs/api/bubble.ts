@@ -48,3 +48,18 @@ export const EditBubble = async (
     return error.response.data.detail
   }
 }
+
+
+export const BatchUpdateBubbles = async (nodes: Array<{ id: number, position: { x: number, y: number } }>): Promise<any> => {
+  try {
+    const result = await request.put('/graphs/nodes', {
+      nodes: nodes
+    });
+
+    if (result.status === 200) {
+      return result.data;
+    }
+  } catch (error: any) {
+    return error.response?.data?.detail || 'An error occurred';
+  }
+}
