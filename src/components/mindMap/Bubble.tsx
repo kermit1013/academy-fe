@@ -107,7 +107,6 @@ const Bubble = ({ data: targetNode }: BubbleProps) => {
   const handlerNewBubble = useCallback(async () => {
     NewBubble(targetNode.id, '', '', '')
       .then((result) => {
-        console.log(getNodes())
         let targetPosition = getNodes().filter((node) => node.id === targetNode.id)[0].position
         const nodesList = getNodes().map((node) => {
           if (node.id === targetNode.id) {

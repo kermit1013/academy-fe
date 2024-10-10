@@ -50,7 +50,7 @@ export const EditBubble = async (
 }
 
 
-export const BatchUpdateBubbles = async (nodes: Array<{ id: number, position: { x: number, y: number } }>): Promise<any> => {
+export const BatchUpdateBubbles = async (nodes: Array<{ id: string, position: { x: number, y: number } }>): Promise<any> => {
   try {
     const result = await request.put('/graphs/nodes', {
       nodes: nodes
