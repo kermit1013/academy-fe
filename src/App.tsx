@@ -115,7 +115,7 @@ const App = () => {
           </button>
         </div>
         <button
-          className={`text-md mt-4 w-full rounded-[20px] p-3 text-white ${isLoggingIn ? 'bg-[#ABAAA6]' : ']'} e-in-out hover:-translate-x shadow-md transition duration-500 hover:scale-105 hover:shadow-inner`}
+          className={`text-md mt-4 w-full rounded-[20px] p-3 text-white ${isLoggingIn ? 'bg-[#ABAAA6]' : 'bg-[#735E5E]'} e-in-out hover:-translate-x shadow-md transition duration-500 hover:scale-105 hover:shadow-inner`}
           onClick={() => handlerLogin()}
           disabled={isLoggingIn}
         >
