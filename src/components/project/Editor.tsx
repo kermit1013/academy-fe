@@ -12,7 +12,7 @@ import {
   NewBlockNote,
   UpdateProject
 } from '../../libs/api/project'
-import useBubbleStore from '../../stores/useEditorStore'
+import useEditorStore from '../../stores/useEditorStore'
 import close_btn from '/close_btn.svg'
 import icon_doc from '/icons/icon_doc.svg'
 
@@ -24,7 +24,7 @@ interface EditorProps {
 }
 
 const Editor: React.FC<EditorProps> = ({ isOpen, projectId, nodeId }) => {
-  const { setIsOpen, setProjectId, setNodeId, editable } = useBubbleStore()
+  const { setIsOpen, setProjectId, setNodeId, editable } = useEditorStore()
   const [messageApi, contextHolder] = message.useMessage()
   const saveTimeoutRef = useRef<number | null>(null)
   const [blocks, setBlocks] = useState<Block[]>([])

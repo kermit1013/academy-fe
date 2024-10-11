@@ -2,7 +2,7 @@ import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
 import React, { useCallback, useEffect, useState } from 'react'
 import { GetProjectList } from '../../libs/api/project'
-import useBubbleStore from '../../stores/useEditorStore'
+import useEditorStore from '../../stores/useEditorStore'
 import close_btn from '/close_btn.svg'
 
 interface ProjectWallProps {
@@ -21,7 +21,7 @@ interface Project {
 }
 
 const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
-  const { setIsOpen, setProjectId, setEditable } = useBubbleStore()
+  const { setIsOpen, setProjectId, setEditable } = useEditorStore()
   const [projects, setProjects] = useState<Project[]>([])
   const [searchTerm, setSearchTerm] = useState('')
 

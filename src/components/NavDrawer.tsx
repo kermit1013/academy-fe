@@ -7,7 +7,7 @@ import useEdgesStateSynced from '../hooks/useEdgesStateSynced'
 import useNodesStateSynced from '../hooks/useNodesStateSynced'
 import { DeleteProject, GetMyProject } from '../libs/api/project'
 import useAheadDiscordStore from '../stores/useAheadDiscordStore'
-import useBubbleStore from '../stores/useEditorStore'
+import useEditorStore from '../stores/useEditorStore'
 import useStartProjectStore from '../stores/useStartProjectStore'
 import useTopMenuStore from '../stores/useTopMenuStore'
 import Editor from '../components/project/Editor'
@@ -42,7 +42,7 @@ const NavDrawer = () => {
   const { setAheadDiscordStatus } = useAheadDiscordStore()
   const { selectedNode, setStartProjectStatus } = useStartProjectStore()
   const { isOpen, setIsOpen, projectId, setProjectId, setEditable, nodeId } =
-    useBubbleStore()
+    useEditorStore()
   const setNodes = useNodesStateSynced()[1]
   const setEdges = useEdgesStateSynced()[1]
   const {
