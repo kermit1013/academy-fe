@@ -39,16 +39,24 @@ export const GetMyProject = async (): Promise<any> => {
   }
 }
 
-export const GetProjectList = async (): Promise<any> => {
+export const GetProjectList = async (index = 1, size = 10, search = ''): Promise<any> => {
   try {
-    const result = await request.get('/projects')
+    const result = await request.get('/projects', {
+      params: { index, size, search }
+    });
     if (result.status === 200) {
-      return result.data
+      return {
+        projects: result.data.projects,
+        totalPages: result.data.total_pages,
+        currentPage: result.data.current_page,
+        totalItems: result.data.total_items
+      };
     }
   } catch (error: any) {
-    return error.response.data.detail
+    console.error('Error fetching projects:', error);
+    throw new Error(error.response?.data?.detail || 'Failed to fetch projects');
   }
-}
+};
 
 export const UpdateProject = async (
   content: Block[],

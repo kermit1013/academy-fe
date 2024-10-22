@@ -1,9 +1,10 @@
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/mantine/style.css'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { GetProjectList } from '../../libs/api/project'
 import useEditorStore from '../../stores/useEditorStore'
 import close_btn from '/close_btn.svg'
+import Loading from '../mindMap/Loading'
 
 interface ProjectWallProps {
   isWallOpen: boolean
@@ -24,31 +25,68 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
   const { setIsOpen, setProjectId, setEditable } = useEditorStore()
   const [projects, setProjects] = useState<Project[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [isLoading, setIsLoading] = useState(false)
+  const searchTimeoutRef = useRef<number | null>(null)
 
-  useEffect(() => {
-    getAllProjects()
-  }, [])
-
-  const getAllProjects = useCallback(async () => {
-    const access_token = localStorage.getItem('access_token')
-    if (!access_token) {
-      return
-    }
-    GetProjectList()
-      .then((result) => {
-        const projectsWithImages = result.map((project: Project) => ({
+  const getAllProjects = useCallback(
+    async (search: string) => {
+      setIsLoading(true)
+      try {
+        const result = await GetProjectList(currentPage, pageSize, search)
+        const projectsWithImages = result.projects.map((project: Project) => ({
           ...project,
           imagePath: project.thumbnail
             ? project.thumbnail
             : `/project_covers/project_${Math.floor(Math.random() * 10) + 1}.webp`
         }))
         setProjects(projectsWithImages)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error)
-      })
-  }, [])
+        setTotalPages(result.totalPages)
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [currentPage, pageSize]
+  )
 
+  const debouncedSearch = useCallback(
+    (search: string) => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+      searchTimeoutRef.current = window.setTimeout(() => {
+        getAllProjects(search)
+      }, 1000)
+    },
+    [getAllProjects]
+  )
+
+  useEffect(() => {
+    debouncedSearch(searchTerm)
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [searchTerm, debouncedSearch])
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value)
+    setCurrentPage(1) // Reset to first page when searching
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+  }
+
+  // const handlePageSizeChange = (event) => {
+  //   setPageSize(Number(event.target.value))
+  //   setCurrentPage(1) // Reset to first page when changing page size
+  // }
   const handleProjectClick = (project: Project) => {
     setProjectId(project.id.toString())
     setIsOpen(true)
@@ -80,51 +118,74 @@ const ProjectWall: React.FC<ProjectWallProps> = ({ isWallOpen, onClose }) => {
         >
           <img src={close_btn} alt="" />
         </button>
-
         <div className="mb-6">
           <input
             type="text"
             placeholder="想搜尋什麼專案..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearch}
             className="input input-bordered w-full p-2 font-sans"
           />
         </div>
-
-        <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
-          {filteredProjects.map((project: Project, index) => (
-            <div
-              key={index}
-              className="card bg-base-100 shadow-lg transition-transform duration-200 ease-in-out hover:scale-105 hover:cursor-pointer"
-              onClick={() => handleProjectClick(project)}
-            >
-              <figure className="h-48 overflow-hidden">
-                <img
-                  draggable={false}
-                  src={project.imagePath}
-                  alt={project.name}
-                  className="h-full w-full object-cover"
-                />
-              </figure>
-              <div className="flex h-40 flex-col items-start p-4 pl-8">
-                <div className="flex h-full flex-col items-center justify-center">
-                  <h2 className="font-sans text-xl font-bold">
-                    {project.name}
-                  </h2>
-                </div>
-                <div className="flex w-full justify-end gap-2">
-                  {isNewProject(project.created_at) && (
-                    <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
-                      NEW
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
+            {filteredProjects.map((project: Project, index) => (
+              <div
+                key={index}
+                className="card bg-base-100 shadow-lg transition-transform duration-200 ease-in-out hover:scale-105 hover:cursor-pointer"
+                onClick={() => handleProjectClick(project)}
+              >
+                <figure className="h-48 overflow-hidden">
+                  <img
+                    draggable={false}
+                    src={project.imagePath}
+                    alt={project.name}
+                    className="h-full w-full object-cover"
+                  />
+                </figure>
+                <div className="flex h-40 flex-col items-start p-4 pl-8">
+                  <div className="flex h-full flex-col items-center justify-center">
+                    <h2 className="font-sans text-xl font-bold">
+                      {project.name}
+                    </h2>
+                  </div>
+                  <div className="flex w-full justify-end gap-2">
+                    {isNewProject(project.created_at) && (
+                      <p className="w-16 rounded-2xl bg-[#6CA579] p-2 text-center font-sans text-xs text-white">
+                        NEW
+                      </p>
+                    )}
+                    <p className="w-16 rounded-2xl bg-[#735E5E] p-2 text-center font-sans text-xs text-white">
+                      {project.view_count} 瀏覽
                     </p>
-                  )}
-                  <p className="w-16 rounded-2xl bg-[#735E5E] p-2 text-center font-sans text-xs text-white">
-                    {project.view_count} 瀏覽
-                  </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+        <div className="mt-4 font-sans">
+          <div className="join flex items-center justify-center">
+            <button
+              className="btn join-item"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              «
+            </button>
+            <button className="btn join-item">
+              Page {currentPage} of {totalPages}
+            </button>
+            <button
+              className="btn join-item"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              »
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ import useLoginStore from '../stores/useLoginStore'
 import useStartProjectStore from '../stores/useStartProjectStore'
 import useTopMenuStore from '../stores/useTopMenuStore'
 import { BatchUpdateBubbles } from '../libs/api/bubble'
+import useEditorStore from '../stores/useEditorStore'
 const proOptions: ProOptions = { account: 'paid-pro', hideAttribution: true }
 
 const elk = new ELK()
@@ -115,6 +116,7 @@ function ReactFlowPro() {
   const { is_ahead_discord, setAheadDiscordStatus } = useAheadDiscordStore()
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const {isOpen} = useEditorStore()
   const [messageApi, contextHolder] = message.useMessage()
   const [userIdList, setUserIdList] = useState<number[]>([])
   const [userId, setUserId] = useState(0)
@@ -126,6 +128,7 @@ function ReactFlowPro() {
     isOpenGalleryContent,
     isOpenSettingModal,
     isOpenTallyPopup,
+    isOpenProjectWall,
     setIsOpenTallyPopup
   } = useTopMenuStore()
   const [tooltipData, setTooltipData] = useState({
@@ -367,7 +370,23 @@ function ReactFlowPro() {
             />
           )}
         </Panel>
-
+        <Panel position="top-right">
+          {' '}
+          <button
+            title="自動排列"
+            className={`e-in-out hover:-translate-x relative flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 shadow-md transition duration-500 hover:scale-105 hover:bg-[#7B7C7B]/10 hover:shadow-inner`}
+            onClick={handlerAutoLayout}
+          >
+            <img src={magic} alt="" />
+          </button>
+          <button
+            title=""
+            className={`e-in-out hover:-translate-x relative mt-4 flex h-10 w-10 items-center justify-center rounded border border-[#7B7C7B] bg-[#7B7C7B]/10 shadow-md transition duration-500 hover:scale-105 hover:bg-[#7B7C7B]/10 hover:shadow-inner`}
+            onClick={() => fitView()}
+          >
+            <img src={fit_view} alt="" />
+          </button>{' '}
+        </Panel>
         {!isOpenGalleryContent && (
           <Panel position="top-right">
             {' '}
@@ -387,8 +406,7 @@ function ReactFlowPro() {
             </button>{' '}
           </Panel>
         )}
-
-        <MiniMap />
+        {!isOpen && !isOpenProjectWall && <MiniMap />}
       </ReactFlow>
       <DiscordModal
         isOpen={is_ahead_discord}
